@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUB S.O.S — Aplicação e Renovação Clube S.O.S</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --card-bg: rgba(13, 19, 33, 0.9);
+      --neon-blue: #00d2ff;
+      --neon-orange: #ff6b00;
+      --neon-green: #00ff88;
+      --text-white: #f0f4f8;
+      --text-gray: #8a99ad;
+      --border-glow: rgba(0, 210, 255, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      padding: 20px;
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.12), transparent 60%);
+      min-height: 100vh;
+    }
+
+    .container { max-width: 850px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 30px; }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 3px;
+    }
+    .logo span { color: var(--neon-orange); }
+
+    .subtitle {
+      color: var(--neon-blue);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
+      margin-top: 5px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+    }
+
+    .hidden { display: none; }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-num {
+      background: var(--neon-blue);
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .grid-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .type-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 25px 20px;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .type-btn:hover {
+      border-color: var(--neon-orange);
+      background: rgba(255, 107, 0, 0.12);
+      box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .type-btn h3 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 8px; }
+    .type-btn p { font-size: 0.9rem; color: var(--text-gray); }
+
+    .grid-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .cat-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 20px 15px;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .cat-btn:hover, .cat-btn.active {
+      border-color: var(--neon-orange);
+      background: rgba(255, 107, 0, 0.12);
+      box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      background: var(--neon-blue);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    .badge-discount {
+      font-size: 0.75rem;
+      background: var(--neon-green);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .cat-btn h3 { margin: 10px 0 5px; font-family: 'Orbitron', sans-serif; }
+    .cat-btn p { font-size: 0.85rem; color: var(--text-gray); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .full-width { grid-column: 1 / -1; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-white);
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="tel"],
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .checkbox-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; }
+    .checkbox-group input { accent-color: var(--neon-orange); width: 16px; height: 16px; }
+
+    .highlight-group {
+      background: rgba(0, 210, 255, 0.05);
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 3px solid var(--neon-blue);
+    }
+
+    .discount-banner {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .btn-group { display: flex; gap: 15px; margin-top: 25px; }
+
+    .next-btn, .cta-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, var(--neon-orange), #ff8c00);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+    }
+
+    .back-btn {
+      width: 30%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid var(--text-gray);
+      color: var(--text-gray);
+      border-radius: 6px;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+    }
+
+    .success-box { text-align: center; padding: 40px 20px; }
+    .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.8rem; margin-bottom: 15px; }
+    .success-box p { font-size: 1.1rem; color: var(--text-gray); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo">S.O.S <span>HUB</span></div>
+      <p class="subtitle">SISTEMA OPERACIONAL DE SETORES — CLUBE S.O.S</p>
+    </header>
+
+    <main>
+      <!-- PASSO 0: IDENTIFICAÇÃO DO PERFIL -->
+      <section class="card" id="step-0">
+        <h2><span class="step-num">01</span> Bem-vindo ao HUB S.O.S</h2>
+        <p style="margin-bottom: 20px; color: var(--text-gray);">Selecione o seu perfil para direcionarmos o seu atendimento:</p>
+        
+        <div class="grid-options">
+          <div class="type-btn" onclick="startFlow('NOVO')">
+            <h3>CLIENTE NOVO</h3>
+            <p>Quero apresentar minha marca e fazer o diagnóstico pré-reunião</p>
+          </div>
+          <div class="type-btn" onclick="startFlow('RENOVACAO')">
+            <h3>RENOVAÇÃO</h3>
+            <p>Já sou parceiro HUB S.O.S e quero renovar com <strong style="color: var(--neon-green);">10% OFF no Anual</strong></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASSO 1: SELEÇÃO DE CLIENTE DE RENOVAÇÃO (Exclusivo para Renovação) -->
+      <section class="card hidden" id="step-renovacao">
+        <h2><span class="step-num">02</span> Identificação do Cliente Ativo</h2>
+        <div class="form-group full-width">
+          <label>Selecione o seu nome / conta corporativa:*</label>
+          <select id="cliente_renovacao_nome" onchange="enableCategoryNextBtn()">
+            <option value="">Selecione seu nome na lista...</option>
+            <option value="Beatriz Morais Tomadon">Beatriz Morais Tomadon</option>
+            <option value="Carla Andrade">Carla Andrade</option>
+            <option value="Valéria Krugger">Valéria Krugger</option>
+            <option value="Micheline">Micheline</option>
+            <option value="Janielle">Janielle</option>
+            <option value="Uliane">Uliane</option>
+            <option value="Juliana Oliveira">Juliana Oliveira</option>
+            <option value="Zevaldo da Gama">Zevaldo da Gama</option>
+            <option value="Kevellyn e Gilberto">Kevellyn e Gilberto</option>
+            <option value="Rafael e Layanne">Rafael e Layanne</option>
+            <option value="Ywerton">Ywerton</option>
+            <option value="Ariadna">Ariadna</option>
+            <option value="Amanda">Amanda</option>
+            <option value="Aine">Aine</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="back-btn" onclick="goToStep(0)">❮ VOLTAR</button>
+          <button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR CATEGORIA ➔</button>
+        </div>
+      </section>
+
+      <!-- PASSO 2: CATEGORIA DO CLUBE -->
+      <section class="card hidden" id="step-cat">
+        <h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria Pretendida</h2>
+        
+        <div id="discountBanner" class="discount-banner hidden">
+          🎁 CUPOM DE RENOVAÇÃO ATIVADO: 10% DE DESCONTO APLICADO NO VALOR ANUAL!
+        </div>
+
+        <div class="grid-categories">
+          <button class="cat-btn active" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
+            <span class="badge">Até 3kg/mês</span>
+            <span class="badge-discount hidden">10% OFF</span>
+            <h3>SIMPLES</h3>
+            <p>Início de operação e demanda enxuta</p>
+          </button>
+          <button class="cat-btn" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
+            <span class="badge">Até 5kg/mês</span>
+            <span class="badge-discount hidden">10% OFF</span>
+            <h3>PRATA</h3>
+            <p>Negócios em expansão constante</p>
+          </button>
+          <button class="cat-btn" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
+            <span class="badge">Até 10kg/mês</span>
+            <span class="badge-discount hidden">10% OFF</span>
+            <h3>OURO</h3>
+            <p>Marcas consolidadas com alto giro</p>
+          </button>
+          <button class="cat-btn" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
+            <span class="badge">Até 20kg/mês</span>
+            <span class="badge-discount hidden">10% OFF</span>
+            <h3>DIAMANTE</h3>
+            <p>Grandes marcas, Atacado e Indústria</p>
+          </button>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="back-btn" onclick="goBackFromCat()">❮ VOLTAR</button>
+          <button type="button" class="next-btn" onclick="handleCatNext()">CONTINUAR ➔</button>
+        </div>
+      </section>
+
+      <!-- PASSO 3: DIAGNÓSTICO (EXCLUSIVO CLIENTE NOVO) -->
+      <section class="card hidden" id="step-diag">
+        <h2><span class="step-num">03</span> Diagnóstico Operacional da Marca</h2>
+        <form id="quizForm" onsubmit="submitDiagnosis(event)">
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Seu nome e cargo na empresa:*</label>
+              <input type="text" id="nome_cargo" placeholder="Ex: Ana Silva - Diretora Comercial">
+            </div>
+
+            <div class="form-group">
+              <label>Nome da sua marca de semijoias:*</label>
+              <input type="text" id="nome_marca" placeholder="Ex: Niara Joias">
+            </div>
+
+            <div class="form-group">
+              <label>Perfil do Instagram da marca:*</label>
+              <input type="text" id="instagram" placeholder="Ex: @suamarca">
+            </div>
+
+            <div class="form-group">
+              <label>Cidade e Estado:*</label>
+              <input type="text" id="cidade_estado" placeholder="Ex: Limeira / SP">
+            </div>
+
+            <div class="form-group">
+              <label>Tempo de atuação no mercado:*</label>
+              <select id="tempo_mercado">
+                <option value="">Selecione...</option>
+                <option value="Menos de 1 ano">Menos de 1 ano</option>
+                <option value="1 a 3 anos">1 a 3 anos</option>
+                <option value="3 a 5 anos">3 a 5 anos</option>
+                <option value="Mais de 5 anos">Mais de 5 anos</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Modelo principal do negócio hoje:*</label>
+              <select id="modelo_negocio">
+                <option value="">Selecione...</option>
+                <option value="Atacado / Revenda">Atacado / Revenda</option>
+                <option value="Varejo / E-commerce">Varejo / E-commerce</option>
+                <option value="Fabricação / Banho">Fabricação / Banho</option>
+                <option value="Híbrido (Varejo + Atacado)">Híbrido (Varejo + Atacado)</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Volume médio de peças movimentadas por mês:*</label>
+              <select id="volume_pecas">
+                <option value="">Selecione...</option>
+                <option value="Até 500 peças/mês">Até 500 peças/mês</option>
+                <option value="500 a 2.000 peças/mês">500 a 2.000 peças/mês</option>
+                <option value="2.000 a 5.000 peças/mês">2.000 a 5.000 peças/mês</option>
+                <option value="Mais de 5.000 peças/mês">Mais de 5.000 peças/mês</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Quais são os principais gargalos e desafios operacionais hoje?</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência</label>
+                <label><input type="checkbox" name="gargalos" value="Demora para fotografar e cadastrar"> Demora para fotografar e cadastrar catálogo</label>
+                <label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Erros de precificação e ficha técnica (CDE)</label>
+                <label><input type="checkbox" name="gargalos" value="Falta de equipe técnica na montagem/cravação"> Falta de equipe de montagem/cravação</label>
+                <label><input type="checkbox" name="gargalos" value="Atraso nas entregas finais"> Atraso e desorganização de prazos</label>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Quais soluções do HUB sua marca mais precisa no momento?</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="solucoes" value="Inspeção Operacional"> Inspeção Operacional Obrigatória</label>
+                <label><input type="checkbox" name="solucoes" value="Fotografia de Catálogo"> Fotografia Profissional de Catálogo</label>
+                <label><input type="checkbox" name="solucoes" value="CDE (Cadastro e Precificação)"> CDE (Cadastro do Produto e Precificação)</label>
+                <label><input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> Etiquetagem e Encartelamento</label>
+                <label><input type="checkbox" name="solucoes" value="Cravação, Colagem e Montagem"> Cravação, Colagem e Montagem</label>
+              </div>
+            </div>
+
+            <div class="form-group full-width highlight-group">
+              <label>WhatsApp Corporativo (com DDD) para entrarmos em contato:*</label>
+              <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="back-btn" onclick="goToStep('cat')">❮ VOLTAR</button>
+            <button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO 🔥</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PASSO FINAL DE RENOVAÇÃO (SOLICITA APENAS WHATSAPP SE NECESSÁRIO) -->
+      <section class="card hidden" id="step-renovacao-confirm">
+        <h2><span class="step-num">03</span> Confirmar Solicitação de Renovação</h2>
+        <div class="form-group full-width highlight-group">
+          <label>Confirme o seu WhatsApp com DDD para envio da proposta com 10% OFF:*</label>
+          <input type="tel" id="whatsapp_renovacao" placeholder="(00) 00000-0000" required>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="back-btn" onclick="goToStep('cat')">❮ VOLTAR</button>
+          <button type="button" class="cta-btn" id="submitRenovacaoBtn" onclick="submitRenovacaoDirect()">FINALIZAR RENOVAÇÃO 🔥</button>
+        </div>
+      </section>
+
+      <!-- PASSO DE MENSAGEM DE SUCESSO -->
+      <section class="card hidden" id="step-success">
+        <div class="success-box">
+          <h3 id="successTitle">🚀 SOLICITAÇÃO RECEBIDA!</h3>
+          <p id="successMessage">O perfil da sua marca foi registrado com sucesso em nosso sistema.</p>
+          <br>
+          <p style="color: #fff;">Nossa equipe entrará em contato via WhatsApp em breve!</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let userType = "NOVO"; // NOVO ou RENOVACAO
+    let currentPlan = "SIMPLES (Até 3kg/mês)";
+
+    // COLE AQUI O URL DA SUA WEB APP DO GOOGLE APPS SCRIPT:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/SEU_CODIGO_AQUI/exec";
+
+    function startFlow(type) {
+      userType = type;
+      if (type === 'NOVO') {
+        document.getElementById('cat-step-num').innerText = "02";
+        document.getElementById('discountBanner').classList.add('hidden');
+        document.querySelectorAll('.badge-discount').forEach(el => el.classList.add('hidden'));
+        goToStep('cat');
+      } else {
+        document.getElementById('cat-step-num').innerText = "03";
+        document.getElementById('discountBanner').classList.remove('hidden');
+        document.querySelectorAll('.badge-discount').forEach(el => el.classList.remove('hidden'));
+        goToStep('renovacao');
+      }
+    }
+
+    function enableCategoryNextBtn() {
+      const val = document.getElementById('cliente_renovacao_nome').value;
+      const btn = document.getElementById('btnNextRenovacao');
+      if (val) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      } else {
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+      }
+    }
+
+    function selectCategory(planName, element) {
+      currentPlan = planName;
+      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function goToStep(stepId) {
+      document.getElementById('step-0').classList.add('hidden');
+      document.getElementById('step-renovacao').classList.add('hidden');
+      document.getElementById('step-cat').classList.add('hidden');
+      document.getElementById('step-diag').classList.add('hidden');
+      document.getElementById('step-renovacao-confirm').classList.add('hidden');
+      document.getElementById('step-success').classList.add('hidden');
+      
+      document.getElementById(`step-${stepId}`).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goBackFromCat() {
+      if (userType === 'NOVO') {
+        goToStep(0);
+      } else {
+        goToStep('renovacao');
+      }
+    }
+
+    function handleCatNext() {
+      if (userType === 'NOVO') {
+        goToStep('diag');
+      } else {
+        goToStep('renovacao-confirm');
+      }
+    }
+
+    function submitDiagnosis(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.innerText = "ENVIANDO...";
+      btn.disabled = true;
+
+      const payload = {
+        tipo_cliente: "Cliente Novo",
+        cliente_renovacao_nome: "-",
+        timestamp: new Date().toLocaleString('pt-BR'),
+        categoria: currentPlan,
+        nome_cargo: document.getElementById('nome_cargo').value,
+        nome_marca: document.getElementById('nome_marca').value,
+        instagram: document.getElementById('instagram').value,
+        cidade_estado: document.getElementById('cidade_estado').value,
+        tempo_mercado: document.getElementById('tempo_mercado').value,
+        modelo_negocio: document.getElementById('modelo_negocio').value,
+        volume_pecas: document.getElementById('volume_pecas').value,
+        gargalos: Array.from(document.querySelectorAll('input[name="gargalos"]:checked')).map(cb => cb.value).join(', ') || 'Nenhum',
+        solucoes: Array.from(document.querySelectorAll('input[name="solucoes"]:checked')).map(cb => cb.value).join(', ') || 'Nenhum',
+        whatsapp: document.getElementById('whatsapp').value
+      };
+
+      sendToGoogle(payload, "Aplicação de Cliente Novo Registrada!");
+    }
+
+    function submitRenovacaoDirect() {
+      const wpp = document.getElementById('whatsapp_renovacao').value;
+      if (!wpp) {
+        alert("Por favor, preencha seu WhatsApp.");
+        return;
+      }
+
+      const btn = document.getElementById('submitRenovacaoBtn');
+      btn.innerText = "ENVIANDO RENOVAÇÃO...";
+      btn.disabled = true;
+
+      const payload = {
+        tipo_cliente: "Renovação (10% OFF)",
+        cliente_renovacao_nome: document.getElementById('cliente_renovacao_nome').value,
+        timestamp: new Date().toLocaleString('pt-BR'),
+        categoria: currentPlan,
+        nome_cargo: "Cliente Ativo",
+        nome_marca: "Cliente Ativo",
+        instagram: "-",
+        cidade_estado: "-",
+        tempo_mercado: "-",
+        modelo_negocio: "-",
+        volume_pecas: "-",
+        gargalos: "Renovação de Contrato Anual",
+        solucoes: "Renovação de Plano com 10% OFF",
+        whatsapp: wpp
+      };
+
+      sendToGoogle(payload, "Solicitação de Renovação Registrada!");
+    }
+
+    function sendToGoogle(payload, titleText) {
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        document.getElementById('successTitle').innerText = titleText;
+        goToStep('success');
+      }).catch(err => {
+        alert("Erro ao enviar dados. Verifique a conexão.");
+      });
+    }
+  </script>
+</body>
+</html>
