@@ -3,160 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HUB S.O.S — Aplicação e Renovação Clube S.O.S</title>
+  <title>CLUBE S.O.S — Sistema Operacional de Setores</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-dark: #07090e;
-      --card-bg: rgba(13, 19, 33, 0.9);
-      --neon-blue: #00d2ff;
-      --neon-orange: #ff6b00;
-      --neon-green: #00ff88;
-      --text-white: #f0f4f8;
-      --text-gray: #8a99ad;
-      --border-glow: rgba(0, 210, 255, 0.25);
+      --bg-light: #f1f3f6;
+      --card-bg: #ffffff;
+      --sidebar-dark: #1e293b;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --orange-primary: #ff5500;
+      --orange-hover: #e04b00;
+      --blue-accent: #0284c7;
+      --green-accent: #16a34a;
+      --border-color: #e2e8f0;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
 
     body {
-      background-color: var(--bg-dark);
-      color: var(--text-white);
+      background-color: var(--bg-light);
+      color: var(--text-dark);
       padding: 20px;
-      background-image: radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.12), transparent 60%);
       min-height: 100vh;
     }
 
-    .container { max-width: 850px; margin: 0 auto; }
+    .container { max-width: 950px; margin: 0 auto; }
 
-    header { text-align: center; margin-bottom: 30px; }
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+    }
 
     .logo {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 900;
-      color: #fff;
-      letter-spacing: 3px;
+      color: var(--sidebar-dark);
+      letter-spacing: 2px;
     }
-    .logo span { color: var(--neon-orange); }
+    .logo span { color: var(--orange-primary); }
 
     .subtitle {
-      color: var(--neon-blue);
+      color: var(--blue-accent);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       letter-spacing: 1.5px;
-      margin-top: 5px;
+      margin-top: 4px;
+      font-weight: 700;
     }
 
     .card {
       background: var(--card-bg);
-      border: 1px solid var(--border-glow);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 20px;
     }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
     .card h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
+      color: var(--sidebar-dark);
     }
 
     .step-num {
-      background: var(--neon-blue);
-      color: #000;
-      padding: 3px 8px;
-      border-radius: 4px;
+      background: var(--orange-primary);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 6px;
       font-size: 0.85rem;
       font-weight: bold;
     }
 
+    /* TELA INICIAL (CHOICE) */
     .grid-options {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       margin-bottom: 20px;
     }
 
+    .type-btn-wrapper {
+      position: relative;
+    }
+
     .type-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #f8fafc;
+      border: 2px solid var(--border-color);
       padding: 25px 20px;
-      border-radius: 10px;
-      color: #fff;
+      border-radius: 12px;
+      color: var(--text-dark);
       cursor: pointer;
       transition: all 0.3s ease;
       text-align: center;
+      height: 100%;
     }
 
     .type-btn:hover {
-      border-color: var(--neon-orange);
-      background: rgba(255, 107, 0, 0.12);
-      box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+      border-color: var(--orange-primary);
+      background: #fff;
+      box-shadow: 0 10px 20px rgba(255, 85, 0, 0.12);
       transform: translateY(-2px);
     }
 
-    .type-btn h3 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 8px; }
-    .type-btn p { font-size: 0.9rem; color: var(--text-gray); }
+    .type-btn h3 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--sidebar-dark); }
+    .type-btn p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
 
+    /* TOOLTIP HOVER TELA INICIAL */
+    .tooltip-info {
+      background: var(--sidebar-dark);
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      line-height: 1.4;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .type-btn-wrapper:hover .tooltip-info {
+      display: block;
+    }
+
+    /* GRID DE CATEGORIAS */
     .grid-categories {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
       margin-bottom: 25px;
     }
 
-    .cat-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 20px 15px;
-      border-radius: 8px;
-      color: #fff;
+    .cat-card {
+      background: #f8fafc;
+      border: 2px solid var(--border-color);
+      padding: 20px;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-align: left;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .cat-btn:hover, .cat-btn.active {
-      border-color: var(--neon-orange);
-      background: rgba(255, 107, 0, 0.12);
-      box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+    .cat-card:hover, .cat-card.active {
+      border-color: var(--orange-primary);
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(255, 85, 0, 0.15);
+    }
+
+    .cat-badge-container {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .badge {
       font-size: 0.75rem;
-      background: var(--neon-blue);
-      color: #000;
-      padding: 2px 6px;
-      border-radius: 3px;
+      background: var(--blue-accent);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .badge-vagas {
+      font-size: 0.75rem;
+      background: var(--orange-primary);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
       font-weight: bold;
     }
 
     .badge-discount {
       font-size: 0.75rem;
-      background: var(--neon-green);
-      color: #000;
-      padding: 2px 6px;
-      border-radius: 3px;
+      background: var(--green-accent);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
       font-weight: bold;
-      margin-left: 5px;
     }
 
-    .cat-btn h3 { margin: 10px 0 5px; font-family: 'Orbitron', sans-serif; }
-    .cat-btn p { font-size: 0.85rem; color: var(--text-gray); }
+    .cat-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--sidebar-dark); margin-bottom: 5px; }
+    .cat-card p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 15px; }
 
+    .btn-detalhes {
+      background: transparent;
+      border: 1px dashed var(--blue-accent);
+      color: var(--blue-accent);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: auto;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-detalhes:hover {
+      background: var(--blue-accent);
+      color: #fff;
+    }
+
+    /* FORMULÁRIO LIGHT */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
+      gap: 18px;
     }
 
     .full-width { grid-column: 1 / -1; }
@@ -164,9 +237,9 @@
     .form-group label {
       display: block;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 6px;
-      color: var(--text-white);
+      color: var(--sidebar-dark);
     }
 
     .form-group input[type="text"],
@@ -174,44 +247,61 @@
     .form-group select {
       width: 100%;
       padding: 12px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-glow);
-      border-radius: 6px;
-      color: #fff;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-dark);
       font-size: 0.95rem;
       outline: none;
+      font-weight: 600;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--orange-primary);
+      background: #fff;
     }
 
     .checkbox-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 10px;
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
     }
 
-    .checkbox-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; }
-    .checkbox-group input { accent-color: var(--neon-orange); width: 16px; height: 16px; }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-dark);
+    }
 
-    .highlight-group {
-      background: rgba(0, 210, 255, 0.05);
+    .checkbox-group input { accent-color: var(--orange-primary); width: 18px; height: 18px; }
+
+    .info-box {
+      background: #f0f9ff;
+      border-left: 4px solid var(--blue-accent);
       padding: 15px;
       border-radius: 6px;
-      border-left: 3px solid var(--neon-blue);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #0369a1;
+      line-height: 1.5;
     }
 
-    .discount-banner {
-      background: rgba(0, 255, 136, 0.1);
-      border: 1px solid var(--neon-green);
-      color: var(--neon-green);
-      padding: 12px;
+    .manifesto-box {
+      background: #fff7ed;
+      border-left: 4px solid var(--orange-primary);
+      padding: 15px;
       border-radius: 6px;
       margin-bottom: 20px;
-      font-family: 'Orbitron', sans-serif;
       font-size: 0.9rem;
-      text-align: center;
+      color: #9a3412;
+      line-height: 1.5;
     }
 
     .btn-group { display: flex; gap: 15px; margin-top: 25px; }
@@ -219,64 +309,133 @@
     .next-btn, .cta-btn {
       width: 100%;
       padding: 16px;
-      background: linear-gradient(90deg, var(--neon-orange), #ff8c00);
+      background: var(--orange-primary);
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       color: #fff;
       font-family: 'Orbitron', sans-serif;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(255, 85, 0, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .next-btn:hover, .cta-btn:hover {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
     }
 
     .back-btn {
       width: 30%;
       padding: 16px;
-      background: transparent;
-      border: 1px solid var(--text-gray);
-      color: var(--text-gray);
-      border-radius: 6px;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 8px;
       font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
       cursor: pointer;
     }
 
+    /* MODAL DE DETALHES DA CATEGORIA */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .modal-header h3 { font-family: 'Orbitron', sans-serif; color: var(--sidebar-dark); font-size: 1.3rem; }
+    .close-modal { background: none; border: none; font-size: 1.5rem; font-weight: bold; cursor: pointer; color: var(--text-muted); }
+
+    .modal-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 0.9rem;
+    }
+
+    .modal-body th, .modal-body td {
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      text-align: left;
+    }
+
+    .modal-body th { background: #f8fafc; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: var(--sidebar-dark); }
+
     .success-box { text-align: center; padding: 40px 20px; }
-    .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.8rem; margin-bottom: 15px; }
-    .success-box p { font-size: 1.1rem; color: var(--text-gray); }
+    .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--orange-primary); font-size: 1.8rem; margin-bottom: 15px; }
+    .success-box p { font-size: 1.1rem; color: var(--text-muted); font-weight: 600; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <div class="logo">S.O.S <span>HUB</span></div>
-      <p class="subtitle">SISTEMA OPERACIONAL DE SETORES — CLUBE S.O.S</p>
+      <div class="logo">S.O.S <span>CLUBE</span></div>
+      <p class="subtitle">SISTEMA OPERACIONAL DE SETORES — PAINEL DE ADESÃO</p>
     </header>
 
     <main>
-      <!-- PASSO 0: IDENTIFICAÇÃO DO PERFIL -->
+      <!-- PASSO 0: IDENTIFICAÇÃO DE PERFIL -->
       <section class="card" id="step-0">
-        <h2><span class="step-num">01</span> Bem-vindo ao HUB S.O.S</h2>
-        <p style="margin-bottom: 20px; color: var(--text-gray);">Selecione o seu perfil para direcionarmos o seu atendimento:</p>
+        <h2><span class="step-num">01</span> Selecione o seu Perfil</h2>
+        <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 600;">Passe o mouse ou toque nas opções abaixo para entender o direcionamento:</p>
         
         <div class="grid-options">
-          <div class="type-btn" onclick="startFlow('NOVO')">
-            <h3>CLIENTE NOVO</h3>
-            <p>Quero apresentar minha marca e fazer o diagnóstico pré-reunião</p>
+          <div class="type-btn-wrapper">
+            <div class="type-btn" onclick="startFlow('NOVO')">
+              <h3>CLIENTE NOVO</h3>
+              <p>Quero apresentar minha marca e fazer o diagnóstico pré-reunião</p>
+            </div>
+            <div class="tooltip-info">
+              💡 <strong>Novas marcas e fabricantes:</strong> Preencha o formulário de diagnóstico operacional da sua marca para nossa equipe analisar o seu perfil e agendar a reunião de fechamento do seu plano.
+            </div>
           </div>
-          <div class="type-btn" onclick="startFlow('RENOVACAO')">
-            <h3>RENOVAÇÃO</h3>
-            <p>Já sou parceiro HUB S.O.S e quero renovar com <strong style="color: var(--neon-green);">10% OFF no Anual</strong></p>
+
+          <div class="type-btn-wrapper">
+            <div class="type-btn" onclick="startFlow('RENOVACAO')">
+              <h3>JÁ SOU PARCEIRO S.O.S</h3>
+              <p>Já tenho contrato ativo e quero renovar com <strong style="color: var(--green-accent);">10% OFF no Anual</strong></p>
+            </div>
+            <div class="tooltip-info">
+              🎁 <strong>Clientes Ativos:</strong> Área exclusiva para parceiros que já possuem contrato no CLUBE S.O.S. Garanta a sua renovação anual com 10% de desconto exclusivo e condições especiais diretamente na sua conta.
+            </div>
           </div>
         </div>
       </section>
 
       <!-- PASSO 1: SELEÇÃO DE CLIENTE DE RENOVAÇÃO -->
       <section class="card hidden" id="step-renovacao">
-        <h2><span class="step-num">02</span> Identificação do Cliente Ativo</h2>
+        <h2><span class="step-num">02</span> Identificação da Conta Corporativa</h2>
         <div class="form-group full-width">
-          <label>Selecione o seu nome / conta corporativa:*</label>
+          <label>Selecione o seu nome na lista de parceiros ativos:*</label>
           <select id="cliente_renovacao_nome" onchange="enableCategoryNextBtn()">
             <option value="">Selecione seu nome na lista...</option>
             <option value="Beatriz Morais Tomadon">Beatriz Morais Tomadon</option>
@@ -301,52 +460,83 @@
         </div>
       </section>
 
-      <!-- PASSO 2: CATEGORIA DO CLUBE -->
+      <!-- PASSO 2: CATEGORIAS DO CLUBE -->
       <section class="card hidden" id="step-cat">
-        <h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria Pretendida</h2>
+        <h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria do Clube S.O.S</h2>
         
-        <div id="discountBanner" class="discount-banner hidden">
-          🎁 CUPOM DE RENOVAÇÃO ATIVADO: 10% DE DESCONTO APLICADO NO VALOR ANUAL!
+        <div class="info-box">
+          📈 <strong>Escala Comercial S.O.S:</strong> Quanto maior a categoria (maior a franquia de peso mensal), menor é o valor pago por serviço individual. Clique em <strong>"Ver Detalhes e Regras"</strong> em cada card para acessar a tabela completa de preços e normas de lote.
+        </div>
+
+        <div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
+          🎁 <strong>CUPOM DE RENOVAÇÃO ATIVADO:</strong> 10% DE DESCONTO APLICADO NO VALOR DA ANUIDADE!
         </div>
 
         <div class="grid-categories">
-          <button class="cat-btn active" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
-            <span class="badge">Até 3kg/mês</span>
-            <span class="badge-discount hidden">10% OFF</span>
+          <!-- CARD SIMPLES -->
+          <div class="cat-card active" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
+            <div class="cat-badge-container">
+              <span class="badge">Até 3kg/mês</span>
+              <span class="badge-vagas">2 Vagas</span>
+              <span class="badge-discount hidden">10% OFF</span>
+            </div>
             <h3>SIMPLES</h3>
-            <p>Início de operação e demanda enxuta</p>
-          </button>
-          <button class="cat-btn" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
-            <span class="badge">Até 5kg/mês</span>
-            <span class="badge-discount hidden">10% OFF</span>
+            <p>Porta de entrada acessível para estruturação inicial, foco em Cadastro e Precificação (CDE).</p>
+            <button type="button" class="btn-detalhes" onclick="openModal('simples', event)">🔍 Ver Detalhes e Regras</button>
+          </div>
+
+          <!-- CARD PRATA -->
+          <div class="cat-card" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
+            <div class="cat-badge-container">
+              <span class="badge">Até 5kg/mês</span>
+              <span class="badge-vagas">3 Vagas</span>
+              <span class="badge-discount hidden">10% OFF</span>
+            </div>
             <h3>PRATA</h3>
-            <p>Negócios em expansão constante</p>
-          </button>
-          <button class="cat-btn" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
-            <span class="badge">Até 10kg/mês</span>
-            <span class="badge-discount hidden">10% OFF</span>
+            <p>Para negócios em ritmo acelerado de expansão constante e fluxo contínuo.</p>
+            <button type="button" class="btn-detalhes" onclick="openModal('prata', event)">🔍 Ver Detalhes e Regras</button>
+          </div>
+
+          <!-- CARD OURO -->
+          <div class="cat-card" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
+            <div class="cat-badge-container">
+              <span class="badge">Até 10kg/mês</span>
+              <span class="badge-vagas">3 Vagas</span>
+              <span class="badge-discount hidden">10% OFF</span>
+            </div>
             <h3>OURO</h3>
-            <p>Marcas consolidadas com alto giro</p>
-          </button>
-          <button class="cat-btn" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
-            <span class="badge">Até 20kg/mês</span>
-            <span class="badge-discount hidden">10% OFF</span>
+            <p>Marcas consolidadas com alto giro de estoque e lançamentos frequentes.</p>
+            <button type="button" class="btn-detalhes" onclick="openModal('ouro', event)">🔍 Ver Detalhes e Regras</button>
+          </div>
+
+          <!-- CARD DIAMANTE -->
+          <div class="cat-card" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
+            <div class="cat-badge-container">
+              <span class="badge">Até 20kg/mês</span>
+              <span class="badge-vagas">3 Vagas</span>
+              <span class="badge-discount hidden">10% OFF</span>
+            </div>
             <h3>DIAMANTE</h3>
-            <p>Grandes marcas, Atacado e Indústria</p>
-          </button>
+            <p>Atacados e indústrias com a menor tarifa unitária + Inteligência de Dados.</p>
+            <button type="button" class="btn-detalhes" onclick="openModal('diamante', event)">🔍 Ver Detalhes e Regras</button>
+          </div>
         </div>
 
         <div class="btn-group">
           <button type="button" class="back-btn" onclick="goBackFromCat()">❮ VOLTAR</button>
-          <button type="button" class="next-btn" onclick="handleCatNext()">CONTINUAR ➔</button>
+          <button type="button" class="next-btn" onclick="handleCatNext()">AVANÇAR COM A CATEGORIA SELECIONADA ➔</button>
         </div>
       </section>
 
       <!-- PASSO 3: DIAGNÓSTICO (EXCLUSIVO CLIENTE NOVO) -->
       <section class="card hidden" id="step-diag">
         <h2><span class="step-num">03</span> Diagnóstico Operacional da Marca</h2>
+        
+        <div class="manifesto-box">
+          🤝 <strong>Nosso Compromisso S.O.S:</strong> Zelamos pelo seu negócio. Trabalhamos com rigor técnico máximo, mas com transparência: processos humanos não são isentos de falhas (0% de erro não existe). Quando um imprevisto ocorrer, nossa equipe estará imediatamente à disposição para resolver e zerar o impacto no seu cliente.
+        </div>
+
         <form id="quizForm" onsubmit="submitDiagnosis(event)">
-          
           <div class="form-grid">
             <div class="form-group">
               <label>Seu nome e cargo na empresa:*</label>
@@ -404,18 +594,18 @@
             <div class="form-group full-width">
               <label>Quais são os principais gargalos e desafios operacionais hoje?</label>
               <div class="checkbox-group">
-                <label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência</label>
-                <label><input type="checkbox" name="gargalos" value="Demora para fotografar e cadastrar"> Demora para fotografar e cadastrar catálogo</label>
-                <label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Erros de precificação e ficha técnica (CDE)</label>
-                <label><input type="checkbox" name="gargalos" value="Falta de equipe técnica na montagem/cravação"> Falta de equipe de montagem/cravação</label>
-                <label><input type="checkbox" name="gargalos" value="Atraso nas entregas finais"> Atraso e desorganização de prazos</label>
+                <label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência de banho</label>
+                <label><input type="checkbox" name="gargalos" value="Demora para fotografar e cadastrar"> Demora para fotografar e publicar catálogo</label>
+                <label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Dificuldades na precificação e ficha técnica (CDE)</label>
+                <label><input type="checkbox" name="gargalos" value="Falta de equipe técnica na montagem/cravação"> Falta de equipe para montagem, cravação e colagem</label>
+                <label><input type="checkbox" name="gargalos" value="Atraso nas entregas finais"> Peças com defeito chegando às revendedoras/clientes</label>
               </div>
             </div>
 
             <div class="form-group full-width">
-              <label>Quais soluções do HUB sua marca mais precisa no momento?</label>
+              <label>Quais soluções do CLUBE S.O.S sua marca mais precisa no momento?</label>
               <div class="checkbox-group">
-                <label><input type="checkbox" name="solucoes" value="Inspeção Operacional"> Inspeção Operacional Obrigatória</label>
+                <label><input type="checkbox" name="solucoes" value="Inspeção Operacional"> Inspeção Operacional Obrigatória (Filtro de Qualidade)</label>
                 <label><input type="checkbox" name="solucoes" value="Fotografia de Catálogo"> Fotografia Profissional de Catálogo</label>
                 <label><input type="checkbox" name="solucoes" value="CDE (Cadastro e Precificação)"> CDE (Cadastro do Produto e Precificação)</label>
                 <label><input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> Etiquetagem e Encartelamento</label>
@@ -423,7 +613,7 @@
               </div>
             </div>
 
-            <div class="form-group full-width highlight-group">
+            <div class="form-group full-width">
               <label>WhatsApp Corporativo (com DDD) para entrarmos em contato:*</label>
               <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required>
             </div>
@@ -431,7 +621,7 @@
 
           <div class="btn-group">
             <button type="button" class="back-btn" onclick="goToStep('cat')">❮ VOLTAR</button>
-            <button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO 🔥</button>
+            <button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO PARA ANÁLISE 🔥</button>
           </div>
         </form>
       </section>
@@ -439,8 +629,8 @@
       <!-- PASSO FINAL DE RENOVAÇÃO -->
       <section class="card hidden" id="step-renovacao-confirm">
         <h2><span class="step-num">03</span> Confirmar Solicitação de Renovação</h2>
-        <div class="form-group full-width highlight-group">
-          <label>Confirme o seu WhatsApp com DDD para envio da proposta com 10% OFF:*</label>
+        <div class="form-group full-width">
+          <label>Confirme o seu WhatsApp com DDD para envio da proposta renovada com 10% OFF:*</label>
           <input type="tel" id="whatsapp_renovacao" placeholder="(00) 00000-0000" required>
         </div>
         <div class="btn-group">
@@ -449,24 +639,109 @@
         </div>
       </section>
 
-      <!-- PASSO DE MENSAGEM DE SUCESSO -->
+      <!-- MENSAGEM DE SUCESSO -->
       <section class="card hidden" id="step-success">
         <div class="success-box">
           <h3 id="successTitle">🚀 SOLICITAÇÃO RECEBIDA!</h3>
           <p id="successMessage">O perfil da sua marca foi registrado com sucesso em nosso sistema.</p>
           <br>
-          <p style="color: #fff;">Nossa equipe entrará em contato via WhatsApp em breve!</p>
+          <p style="color: var(--sidebar-dark); font-weight: bold;">Nossa equipe analisará os seus dados e entrará em contato via WhatsApp em breve!</p>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL FLUTUANTE DE REGRAS E PREÇOS DAS CATEGORIAS -->
+  <div class="modal-overlay hidden" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Detalhes da Categoria</h3>
+        <button class="close-modal" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Conteúdo injetado via JS -->
+      </div>
+    </div>
   </div>
 
   <script>
     let userType = "NOVO"; 
     let currentPlan = "SIMPLES (Até 3kg/mês)";
 
-    // URL DO GOOGLE APPS SCRIPT INSERIDA:
+    // URL DO GOOGLE APPS SCRIPT MANTIDA:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKkDE_CS-Du-JuDXDULTpidiIKtbRFKIsceubELzn-7KunYLx2/exec";
+
+    // BASE DE DADOS DOS MODAIS DAS CATEGORIAS
+    const catDetails = {
+      simples: {
+        title: "🟢 CATEGORIA SIMPLES (Até 3kg/mês) — 2 VAGAS",
+        vagas: "2 VAGAS DISPONÍVEIS",
+        descricao: "A Categoria Simples foi criada para marcas em fase inicial com capital enxuto. Possui a menor taxa de adesão anual para permitir a entrada da empresa no Clube, focando na organização do cadastro e precificação técnica (CDE).",
+        prazos: "• Lote de até 1kg (com até 50 modelos): 5 dias úteis (Express)<br>• Lote de até 1kg (com mais de 50 modelos): 7 dias úteis<br>• Lote de até 3kg (Padrão): 10 dias úteis",
+        relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Anual Consolidado",
+        precos: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,77" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 2,10" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,50" },
+          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,27" },
+          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,65" },
+          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,80" },
+          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,80" },
+          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,77" }
+        ]
+      },
+      prata: {
+        title: "⚪ CATEGORIA PRATA (Até 5kg/mês) — 3 VAGAS",
+        vagas: "3 VAGAS DISPONÍVEIS",
+        descricao: "Para marcas em expansão constante que precisam de envio contínuo. Garante redução no custo unitário das peças aproveitando o maior volume mensal.",
+        prazos: "• Prazos padrão de 1kg (5 a 7 dias) e 3kg (10 dias)<br>• Lotes de até 5kg unificados no mesmo lote: 12 dias úteis",
+        relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Semestral Consolidado",
+        precos: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,75" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,99" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,45" },
+          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,25" },
+          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,60" },
+          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,77" },
+          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,77" },
+          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,73" }
+        ]
+      },
+      ouro: {
+        title: "🟡 CATEGORIA OURO (Até 10kg/mês) — 3 VAGAS",
+        vagas: "3 VAGAS DISPONÍVEIS",
+        descricao: "Para marcas consolidadas com alto giro de estoque e coleções frequentes. Excelente escala comercial e ganho de margem de lucro por peça.",
+        prazos: "• Prazos padrão conforme peso do lote (1kg/3kg/5kg)<br>• Lotes com mais de 100 modelos: 8 a 10 dias úteis<br>• Lotes com mais de 150 modelos: mínimo 10 dias úteis",
+        relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatório Trimestral Consolidado",
+        precos: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,72" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,95" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,40" },
+          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,23" },
+          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,60" },
+          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,73" },
+          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,73" },
+          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,70" }
+        ]
+      },
+      diamante: {
+        title: "💎 CATEGORIA DIAMANTE (Até 20kg/mês) — 3 VAGAS",
+        vagas: "3 VAGAS DISPONÍVEIS",
+        descricao: "A categoria VIP para atacados, indústrias e grandes marcas. Garante a menor tarifa unitária de todo o Clube + Inteligência Gerencial Avançada.",
+        prazos: "• Fracionamento prioritário de lotes<br>• Gestão de transbordo de agenda para envios de grande escala",
+        relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatórios Mensais, Semestrais e Anuais com inteligência de giro",
+        precos: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,70" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,90" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,30" },
+          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,20" },
+          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,55" },
+          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,70" },
+          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,60" },
+          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,65" }
+        ]
+      }
+    };
 
     function startFlow(type) {
       userType = type;
@@ -497,8 +772,52 @@
 
     function selectCategory(planName, element) {
       currentPlan = planName;
-      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.cat-card').forEach(card => card.classList.remove('active'));
       element.classList.add('active');
+    }
+
+    function openModal(catKey, event) {
+      event.stopPropagation(); // Impede de ativar o clique do card ao abrir o modal
+      const data = catDetails[catKey];
+      document.getElementById('modalTitle').innerText = data.title;
+      
+      let tableRows = data.precos.map(p => `
+        <tr>
+          <td><strong>${p.srv}</strong></td>
+          <td>${p.tipo}</td>
+          <td style="color: var(--orange-primary); font-weight: bold;">${p.preco}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('modalBody').innerHTML = `
+        <p style="margin-bottom: 12px; color: var(--text-dark);">${data.descricao}</p>
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+          <strong>⏱️ Regras de Prazos e Modelos:</strong><br>${data.prazos}
+        </div>
+        <div style="background: #f0fdf4; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #166534;">
+          <strong>📊 Acompanhamento e Relatórios:</strong><br>${data.relatorios}
+        </div>
+        <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark);">TABELA DE PREÇOS POR SERVIÇO</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Serviço</th>
+              <th>Métrica</th>
+              <th>Preço Cartão (3x)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">* Pagamento no Pix com 7% de desconto automático.</p>
+      `;
+
+      document.getElementById('categoryModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('categoryModal').classList.add('hidden');
     }
 
     function goToStep(stepId) {
@@ -532,7 +851,7 @@
     function submitDiagnosis(e) {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
-      btn.innerText = "ENVIANDO...";
+      btn.innerText = "ENVIANDO DADOS...";
       btn.disabled = true;
 
       const payload = {
