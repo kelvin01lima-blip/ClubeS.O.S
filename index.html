@@ -272,7 +272,7 @@
         </div>
       </section>
 
-      <!-- PASSO 1: SELEÇÃO DE CLIENTE DE RENOVAÇÃO (Exclusivo para Renovação) -->
+      <!-- PASSO 1: SELEÇÃO DE CLIENTE DE RENOVAÇÃO -->
       <section class="card hidden" id="step-renovacao">
         <h2><span class="step-num">02</span> Identificação do Cliente Ativo</h2>
         <div class="form-group full-width">
@@ -436,7 +436,7 @@
         </form>
       </section>
 
-      <!-- PASSO FINAL DE RENOVAÇÃO (SOLICITA APENAS WHATSAPP SE NECESSÁRIO) -->
+      <!-- PASSO FINAL DE RENOVAÇÃO -->
       <section class="card hidden" id="step-renovacao-confirm">
         <h2><span class="step-num">03</span> Confirmar Solicitação de Renovação</h2>
         <div class="form-group full-width highlight-group">
@@ -462,11 +462,11 @@
   </div>
 
   <script>
-    let userType = "NOVO"; // NOVO ou RENOVACAO
+    let userType = "NOVO"; 
     let currentPlan = "SIMPLES (Até 3kg/mês)";
 
-    // COLE AQUI O URL DA SUA WEB APP DO GOOGLE APPS SCRIPT:
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/SEU_CODIGO_AQUI/exec";
+    // URL DO GOOGLE APPS SCRIPT INSERIDA:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKkDE_CS-Du-JuDXDULTpidiIKtbRFKIsceubELzn-7KunYLx2/exec";
 
     function startFlow(type) {
       userType = type;
