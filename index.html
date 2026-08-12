@@ -27,11 +27,13 @@
     body {
       background-color: var(--bg-light);
       color: var(--text-dark);
-      padding: 20px;
+      padding: 20px 20px 0 20px;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container { max-width: 950px; margin: 0 auto; }
+    .container { max-width: 950px; margin: 0 auto; flex: 1; width: 100%; }
 
     header {
       text-align: center;
@@ -125,7 +127,7 @@
     .type-btn h3 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--sidebar-dark); }
     .type-btn p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
 
-    /* TOOLTIP HOVER TELA INICIAL */
+    /* TOOLTIP HOVER TELA INICIAL (DESKTOP E MOBILE) */
     .tooltip-info {
       background: var(--sidebar-dark);
       color: #fff;
@@ -138,8 +140,18 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    .type-btn-wrapper:hover .tooltip-info {
-      display: block;
+    /* Regra para Computador (Hover) */
+    @media (hover: hover) {
+      .type-btn-wrapper:hover .tooltip-info {
+        display: block;
+      }
+    }
+
+    /* Regra para Celular / Telas de Toque (Sempre Visível para não perder informação) */
+    @media (hover: none), (max-width: 768px) {
+      .tooltip-info {
+        display: block !important;
+      }
     }
 
     /* GRID DE CATEGORIAS */
@@ -392,6 +404,22 @@
     .success-box { text-align: center; padding: 40px 20px; }
     .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--orange-primary); font-size: 1.8rem; margin-bottom: 15px; }
     .success-box p { font-size: 1.1rem; color: var(--text-muted); font-weight: 600; }
+
+    /* RODAPÉ ESTILIZADO */
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    footer span {
+      color: var(--orange-primary);
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -406,7 +434,7 @@
       <!-- PASSO 0: IDENTIFICAÇÃO DE PERFIL -->
       <section class="card" id="step-0">
         <h2><span class="step-num">01</span> Selecione o seu Perfil</h2>
-        <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 600;">Passe o mouse ou toque nas opções abaixo para entender o direcionamento:</p>
+        <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 600;">Confira as informações de direcionamento abaixo:</p>
         
         <div class="grid-options">
           <div class="type-btn-wrapper">
@@ -649,6 +677,11 @@
         </div>
       </section>
     </main>
+
+    <!-- RODAPÉ COMPLETO -->
+    <footer>
+      Feito e criado por <span>Kelvin Lima — CEO S.O.S</span> | Todos os direitos reservados
+    </footer>
   </div>
 
   <!-- MODAL FLUTUANTE DE REGRAS E PREÇOS DAS CATEGORIAS -->
@@ -668,10 +701,8 @@
     let userType = "NOVO"; 
     let currentPlan = "SIMPLES (Até 3kg/mês)";
 
-    // URL DO GOOGLE APPS SCRIPT MANTIDA:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKkDE_CS-Du-JuDXDULTpidiIKtbRFKIsceubELzn-7KunYLx2/exec";
 
-    // BASE DE DADOS DOS MODAIS DAS CATEGORIAS
     const catDetails = {
       simples: {
         title: "🟢 CATEGORIA SIMPLES (Até 3kg/mês) — 2 VAGAS",
@@ -777,7 +808,7 @@
     }
 
     function openModal(catKey, event) {
-      event.stopPropagation(); // Impede de ativar o clique do card ao abrir o modal
+      event.stopPropagation();
       const data = catDetails[catKey];
       document.getElementById('modalTitle').innerText = data.title;
       
