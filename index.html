@@ -147,7 +147,7 @@
       }
     }
 
-    /* Regra para Celular / Telas de Toque (Sempre Visível para não perder informação) */
+    /* Regra para Celular / Telas de Toque */
     @media (hover: none), (max-width: 768px) {
       .tooltip-info {
         display: block !important;
@@ -401,6 +401,34 @@
 
     .modal-body th { background: #f8fafc; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: var(--sidebar-dark); }
 
+    .price-card-box {
+      background: #fff7ed;
+      border: 2px solid var(--orange-primary);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .price-card-box h4 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--orange-primary);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .price-card-box ul {
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .price-card-box ul li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .success-box { text-align: center; padding: 40px 20px; }
     .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--orange-primary); font-size: 1.8rem; margin-bottom: 15px; }
     .success-box p { font-size: 1.1rem; color: var(--text-muted); font-weight: 600; }
@@ -493,7 +521,7 @@
         <h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria do Clube S.O.S</h2>
         
         <div class="info-box">
-          📈 <strong>Escala Comercial S.O.S:</strong> Quanto maior a categoria (maior a franquia de peso mensal), menor é o valor pago por serviço individual. Clique em <strong>"Ver Detalhes e Regras"</strong> em cada card para acessar a tabela completa de preços e normas de lote.
+          📈 <strong>Escala Comercial S.O.S:</strong> Quanto maior a categoria (maior a franquia de peso mensal), menor é o valor pago por serviço individual. Clique em <strong>"Ver Detalhes e Regras"</strong> em cada card para acessar a tabela completa de preços, valores da anuidade e normas de lote.
         </div>
 
         <div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
@@ -707,6 +735,7 @@
       simples: {
         title: "🟢 CATEGORIA SIMPLES (Até 3kg/mês) — 2 VAGAS",
         vagas: "2 VAGAS DISPONÍVEIS",
+        valorBase: 1200.00, // Ajuste o valor base total da anuidade se necessário
         descricao: "A Categoria Simples foi criada para marcas em fase inicial com capital enxuto. Possui a menor taxa de adesão anual para permitir a entrada da empresa no Clube, focando na organização do cadastro e precificação técnica (CDE).",
         prazos: "• Lote de até 1kg (com até 50 modelos): 5 dias úteis (Express)<br>• Lote de até 1kg (com mais de 50 modelos): 7 dias úteis<br>• Lote de até 3kg (Padrão): 10 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Anual Consolidado",
@@ -724,6 +753,7 @@
       prata: {
         title: "⚪ CATEGORIA PRATA (Até 5kg/mês) — 3 VAGAS",
         vagas: "3 VAGAS DISPONÍVEIS",
+        valorBase: 1800.00, // Ajuste o valor base total da anuidade se necessário
         descricao: "Para marcas em expansão constante que precisam de envio contínuo. Garante redução no custo unitário das peças aproveitando o maior volume mensal.",
         prazos: "• Prazos padrão de 1kg (5 a 7 dias) e 3kg (10 dias)<br>• Lotes de até 5kg unificados no mesmo lote: 12 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Semestral Consolidado",
@@ -741,6 +771,7 @@
       ouro: {
         title: "🟡 CATEGORIA OURO (Até 10kg/mês) — 3 VAGAS",
         vagas: "3 VAGAS DISPONÍVEIS",
+        valorBase: 2500.00, // Ajuste o valor base total da anuidade se necessário
         descricao: "Para marcas consolidadas com alto giro de estoque e coleções frequentes. Excelente escala comercial e ganho de margem de lucro por peça.",
         prazos: "• Prazos padrão conforme peso do lote (1kg/3kg/5kg)<br>• Lotes com mais de 100 modelos: 8 a 10 dias úteis<br>• Lotes com mais de 150 modelos: mínimo 10 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatório Trimestral Consolidado",
@@ -758,6 +789,7 @@
       diamante: {
         title: "💎 CATEGORIA DIAMANTE (Até 20kg/mês) — 3 VAGAS",
         vagas: "3 VAGAS DISPONÍVEIS",
+        valorBase: 3600.00, // Ajuste o valor base total da anuidade se necessário
         descricao: "A categoria VIP para atacados, indústrias e grandes marcas. Garante a menor tarifa unitária de todo o Clube + Inteligência Gerencial Avançada.",
         prazos: "• Fracionamento prioritário de lotes<br>• Gestão de transbordo de agenda para envios de grande escala",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatórios Mensais, Semestrais e Anuais com inteligência de giro",
@@ -820,8 +852,48 @@
         </tr>
       `).join('');
 
+      // CÁLCULOS DINÂMICOS DE PREÇO DA ANUIDADE DO PLANO
+      const valorBase = data.valorBase || 0;
+      let htmlPagamento = '';
+
+      if (userType === 'RENOVACAO') {
+        const valorPix = (valorBase * 0.90).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valor2x = (valorBase / 2).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valor3x = (valorBase / 3).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valorBaseFmt = valorBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        htmlPagamento = `
+          <div class="price-card-box">
+            <h4>💳 VALOR DA ANUIDADE & CONDIÇÕES (RENOVAÇÃO)</h4>
+            <ul>
+              <li>💵 <strong>À vista no Pix (10% OFF):</strong> ${valorPix}</li>
+              <li>💳 <strong>Cartão até 3x sem juros:</strong> 3x de ${valor3x} (Total: ${valorBaseFmt})</li>
+              <li>💳 <strong>Parcelamento em até 10x:</strong> Com acréscimo das taxas de juros da maquininha</li>
+            </ul>
+          </div>
+        `;
+      } else {
+        const valorPix = (valorBase * 0.95).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valor2x = (valorBase / 2).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valorBaseFmt = valorBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        htmlPagamento = `
+          <div class="price-card-box">
+            <h4>💳 VALOR DA ANUIDADE & CONDIÇÕES (CLIENTE NOVO)</h4>
+            <ul>
+              <li>💵 <strong>À vista no Pix (5% OFF):</strong> ${valorPix}</li>
+              <li>💳 <strong>Cartão em 2x sem juros:</strong> 2x de ${valor2x} (Total: ${valorBaseFmt})</li>
+              <li>💳 <strong>Parcelamento em até 10x:</strong> Com acréscimo das taxas de juros da maquininha</li>
+            </ul>
+          </div>
+        `;
+      }
+
       document.getElementById('modalBody').innerHTML = `
         <p style="margin-bottom: 12px; color: var(--text-dark);">${data.descricao}</p>
+        
+        ${htmlPagamento}
+
         <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
           <strong>⏱️ Regras de Prazos e Modelos:</strong><br>${data.prazos}
         </div>
@@ -841,7 +913,7 @@
             ${tableRows}
           </tbody>
         </table>
-        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">* Pagamento no Pix com 7% de desconto automático.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">* Pagamento de serviços no Pix com 7% de desconto automático.</p>
       `;
 
       document.getElementById('categoryModal').classList.remove('hidden');
