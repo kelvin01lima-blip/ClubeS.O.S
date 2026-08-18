@@ -468,20 +468,20 @@
           <div class="type-btn-wrapper">
             <div class="type-btn" onclick="startFlow('NOVO')">
               <h3>CLIENTE NOVO</h3>
-              <p>Quero apresentar minha marca e fazer o diagnóstico pré-reunião</p>
+              <p>Abertura de Vagas: <strong style="color: var(--blue-accent);">20/Nov a 15/Dez</strong> (8 Vagas Oficiais + Saldo de Renovação)</p>
             </div>
             <div class="tooltip-info">
-              💡 <strong>Novas marcas e fabricantes:</strong> Preencha o formulário de diagnóstico operacional da sua marca para nossa equipe analisar o seu perfil e agendar a reunião de fechamento do seu plano.
+              💡 <strong>Novas marcas e fabricantes:</strong> Vagas abertas de 20 de Novembro a 15 de Dezembro. Garanta descontos de entrada nos serviços (7% Simples, 10% Prata, 12% Ouro e 15% Diamante) e parcelamento em até 10x no cartão.
             </div>
           </div>
 
           <div class="type-btn-wrapper">
             <div class="type-btn" onclick="startFlow('RENOVACAO')">
               <h3>JÁ SOU PARCEIRO S.O.S</h3>
-              <p>Já tenho contrato ativo e quero renovar com <strong style="color: var(--green-accent);">10% OFF no Anual</strong></p>
+              <p>Janela de Renovação Exclusiva: <strong style="color: var(--green-accent);">15/Out a 15/Nov</strong> (10 Vagas Garantidas)</p>
             </div>
             <div class="tooltip-info">
-              🎁 <strong>Clientes Ativos:</strong> Área exclusiva para parceiros que já possuem contrato no CLUBE S.O.S. Garanta a sua renovação anual com 10% de desconto exclusivo e condições especiais diretamente na sua conta.
+              🎁 <strong>Clientes Ativos:</strong> Área exclusiva para parceiros garantirem sua renovação antecipada. Até 27% OFF nos serviços por peça/modelo, valor especial na anuidade e 10 vagas reservadas.
             </div>
           </div>
         </div>
@@ -521,20 +521,20 @@
         <h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria do Clube S.O.S</h2>
         
         <div class="info-box">
-          📈 <strong>Escala Comercial S.O.S:</strong> Quanto maior a categoria (maior a franquia de peso mensal), menor é o valor pago por serviço individual. Clique em <strong>"Ver Detalhes e Regras"</strong> em cada card para acessar a tabela completa de preços, valores da anuidade e normas de lote.
+          📈 <strong>Escala Comercial S.O.S:</strong> Quanto maior a categoria (maior a franquia de peso mensal), menor é o valor pago por serviço individual. Clique em <strong>"Ver Detalhes e Regras"</strong> em cada card para acessar a tabela completa de preços, valores da anuidade e normas operacionais.
         </div>
 
         <div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
-          🎁 <strong>CUPOM DE RENOVAÇÃO ATIVADO:</strong> 10% DE DESCONTO APLICADO NO VALOR DA ANUIDADE!
+          🎁 <strong>CONDIÇÃO DE RENOVAÇÃO ATIVADA:</strong> DESCONTOS EXCLUSIVOS DE ATÉ 27% NOS SERVIÇOS E ANUIDADE REDUZIDA COM RESERVA DE VAGA GARANTIDA!
         </div>
 
         <div class="grid-categories">
           <!-- CARD SIMPLES -->
-          <div class="cat-card active" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
+          <div class="cat-card" id="card-simples" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
             <div class="cat-badge-container">
               <span class="badge">Até 3kg/mês</span>
-              <span class="badge-vagas">2 Vagas</span>
-              <span class="badge-discount hidden">10% OFF</span>
+              <span class="badge-vagas" id="vagas-simples">2 Vagas</span>
+              <span class="badge-discount" id="discount-simples">7% OFF Serv.</span>
             </div>
             <h3>SIMPLES</h3>
             <p>Porta de entrada acessível para estruturação inicial, foco em Cadastro e Precificação (CDE).</p>
@@ -542,11 +542,11 @@
           </div>
 
           <!-- CARD PRATA -->
-          <div class="cat-card" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
+          <div class="cat-card active" id="card-prata" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
             <div class="cat-badge-container">
               <span class="badge">Até 5kg/mês</span>
-              <span class="badge-vagas">3 Vagas</span>
-              <span class="badge-discount hidden">10% OFF</span>
+              <span class="badge-vagas" id="vagas-prata">4 Vagas</span>
+              <span class="badge-discount" id="discount-prata">22% OFF Serv.</span>
             </div>
             <h3>PRATA</h3>
             <p>Para negócios em ritmo acelerado de expansão constante e fluxo contínuo.</p>
@@ -554,11 +554,11 @@
           </div>
 
           <!-- CARD OURO -->
-          <div class="cat-card" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
+          <div class="cat-card" id="card-ouro" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
             <div class="cat-badge-container">
               <span class="badge">Até 10kg/mês</span>
-              <span class="badge-vagas">3 Vagas</span>
-              <span class="badge-discount hidden">10% OFF</span>
+              <span class="badge-vagas" id="vagas-ouro">3 Vagas</span>
+              <span class="badge-discount" id="discount-ouro">23% OFF Serv.</span>
             </div>
             <h3>OURO</h3>
             <p>Marcas consolidadas com alto giro de estoque e lançamentos frequentes.</p>
@@ -566,11 +566,11 @@
           </div>
 
           <!-- CARD DIAMANTE -->
-          <div class="cat-card" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
+          <div class="cat-card" id="card-diamante" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
             <div class="cat-badge-container">
               <span class="badge">Até 20kg/mês</span>
-              <span class="badge-vagas">3 Vagas</span>
-              <span class="badge-discount hidden">10% OFF</span>
+              <span class="badge-vagas" id="vagas-diamante">3 Vagas</span>
+              <span class="badge-discount" id="discount-diamante">27% OFF Serv.</span>
             </div>
             <h3>DIAMANTE</h3>
             <p>Atacados e indústrias com a menor tarifa unitária + Inteligência de Dados.</p>
@@ -596,27 +596,27 @@
           <div class="form-grid">
             <div class="form-group">
               <label>Seu nome e cargo na empresa:*</label>
-              <input type="text" id="nome_cargo" placeholder="Ex: Ana Silva - Diretora Comercial">
+              <input type="text" id="nome_cargo" placeholder="Ex: Ana Silva - Diretora Comercial" required>
             </div>
 
             <div class="form-group">
               <label>Nome da sua marca de semijoias:*</label>
-              <input type="text" id="nome_marca" placeholder="Ex: Niara Joias">
+              <input type="text" id="nome_marca" placeholder="Ex: Niara Joias" required>
             </div>
 
             <div class="form-group">
               <label>Perfil do Instagram da marca:*</label>
-              <input type="text" id="instagram" placeholder="Ex: @suamarca">
+              <input type="text" id="instagram" placeholder="Ex: @suamarca" required>
             </div>
 
             <div class="form-group">
               <label>Cidade e Estado:*</label>
-              <input type="text" id="cidade_estado" placeholder="Ex: Limeira / SP">
+              <input type="text" id="cidade_estado" placeholder="Ex: Limeira / SP" required>
             </div>
 
             <div class="form-group">
               <label>Tempo de atuação no mercado:*</label>
-              <select id="tempo_mercado">
+              <select id="tempo_mercado" required>
                 <option value="">Selecione...</option>
                 <option value="Menos de 1 ano">Menos de 1 ano</option>
                 <option value="1 a 3 anos">1 a 3 anos</option>
@@ -627,7 +627,7 @@
 
             <div class="form-group">
               <label>Modelo principal do negócio hoje:*</label>
-              <select id="modelo_negocio">
+              <select id="modelo_negocio" required>
                 <option value="">Selecione...</option>
                 <option value="Atacado / Revenda">Atacado / Revenda</option>
                 <option value="Varejo / E-commerce">Varejo / E-commerce</option>
@@ -638,7 +638,7 @@
 
             <div class="form-group full-width">
               <label>Volume médio de peças movimentadas por mês:*</label>
-              <select id="volume_pecas">
+              <select id="volume_pecas" required>
                 <option value="">Selecione...</option>
                 <option value="Até 500 peças/mês">Até 500 peças/mês</option>
                 <option value="500 a 2.000 peças/mês">500 a 2.000 peças/mês</option>
@@ -686,7 +686,7 @@
       <section class="card hidden" id="step-renovacao-confirm">
         <h2><span class="step-num">03</span> Confirmar Solicitação de Renovação</h2>
         <div class="form-group full-width">
-          <label>Confirme o seu WhatsApp com DDD para envio da proposta renovada com 10% OFF:*</label>
+          <label>Confirme o seu WhatsApp com DDD para envio da proposta de renovação antecipada:*</label>
           <input type="tel" id="whatsapp_renovacao" placeholder="(00) 00000-0000" required>
         </div>
         <div class="btn-group">
@@ -727,96 +727,174 @@
 
   <script>
     let userType = "NOVO"; 
-    let currentPlan = "SIMPLES (Até 3kg/mês)";
+    let currentPlan = "PRATA (Até 5kg/mês)";
 
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKkDE_CS-Du-JuDXDULTpidiIKtbRFKIsceubELzn-7KunYLx2/exec";
 
     const catDetails = {
       simples: {
-        title: "🟢 CATEGORIA SIMPLES (Até 3kg/mês) — 2 VAGAS",
-        vagas: "2 VAGAS DISPONÍVEIS",
-        valorBase: 1200.00, // Ajuste o valor base total da anuidade se necessário
-        descricao: "A Categoria Simples foi criada para marcas em fase inicial com capital enxuto. Possui a menor taxa de adesão anual para permitir a entrada da empresa no Clube, focando na organização do cadastro e precificação técnica (CDE).",
+        title: "🔴 CATEGORIA SIMPLES (Até 3kg/mês)",
+        descricao: "A Categoria Simples foi criada para marcas em fase inicial. Permite a entrada da empresa no Clube com foco na organização do cadastro e precificação técnica (CDE).",
         prazos: "• Lote de até 1kg (com até 50 modelos): 5 dias úteis (Express)<br>• Lote de até 1kg (com mais de 50 modelos): 7 dias úteis<br>• Lote de até 3kg (Padrão): 10 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Anual Consolidado",
-        precos: [
-          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,77" },
-          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 2,10" },
-          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,50" },
-          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,27" },
-          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,65" },
-          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,80" },
-          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,80" },
-          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,77" }
-        ]
+        anuidadeNovo: 1299.00,
+        anuidadeRenovacao: null, // Categoria descontinuada para renovação
+        precosNovo: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,83" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,22" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,71" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,32" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,65" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,83" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,71" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,65" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,94" }
+        ],
+        precosRenovacao: []
       },
       prata: {
-        title: "⚪ CATEGORIA PRATA (Até 5kg/mês) — 3 VAGAS",
-        vagas: "3 VAGAS DISPONÍVEIS",
-        valorBase: 1800.00, // Ajuste o valor base total da anuidade se necessário
+        title: "⚪ CATEGORIA PRATA (Até 5kg/mês)",
         descricao: "Para marcas em expansão constante que precisam de envio contínuo. Garante redução no custo unitário das peças aproveitando o maior volume mensal.",
-        prazos: "• Prazos padrão de 1kg (5 a 7 dias) e 3kg (10 dias)<br>• Lotes de até 5kg unificados no mesmo lote: 12 dias úteis",
+        prazos: "• Lote de até 1kg (com até 50 modelos): 5 dias úteis (Express)<br>• Lote de até 1kg (com mais de 50 modelos): 7 dias úteis<br>• Lote acumulado padrão de 5kg: 10 a 12 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema/Dashboard em Tempo Real<br>• Relatório Semestral Consolidado",
-        precos: [
-          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,75" },
-          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,99" },
-          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,45" },
-          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,25" },
-          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,60" },
-          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,77" },
-          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,77" },
-          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,73" }
+        anuidadeNovo: 2199.00,
+        anuidadeRenovacao: 1999.00,
+        precosNovo: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,80" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,15" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,62" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,31" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,63" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,80" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,68" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,63" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,91" }
+        ],
+        precosRenovacao: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,86" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,27" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,27" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,55" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,59" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,55" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,79" }
         ]
       },
       ouro: {
-        title: "🟡 CATEGORIA OURO (Até 10kg/mês) — 3 VAGAS",
-        vagas: "3 VAGAS DISPONÍVEIS",
-        valorBase: 2500.00, // Ajuste o valor base total da anuidade se necessário
+        title: "🟡 CATEGORIA OURO (Até 10kg/mês)",
         descricao: "Para marcas consolidadas com alto giro de estoque e coleções frequentes. Excelente escala comercial e ganho de margem de lucro por peça.",
-        prazos: "• Prazos padrão conforme peso do lote (1kg/3kg/5kg)<br>• Lotes com mais de 100 modelos: 8 a 10 dias úteis<br>• Lotes com mais de 150 modelos: mínimo 10 dias úteis",
+        prazos: "• Lote de até 1kg (com até 50 modelos): 5 dias úteis (Express)<br>• Lote de até 1kg (com mais de 50 modelos): 7 dias úteis<br>• Lote acumulado padrão da categoria: 10 dias úteis",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatório Trimestral Consolidado",
-        precos: [
-          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,72" },
-          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,95" },
-          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,40" },
-          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,23" },
-          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,60" },
-          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,73" },
-          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,73" },
-          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,70" }
+        anuidadeNovo: 2599.00,
+        anuidadeRenovacao: 2299.00,
+        precosNovo: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,78" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,10" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,56" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,30" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,62" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,78" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,67" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,62" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,89" }
+        ],
+        precosRenovacao: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,84" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,24" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,26" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,54" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,59" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,54" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,78" }
         ]
       },
       diamante: {
-        title: "💎 CATEGORIA DIAMANTE (Até 20kg/mês) — 3 VAGAS",
-        vagas: "3 VAGAS DISPONÍVEIS",
-        valorBase: 3600.00, // Ajuste o valor base total da anuidade se necessário
+        title: "💎 CATEGORIA DIAMANTE (Até 20kg/mês)",
         descricao: "A categoria VIP para atacados, indústrias e grandes marcas. Garante a menor tarifa unitária de todo o Clube + Inteligência Gerencial Avançada.",
-        prazos: "• Fracionamento prioritário de lotes<br>• Gestão de transbordo de agenda para envios de grande escala",
+        prazos: "• Fracionamento prioritário de lotes em até 3kg/5kg<br>• Gestão de transbordo de agenda para envios de grande escala",
         relatorios: "• Relatório individual a cada Lote concluído<br>• Acesso ao Sistema em Tempo Real<br>• Relatórios Mensais, Semestrais e Anuais com inteligência de giro",
-        precos: [
-          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", preco: "R$ 0,70" },
-          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", preco: "R$ 1,90" },
-          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", preco: "R$ 2,30" },
-          { srv: "Etiqueta", tipo: "Por Peça", preco: "R$ 0,20" },
-          { srv: "Montagem", tipo: "Por Peça", preco: "R$ 0,55" },
-          { srv: "Cravação", tipo: "Por Peça", preco: "R$ 0,70" },
-          { srv: "Colagem", tipo: "Por Peça", preco: "R$ 0,60" },
-          { srv: "Encarte", tipo: "Por Peça", preco: "R$ 0,65" }
+        anuidadeNovo: 3199.00,
+        anuidadeRenovacao: 3099.00,
+        precosNovo: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,03" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,47" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,29" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,65" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,86" }
+        ],
+        precosRenovacao: [
+          { srv: "Inspeção Operacional (Obrigatório)", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,65" },
+          { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,74" },
+          { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,12" },
+          { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,25" },
+          { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,51" },
+          { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,65" },
+          { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,55" },
+          { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,51" },
+          { srv: "Lixa e Acabamento", tipo: "Por Peça", precoCheio: "R$ 1,01", precoDesc: "R$ 0,74" }
         ]
       }
     };
 
     function startFlow(type) {
       userType = type;
+      
+      const cardSimples = document.getElementById('card-simples');
+      const vagasSimples = document.getElementById('vagas-simples');
+      const discountSimples = document.getElementById('discount-simples');
+      
+      const vagasPrata = document.getElementById('vagas-prata');
+      const discountPrata = document.getElementById('discount-prata');
+      
+      const vagasOuro = document.getElementById('vagas-ouro');
+      const discountOuro = document.getElementById('discount-ouro');
+      
+      const vagasDiamante = document.getElementById('vagas-diamante');
+      const discountDiamante = document.getElementById('discount-diamante');
+
       if (type === 'NOVO') {
         document.getElementById('cat-step-num').innerText = "02";
         document.getElementById('discountBanner').classList.add('hidden');
-        document.querySelectorAll('.badge-discount').forEach(el => el.classList.add('hidden'));
+
+        // Exibe categoria simples
+        cardSimples.classList.remove('hidden');
+        vagasSimples.innerText = "2 Vagas";
+        discountSimples.innerText = "7% OFF Serv.";
+
+        vagasPrata.innerText = "3 Vagas";
+        discountPrata.innerText = "10% OFF Serv.";
+
+        vagasOuro.innerText = "2 Vagas";
+        discountOuro.innerText = "12% OFF Serv.";
+
+        vagasDiamante.innerText = "1 Vaga";
+        discountDiamante.innerText = "15% OFF Serv.";
+
         goToStep('cat');
       } else {
         document.getElementById('cat-step-num').innerText = "03";
         document.getElementById('discountBanner').classList.remove('hidden');
-        document.querySelectorAll('.badge-discount').forEach(el => el.classList.remove('hidden'));
+
+        // Oculta categoria simples na renovação
+        cardSimples.classList.add('hidden');
+
+        vagasPrata.innerText = "4 Vagas";
+        discountPrata.innerText = "22% OFF Serv.";
+
+        vagasOuro.innerText = "3 Vagas";
+        discountOuro.innerText = "23% OFF Serv.";
+
+        vagasDiamante.innerText = "3 Vagas";
+        discountDiamante.innerText = "27% OFF Serv.";
+
         goToStep('renovacao');
       }
     }
@@ -844,46 +922,43 @@
       const data = catDetails[catKey];
       document.getElementById('modalTitle').innerText = data.title;
       
-      let tableRows = data.precos.map(p => `
+      const listaPrecos = (userType === 'RENOVACAO') ? data.precosRenovacao : data.precosNovo;
+      const labelDesconto = (userType === 'RENOVACAO') ? "Preço Serviços Renovação" : "Preço Serviços Novo Cliente";
+
+      let tableRows = listaPrecos.map(p => `
         <tr>
           <td><strong>${p.srv}</strong></td>
           <td>${p.tipo}</td>
-          <td style="color: var(--orange-primary); font-weight: bold;">${p.preco}</td>
+          <td style="color: var(--text-muted); text-decoration: line-through;">${p.precoCheio}</td>
+          <td style="color: var(--orange-primary); font-weight: bold;">${p.precoDesc}</td>
         </tr>
       `).join('');
 
-      // CÁLCULOS DINÂMICOS DE PREÇO DA ANUIDADE DO PLANO
-      const valorBase = data.valorBase || 0;
       let htmlPagamento = '';
 
       if (userType === 'RENOVACAO') {
-        const valorPix = (valorBase * 0.90).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valor2x = (valorBase / 2).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valor3x = (valorBase / 3).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valorBaseFmt = valorBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valorAnuidade = data.anuidadeRenovacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         htmlPagamento = `
           <div class="price-card-box">
-            <h4>💳 VALOR DA ANUIDADE & CONDIÇÕES (RENOVAÇÃO)</h4>
+            <h4>💳 VALOR DA ANUIDADE & CONDIÇÕES (RENOVAÇÃO EXCLUSIVA)</h4>
             <ul>
-              <li>💵 <strong>À vista no Pix (10% OFF):</strong> ${valorPix}</li>
-              <li>💳 <strong>Cartão até 3x sem juros:</strong> 3x de ${valor3x} (Total: ${valorBaseFmt})</li>
-              <li>💳 <strong>Parcelamento em até 10x:</strong> Com acréscimo das taxas de juros da maquininha</li>
+              <li>🏷️ <strong>Valor Exclusivo de Renovação:</strong> ${valorAnuidade}</li>
+              <li>💳 <strong>Parcelamento no Cartão:</strong> Em até 10x com encargos/taxas da maquininha por conta do contratante.</li>
+              <li>⚡ <strong>Manutenção dos Descontos:</strong> Os descontos de 22%, 23% e 27% em cada serviço aplicam-se no pagamento à vista ou no cartão.</li>
             </ul>
           </div>
         `;
       } else {
-        const valorPix = (valorBase * 0.95).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valor2x = (valorBase / 2).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valorBaseFmt = valorBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const valorAnuidade = data.anuidadeNovo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         htmlPagamento = `
           <div class="price-card-box">
             <h4>💳 VALOR DA ANUIDADE & CONDIÇÕES (CLIENTE NOVO)</h4>
             <ul>
-              <li>💵 <strong>À vista no Pix (5% OFF):</strong> ${valorPix}</li>
-              <li>💳 <strong>Cartão em 2x sem juros:</strong> 2x de ${valor2x} (Total: ${valorBaseFmt})</li>
-              <li>💳 <strong>Parcelamento em até 10x:</strong> Com acréscimo das taxas de juros da maquininha</li>
+              <li>🏷️ <strong>Valor da Anuidade (Tabela Cheia 2027):</strong> ${valorAnuidade}</li>
+              <li>💳 <strong>Parcelamento no Cartão:</strong> Em até 10x com encargos/taxas da maquininha por conta do contratante.</li>
+              <li>⚡ <strong>Manutenção dos Descontos:</strong> Os descontos de 7%, 10%, 12% e 15% nos serviços aplicam-se no pagamento à vista ou no cartão.</li>
             </ul>
           </div>
         `;
@@ -894,26 +969,47 @@
         
         ${htmlPagamento}
 
-        <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
-          <strong>⏱️ Regras de Prazos e Modelos:</strong><br>${data.prazos}
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; line-height: 1.5;">
+          <strong>⏱️ Regras de Prazos e Recebimento de Lotes:</strong><br>
+          ${data.prazos}<br><br>
+          ⚠️ <strong>Agendamento Prévio (48h):</strong> O envio de qualquer lote deve ser notificado e agendado com no mínimo 48 horas de antecedência. O agendamento reserva formalmente sua vaga na bancada.<br>
+          🚨 <strong>Envio Atrasado:</strong> Envios fora da data perdem a janela de bancada garantida e passam por reprogramação de esteira, alterando a data final de entrega.<br>
+          📦 <strong>Envio Antecipado:</strong> Mercadorias entregues antes da data ficam armazenadas com total segurança, porém o prazo inicia na data agendada.<br>
+          📦 <strong>Lotes Unificados:</strong> Possibilidade de unificar envios até 5kg. O envio unificado readequará o tempo final de entrega da produção.
         </div>
-        <div style="background: #f0fdf4; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #166534;">
+
+        <div style="background: #fff7ed; border-left: 4px solid var(--orange-primary); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: #9a3412; line-height: 1.5;">
+          <strong>🔍 Regra Técnica de Alta Variedade de Modelos (Pós-Separação):</strong><br>
+          Após a triagem e separação inicial, caso seja identificada alta quantidade e variedade de modelos distintos no mesmo lote, o prazo de produção sofrerá ajuste proporcional devido à alta complexidade de Fotografia e CDE.<br>
+          • <em>Até 50 modelos:</em> Prazo padrão da categoria.<br>
+          • <em>Acima de 100 modelos:</em> +2 a 3 dias úteis no prazo regular.<br>
+          • <em>Acima de 150 modelos:</em> Prazo mínimo de 10 a 12 dias úteis.
+        </div>
+
+        <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.85rem; color: #991b1b; line-height: 1.5;">
+          <strong>⚠️ Política de Reposição e Réplica de Cadastro:</strong><br>
+          A S.O.S não trabalha com taxa reduzida para reposição. Qualquer reposição ou réplica de cadastro será cobrada como <strong>valor cheio de cadastro por modelo</strong>.
+        </div>
+
+        <div style="background: #f0fdf4; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #166534; font-size: 0.85rem;">
           <strong>📊 Acompanhamento e Relatórios:</strong><br>${data.relatorios}
         </div>
-        <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark);">TABELA DE PREÇOS POR SERVIÇO</h4>
+
+        <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark);">TABELA DE PREÇOS POR SERVIÇO POR PEÇA/MODELO</h4>
         <table>
           <thead>
             <tr>
               <th>Serviço</th>
               <th>Métrica</th>
-              <th>Preço Cartão (3x)</th>
+              <th>Tabela Cheia</th>
+              <th>${labelDesconto}</th>
             </tr>
           </thead>
           <tbody>
             ${tableRows}
           </tbody>
         </table>
-        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">* Pagamento de serviços no Pix com 7% de desconto automático.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">* Encargos e taxas de parcelamento no cartão por conta do contratante.</p>
       `;
 
       document.getElementById('categoryModal').classList.remove('hidden');
@@ -958,7 +1054,7 @@
       btn.disabled = true;
 
       const payload = {
-        tipo_cliente: "Cliente Novo",
+        tipo_cliente: "Cliente Novo (Abertura 20/Nov a 15/Dez)",
         cliente_renovacao_nome: "-",
         timestamp: new Date().toLocaleString('pt-BR'),
         categoria: currentPlan,
@@ -989,7 +1085,7 @@
       btn.disabled = true;
 
       const payload = {
-        tipo_cliente: "Renovação (10% OFF)",
+        tipo_cliente: "Renovação Parceiro (15/Out a 15/Nov)",
         cliente_renovacao_nome: document.getElementById('cliente_renovacao_nome').value,
         timestamp: new Date().toLocaleString('pt-BR'),
         categoria: currentPlan,
@@ -1000,8 +1096,8 @@
         tempo_mercado: "-",
         modelo_negocio: "-",
         volume_pecas: "-",
-        gargalos: "Renovação de Contrato Anual",
-        solucoes: "Renovação de Plano com 10% OFF",
+        gargalos: "Renovação de Contrato Anual Exclusiva",
+        solucoes: "Renovação de Plano com Desconto em Serviços",
         whatsapp: wpp
       };
 
