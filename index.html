@@ -491,23 +491,24 @@
       <section class="card hidden" id="step-renovacao">
         <h2><span class="step-num">02</span> Identificação da Conta Corporativa</h2>
         <div class="form-group full-width">
-          <label>Selecione o seu nome na lista de parceiros ativos:*</label>
+          <label>Selecione a sua marca na lista de parceiros ativos:*</label>
           <select id="cliente_renovacao_nome" onchange="enableCategoryNextBtn()">
-            <option value="">Selecione seu nome na lista...</option>
-            <option value="Beatriz Morais Tomadon">Beatriz Morais Tomadon</option>
-            <option value="Carla Andrade">Carla Andrade</option>
-            <option value="Valéria Krugger">Valéria Krugger</option>
-            <option value="Micheline">Micheline</option>
-            <option value="Janielle">Janielle</option>
-            <option value="Uliane">Uliane</option>
-            <option value="Juliana Oliveira">Juliana Oliveira</option>
-            <option value="Zevaldo da Gama">Zevaldo da Gama</option>
-            <option value="Kevellyn e Gilberto">Kevellyn e Gilberto</option>
-            <option value="Rafael e Layanne">Rafael e Layanne</option>
-            <option value="Ywerton">Ywerton</option>
-            <option value="Ariadna">Ariadna</option>
-            <option value="Amanda">Amanda</option>
-            <option value="Aine">Aine</option>
+            <option value="">Selecione sua marca na lista...</option>
+            <option value="Anela Acessórios">Anela Acessórios</option>
+            <option value="Stillo Semijoias">Stillo Semijoias</option>
+            <option value="Elisangela Joias">Elisangela Joias</option>
+            <option value="Musser Joias">Musser Joias</option>
+            <option value="Jane Fernandes Acessórios">Jane Fernandes Acessórios</option>
+            <option value="Ulli Joias">Ulli Joias</option>
+            <option value="Quilatts Semijoias">Quilatts Semijoias</option>
+            <option value="Zeglam semijoias">Zeglam semijoias</option>
+            <option value="Majoris semijoias">Majoris semijoias</option>
+            <option value="Niara Joias">Niara Joias</option>
+            <option value="Vaillant">Vaillant</option>
+            <option value="Ourolux semijoias">Ourolux semijoias</option>
+            <option value="Orli acessórios">Orli acessórios</option>
+            <option value="Evoe">Evoe</option>
+            <option value="Madame Nina">Madame Nina</option>
           </select>
         </div>
         <div class="btn-group">
@@ -1096,7 +1097,7 @@
         timestamp: new Date().toLocaleString('pt-BR'),
         categoria: currentPlan,
         nome_cargo: "Cliente Ativo",
-        nome_marca: "Cliente Ativo",
+        nome_marca: document.getElementById('cliente_renovacao_nome').value,
         instagram: "-",
         cidade_estado: "-",
         tempo_mercado: "-",
