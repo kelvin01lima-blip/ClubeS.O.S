@@ -231,15 +231,58 @@ header {
   border-radius: 8px;
   border: 1px solid var(--border-color);
 }
-.checkbox-group label {
+.service-item-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.checkbox-label-hover {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   font-weight: 600;
   cursor: pointer;
   color: var(--text-dark);
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
-.checkbox-group input { accent-color: var(--orange-primary); width: 18px; height: 18px; }
+.checkbox-label-hover:hover {
+  background: #e2e8f0;
+}
+.checkbox-label-hover input { accent-color: var(--orange-primary); width: 18px; height: 18px; }
+
+/* HOVER TOOLTIP NOS SERVIÇOS */
+.service-hover-card {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 50;
+  width: 100%;
+  background: var(--sidebar-dark);
+  color: #fff;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+  border-left: 4px solid var(--orange-primary);
+  margin-top: 4px;
+}
+.service-item-wrapper:hover .service-hover-card {
+  display: block;
+}
+.service-hover-card .charge-badge {
+  display: inline-block;
+  background: var(--orange-primary);
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
 
 .info-btn-inline {
   background: #e0f2fe;
@@ -467,7 +510,7 @@ footer span {
 <p>Abertura das Vagas Exclusivas de Renovação</p>
 </div>
 <div class="tooltip-info">
-<strong>Abertura em 10/10:</strong> Prioridade garantida para parceiros ativos garantirem a renovação do seu contrato anual.
+<strong>Abertura em 10/10:</strong> Prioridade garantida para parceiros ativos garantirem a renovação do seu contrato anual (Anuidade: R$ 2.000,00).
 </div>
 </div>
 <div class="type-btn-wrapper">
@@ -476,7 +519,7 @@ footer span {
 <p>Abertura Geral das Vagas Remanescentes</p>
 </div>
 <div class="tooltip-info">
-<strong>Abertura oficial em 20/11:</strong> Inscrição para novas marcas ocuparem as vagas que restarem das 15 vagas oficiais do Clube.
+<strong>Abertura oficial em 20/11:</strong> Inscrição para novas marcas ocuparem as vagas remanescentes das 15 vagas oficiais do Clube (Anuidade: R$ 2.500,00).
 </div>
 </div>
 </div>
@@ -508,7 +551,7 @@ footer span {
 </div>
 <div class="btn-group">
 <button type="button" class="back-btn" onclick="goToStep(0)">&lt; VOLTAR</button>
-<button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR FRANSIQUIA &rarr;</button>
+<button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR FRANQUIA &rarr;</button>
 </div>
 </section>
 
@@ -516,10 +559,10 @@ footer span {
 <section class="card hidden" id="step-cat">
 <h2><span class="step-num" id="cat-step-num">02</span> Franquia Operacional CLUBE S.O.S</h2>
 <div id="infoBoxNovo" class="info-box">
- <strong>Abertura de Vagas (20/11):</strong> São apenas <strong>15 vagas no total</strong> para o Clube S.O.S. Os novos clientes ocuparão as vagas remanescentes após o período exclusivo de renovação dos parceiros ativos.
+ <strong>Abertura de Vagas (20/11):</strong> São apenas <strong>15 vagas no total</strong> para o Clube S.O.S. Os novos clientes ocuparão as vagas remanescentes após o período exclusivo de renovação. Anuidade para novos membros: <strong>R$ 2.500,00</strong>.
 </div>
 <div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
-<strong>Abertura Exclusiva de Renovação (10/10):</strong> Garanta a renovação da sua marca na bancada com prioridade de vaga antes da abertura para novos clientes!
+<strong>Abertura Exclusiva de Renovação (10/10):</strong> Garanta a renovação da sua marca na bancada com prioridade de vaga antes da abertura para novos clientes! Valor especial de renovação: <strong>R$ 2.000,00</strong>.
 </div>
 
 <!-- PORTAL DO CLIENTE DESTAQUE -->
@@ -529,7 +572,7 @@ footer span {
     <li>🔹 <strong>Acesso Exclusivo por Login e Senha:</strong> Plataforma própria para acompanhar a jornada do seu produto.</li>
     <li>🔹 <strong>Rastreamento de Lotes:</strong> Saiba exatamente em qual etapa seu lote está (Separação, Foto, CDE, Encarte, etc.).</li>
     <li>🔹 <strong>Calendário & Agendamento:</strong> Programe o envio dos lotes e cadastre antecipadamente a mercadoria que chegará à bancada.</li>
-    <li>🔹 <strong>Relatórios Mensais de Inteligência:</strong> Dados estratégicos do seu volume movimentado e performance operacional.</li>
+    <li>🔹 <strong>Relatórios Mensais de Inteligência:</strong> Dashboards operacionais com histórico de volume, rendimento do banho e métricas de produção.</li>
   </ul>
 </div>
 
@@ -537,12 +580,12 @@ footer span {
 <!-- CARD UNICO DO CLUBE -->
 <div class="cat-card active" id="card-clube" onclick="selectCategory('CLUBE S.O.S', this)">
 <div class="cat-badge-container">
-<span class="badge">Anuidade R$ 2.000,00</span>
+<span class="badge" id="badge-anuidade-valor">Anuidade R$ 2.000,00</span>
 <span class="badge-vagas" id="badge-vagas-texto">15 Vagas Totais</span>
 <span class="badge-discount" id="badge-desconto-texto">Desconto por Volume (>600 peças)</span>
 </div>
 <h3>MEMBRO CLUBE S.O.S</h3>
-<p>Terceirização completa da bancada operacional. Prazos escalonados por volume, gerenciamento total de insumos, tecnologia de IA fotográfica e sistema exclusivo de acompanhamento.</p>
+<p>Terceirização completa da bancada operacional. Prazos escalonados por volume, gerenciamento total de insumos (saquinhos, fechos, correntes, argolinhas, tags), IA fotográfica e portal exclusivo.</p>
 <button type="button" class="btn-detalhes" onclick="openModal('clube', event)">Ver Detalhes, Valores, Prazos e Regras</button>
 </div>
 </div>
@@ -617,33 +660,69 @@ footer span {
 </div>
 </div>
 <div class="form-group full-width">
-<label>Quais soluções do CLUBE S.O.S sua marca mais precisa no momento?</label>
+<label>Quais soluções do CLUBE S.O.S sua marca mais precisa no momento? (Passe o mouse para ver detalhes):</label>
 <div class="checkbox-group">
-<label>
-  <input type="checkbox" name="solucoes" value="Inspeção Operacional Completa"> 
-  Triagem Técnica Inicial (Separação + Filtro de Qualidade + CDI)
-  <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('inspecao')">ℹ️ Ver Detalhes</button>
-</label>
-<label>
-  <input type="checkbox" name="solucoes" value="Fotografia de Catálogo e IA"> 
-  Fotografia Profissional (Still / Cenário / Adicional de IA)
-  <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('foto')">ℹ️ Ver Detalhes</button>
-</label>
-<label>
-  <input type="checkbox" name="solucoes" value="CDE (Cadastro Direto no Sistema)"> 
-  CDE (Cadastro no Sistema/Site do Cliente e Precificação)
-  <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cde')">ℹ️ Ver Detalhes</button>
-</label>
-<label>
-  <input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> 
-  Etiquetagem e Encartelamento (Tags e Saquinhos)
-  <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('etiqueta_encarte')">ℹ️ Ver Detalhes</button>
-</label>
-<label>
-  <input type="checkbox" name="solucoes" value="Cravação, Colagem e Montagem"> 
-  Cravação, Colagem e Montagem (Gestão de Insumos)
-  <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cravacao_montagem')">ℹ️ Ver Detalhes</button>
-</label>
+  
+  <!-- SERVIÇO 1 -->
+  <div class="service-item-wrapper">
+    <label class="checkbox-label-hover">
+      <span><input type="checkbox" name="solucoes" value="Inspeção Operacional Completa"> Triagem Técnica Inicial (Separação + Filtro + CDI)</span>
+      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('inspecao')">ℹ️ Detalhes</button>
+    </label>
+    <div class="service-hover-card">
+      <span class="charge-badge">COBRANÇA: POR PEÇA (R$ 0,77 / R$ 0,70)</span>
+      <p>Triagem minuciosa peça por peça, conferência de romaneio, filtro rigoroso de defeitos pós-banho e cálculo técnico do custo real do banho (ouro/prata/paládio).</p>
+    </div>
+  </div>
+
+  <!-- SERVIÇO 2 -->
+  <div class="service-item-wrapper">
+    <label class="checkbox-label-hover">
+      <span><input type="checkbox" name="solucoes" value="Fotografia de Catálogo e IA"> Fotografia Profissional (Still / Cenário / Adicional de IA)</span>
+      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('foto')">ℹ️ Detalhes</button>
+    </label>
+    <div class="service-hover-card">
+      <span class="charge-badge">COBRANÇA: POR FOTO (R$ 2,59 / R$ 2,39)</span>
+      <p>Estúdio Still e cenário técnico para e-commerce e catálogo. Adicional opcional de IA (+ R$ 1,00/foto) para fotos ultra editadas e modelos virtuais hiper-realistas.</p>
+    </div>
+  </div>
+
+  <!-- SERVIÇO 3 -->
+  <div class="service-item-wrapper">
+    <label class="checkbox-label-hover">
+      <span><input type="checkbox" name="solucoes" value="CDE (Cadastro Direto no Sistema)"> CDE (Cadastro no Sistema/Site do Cliente e Precificação)</span>
+      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cde')">ℹ️ Detalhes</button>
+    </label>
+    <div class="service-hover-card">
+      <span class="charge-badge">COBRANÇA: POR MODELO CADASTRADO (R$ 2,59 / R$ 2,49)</span>
+      <p>Cadastro técnico completo direto no ERP/e-commerce da sua marca, com upload de fotos tratadas e parametrização de regras de precificação/margem.</p>
+    </div>
+  </div>
+
+  <!-- SERVIÇO 4 -->
+  <div class="service-item-wrapper">
+    <label class="checkbox-label-hover">
+      <span><input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> Etiquetagem e Encartelamento (Tags, Saquinhos e Selagem)</span>
+      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('etiqueta_encarte')">ℹ️ Detalhes</button>
+    </label>
+    <div class="service-hover-card">
+      <span class="charge-badge">COBRANÇA: POR PEÇA (Etiqueta: R$ 0,30 | Encarte: R$ 0,75)</span>
+      <p>Impressão de etiquetas térmicas com SKU/preço, encartelamento nas tags da sua marca, embalagem em saquinhos plásticos protetores e selagem final.</p>
+    </div>
+  </div>
+
+  <!-- SERVIÇO 5 -->
+  <div class="service-item-wrapper">
+    <label class="checkbox-label-hover">
+      <span><input type="checkbox" name="solucoes" value="Cravação, Colagem e Montagem"> Cravação, Colagem e Montagem (Gestão de Insumos)</span>
+      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cravacao_montagem')">ℹ️ Detalhes</button>
+    </label>
+    <div class="service-hover-card">
+      <span class="charge-badge">COBRANÇA: POR UNIDADE / PEÇA (R$ 0,55 / R$ 0,75)</span>
+      <p>Cravação/colagem pós-banho e montagem de correntes/fechos/pingentes. Gestão total de insumos na bancada: saquinhos, fechos, correntes, argolinhas, pedras e tags.</p>
+    </div>
+  </div>
+
 </div>
 </div>
 <div class="form-group full-width">
@@ -705,11 +784,12 @@ let userType = "RENOVACAO";
 let currentPlan = "CLUBE S.O.S";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKKDE_CS-Du-JuDXDULTpidilKtbRFKIsceubELzn-7KunYLx2/exec";
 
-// DETALHAMENTO DOS SERVIÇOS
+// DETALHAMENTO DOS SERVIÇOS NOS MODAIS
 const servicosExplicacao = {
   inspecao: {
     titulo: "🔍 Triagem Técnica Inicial (Separação + Filtro + CDI)",
     descricao: `
+      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Peça (R$ 0,77 / R$ 0,70)</p>
       <p style="margin-bottom: 12px; color: var(--text-dark); line-height: 1.5;"><strong>Esteira de entrada padrão e obrigatória da bancada.</strong> Garantia de alinhamento físico e técnico antes do início da produção:</p>
       
       <div style="background: #f8fafc; border-left: 4px solid var(--orange-primary); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
@@ -731,6 +811,7 @@ const servicosExplicacao = {
   foto: {
     titulo: "📸 Fotografia Profissional & Inteligência Artificial",
     descricao: `
+      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Foto Produzida (R$ 2,59 / R$ 2,39)</p>
       <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 12px;">Produção em estúdio técnico estilo Still ou com cenário padrão para catálogo, e-commerce e redes sociais.</p>
       
       <div style="background: #f0f9ff; border: 1px solid var(--blue-accent); padding: 12px; border-radius: 8px; font-size: 0.88rem; color: #0369a1; line-height: 1.5;">
@@ -753,12 +834,14 @@ const servicosExplicacao = {
   cde: {
     titulo: "💻 CDE (Cadastro de Produtos Direto no Sistema do Cliente)",
     descricao: `
+      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Modelo Cadastrado (R$ 2,59 / R$ 2,49)</p>
       <p style="color: var(--text-dark); line-height: 1.5;">Cadastro completo realizado diretamente no sistema ERP ou e-commerce do cliente. Inclui parametrização customizada de dados, regra de precificação de margem e vinculação das fotos tratadas, com nosso setor de cadastro inteiramente à disposição.</p>
     `
   },
   etiqueta_encarte: {
     titulo: "🏷️ Etiquetagem & Encartelamento Completo",
     descricao: `
+      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Peça (Etiqueta: R$ 0,30 | Encarte: R$ 0,75)</p>
       <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Etiquetagem:</strong> Emissão e impressão técnica das etiquetas térmicas com código de barras, SKU e preço.</p>
       <p style="color: var(--text-dark); line-height: 1.5;"><strong>Encartelamento:</strong> Fixação das peças nas cartelas/tags próprias da sua marca e embalagem em saquinhos plásticos protetores selados (o cliente envia seus modelos de embalagem como referência).</p>
     `
@@ -766,9 +849,10 @@ const servicosExplicacao = {
   cravacao_montagem: {
     titulo: "💎 Cravação, Colagem & Montagem (Gestão de Insumos)",
     descricao: `
-      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Gestão de Insumos S.O.S:</strong> A S.O.S gerencia o estoque de insumos dos clientes para máxima eficiência na bancada.</p>
+      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Unidade Montada ou Peça Cravada/Colada</p>
+      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Gestão Ampla de Insumos S.O.S:</strong> A S.O.S cuida do gerenciamento completo de estoque dos insumos da sua marca na bancada (saquinhos, fechos, correntes, argolinhas, pedras, tags e embalagens).</p>
       <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Cravação & Colagem:</strong> Execução técnica pós-banho. A S.O.S fornece alguns tamanhos de pedras sem custo adicional (caso não haja estoque da medida específica, o cliente envia as pedras necessárias).</p>
-      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Montagem:</strong> Junção de correntes, fechos e pingentes utilizando argolinhas do nosso estoque próprio, cobrado por unidade montada.</p>
+      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Montagem:</strong> Junção de correntes, fechos e pingentes utilizando componentes e argolinhas do estoque sob nossa gestão.</p>
     `
   }
 };
@@ -786,18 +870,21 @@ function startFlow(type) {
   const infoBoxNovo = document.getElementById('infoBoxNovo');
   const discountBanner = document.getElementById('discountBanner');
   const badgeVagas = document.getElementById('badge-vagas-texto');
+  const badgeAnuidade = document.getElementById('badge-anuidade-valor');
 
   if (type === 'NOVO') {
     document.getElementById('cat-step-num').innerText = "02";
     infoBoxNovo.classList.remove('hidden');
     discountBanner.classList.add('hidden');
     badgeVagas.innerText = "Vagas Remanescentes (Abertura 20/11)";
+    badgeAnuidade.innerText = "Anuidade R$ 2.500,00";
     goToStep('cat');
   } else {
     document.getElementById('cat-step-num').innerText = "03";
     infoBoxNovo.classList.add('hidden');
     discountBanner.classList.remove('hidden');
     badgeVagas.innerText = "Prioridade de Renovação (Abertura 10/10)";
+    badgeAnuidade.innerText = "Anuidade R$ 2.000,00";
     goToStep('renovacao');
   }
 }
@@ -823,26 +910,28 @@ function selectCategory(planName, element) {
 function openModal(catKey, event) {
   event.stopPropagation();
   
+  const valorAnuidade = (userType === 'NOVO') ? 'R$ 2.500,00 (Novo Cliente)' : 'R$ 2.000,00 (Renovação Exclusiva)';
+
   let headerHtml = `
     <div class="price-card-box">
       <h4>ESTRUTURA DE REGRAS E PRAZOS DO CLUBE</h4>
       <ul>
-        <li><strong>Anuidade:</strong> R$ 2.000,00</li>
+        <li><strong>Anuidade:</strong> ${valorAnuidade}</li>
         <li><strong>Prazo - Até 600 peças (até 100 modelos):</strong> 8 dias úteis</li>
         <li><strong>Prazo - De 601 a 1.000 peças:</strong> 10 dias úteis</li>
         <li><strong>Prazo - Acima de 1.000 peças:</strong> 13 dias úteis</li>
-        <li><strong>Gestão de Insumos:</strong> Controle total de estoque de tags, sacos e argolinhas na bancada S.O.S</li>
+        <li><strong>Gestão Completa de Insumos:</strong> Controle total de estoque de saquinhos, fechos, correntes, argolinhas, pedras e tags na bancada S.O.S</li>
       </ul>
     </div>
   `;
 
   let tableHtml = `
-    <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark); margin-top: 15px;">TABELA DE VALORES POR SERVIÇO</h4>
+    <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark); margin-top: 15px;">TABELA DE VALORES POR SERVIÇO E MÉTRICA</h4>
     <table>
       <thead>
         <tr>
           <th>Serviço Operacional</th>
-          <th>Métrica</th>
+          <th>Métrica de Cobrança</th>
           <th>Lote Até 600 peças</th>
           <th>Lote Acima de 600 peças</th>
         </tr>
@@ -856,37 +945,37 @@ function openModal(catKey, event) {
         </tr>
         <tr>
           <td><strong>Fotografia Profissional (Still/Cenário)</strong></td>
-          <td>Por Foto</td>
+          <td>Por Foto Produzida</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 2,39</td>
         </tr>
         <tr>
           <td><strong>CDE (Cadastro no Sistema/Site do Cliente)</strong></td>
-          <td>Por Cadastro</td>
+          <td>Por Modelo Cadastrado</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 2,49</td>
         </tr>
         <tr>
           <td><strong>Etiquetagem</strong></td>
-          <td>Por Peça</td>
+          <td>Por Peça Etiquetada</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 0,30</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 0,27</td>
         </tr>
         <tr>
           <td><strong>Encartelamento (Tags em Saquinhos)</strong></td>
-          <td>Por Peça</td>
+          <td>Por Peça Encartelada</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
         </tr>
         <tr>
           <td><strong>Montagem de Peças</strong></td>
-          <td>Por Unidade</td>
+          <td>Por Unidade Montada</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 0,55</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 0,50</td>
         </tr>
         <tr>
           <td><strong>Cravação ou Colagem Pós-Banho</strong></td>
-          <td>Por Peça</td>
+          <td>Por Peça Trabalhada</td>
           <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
           <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
         </tr>
@@ -941,7 +1030,7 @@ function submitDiagnosis(e) {
     tipo_cliente: "Novo Cliente (Fila 20/11)",
     cliente_renovacao_nome: "-",
     timestamp: new Date().toLocaleString('pt-BR'),
-    categoria: "CLUBE S.O.S (Anuidade R$ 2.000)",
+    categoria: "CLUBE S.O.S (Anuidade R$ 2.500)",
     nome_cargo: document.getElementById('nome_cargo').value,
     nome_marca: document.getElementById('nome_marca').value,
     instagram: document.getElementById('instagram').value,
