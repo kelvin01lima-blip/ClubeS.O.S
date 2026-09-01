@@ -115,27 +115,21 @@ header {
   font-size: 0.85rem;
   margin-top: 10px;
   line-height: 1.4;
-  display: none;
+  display: block;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-@media (hover: hover) {
-  .type-btn-wrapper:hover .tooltip-info { display: block; }
-}
-@media (hover: none), (max-width: 768px) {
-  .tooltip-info { display: block !important; }
 }
 
 .grid-categories {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
   margin-bottom: 25px;
 }
 .cat-card {
   background: #f8fafc;
   border: 2px solid var(--border-color);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -152,13 +146,13 @@ header {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .badge {
   font-size: 0.75rem;
   background: var(--blue-accent);
   color: #fff;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-weight: bold;
 }
@@ -166,7 +160,7 @@ header {
   font-size: 0.75rem;
   background: var(--orange-primary);
   color: #fff;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-weight: bold;
 }
@@ -174,19 +168,19 @@ header {
   font-size: 0.75rem;
   background: var(--green-accent);
   color: #fff;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-weight: bold;
 }
-.cat-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--sidebar-dark); margin-bottom: 5px; }
-.cat-card p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 15px; }
+.cat-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--sidebar-dark); margin-bottom: 8px; }
+.cat-card p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
 .btn-detalhes {
   background: transparent;
   border: 1px dashed var(--blue-accent);
   color: var(--blue-accent);
-  padding: 6px 10px;
+  padding: 10px 14px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: bold;
   cursor: pointer;
   margin-top: auto;
@@ -284,6 +278,35 @@ header {
   color: #9a3412;
   line-height: 1.5;
 }
+.portal-box {
+  background: #f8fafc;
+  border: 2px solid var(--blue-accent);
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.portal-box h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--blue-accent);
+  font-size: 1rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.portal-box ul {
+  list-style: none;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+.portal-box ul li {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .btn-group { display: flex; gap: 15px; margin-top: 25px; }
 .next-btn, .cta-btn {
   width: 100%;
@@ -329,7 +352,7 @@ header {
 .modal-content {
   background: #fff;
   width: 100%;
-  max-width: 650px;
+  max-width: 750px;
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 12px;
@@ -350,7 +373,7 @@ header {
   width: 100%;
   border-collapse: collapse;
   margin: 15px 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 .modal-body th, .modal-body td {
   border: 1px solid var(--border-color);
@@ -381,6 +404,31 @@ header {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+.ia-sample-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+.ia-sample-card {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.ia-sample-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.ia-sample-card span {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--sidebar-dark);
 }
 .success-box { text-align: center; padding: 40px 20px; }
 .success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--orange-primary); font-size: 1.8rem; margin-bottom: 15px; }
@@ -414,21 +462,21 @@ footer span {
 <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 600;">Escolha a opção correspondente para acessar as condições de adesão:</p>
 <div class="grid-options">
 <div class="type-btn-wrapper">
-<div class="type-btn" onclick="startFlow('NOVO')">
-<h3>CLIENTE NOVO</h3>
-<p>Abertura de Vagas Oficiais de Entrada</p>
+<div class="type-btn" onclick="startFlow('RENOVACAO')">
+<h3>JÁ SOU PARCEIRO S.O.S</h3>
+<p>Abertura das Vagas Exclusivas de Renovação</p>
 </div>
 <div class="tooltip-info">
-<strong>Novas marcas e fabricantes:</strong> Aplicação para novas marcas que desejam terceirizar a esteira operacional com o Clube S.O.S.
+<strong>Abertura em 10/10:</strong> Prioridade garantida para parceiros ativos garantirem a renovação do seu contrato anual.
 </div>
 </div>
 <div class="type-btn-wrapper">
-<div class="type-btn" onclick="startFlow('RENOVACAO')">
-<h3>JÁ SOU PARCEIRO S.O.S</h3>
-<p>Área Exclusiva de Renovação</p>
+<div class="type-btn" onclick="startFlow('NOVO')">
+<h3>NOVO CLIENTE</h3>
+<p>Abertura Geral das Vagas Remanescentes</p>
 </div>
 <div class="tooltip-info">
-<strong>Clientes Ativos:</strong> Área para parceiros garantirem sua renovação com condições especiais e reserva de vaga garantida.
+<strong>Abertura oficial em 20/11:</strong> Inscrição para novas marcas ocuparem as vagas que restarem das 15 vagas oficiais do Clube.
 </div>
 </div>
 </div>
@@ -460,68 +508,47 @@ footer span {
 </div>
 <div class="btn-group">
 <button type="button" class="back-btn" onclick="goToStep(0)">&lt; VOLTAR</button>
-<button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR CATEGORIA &rarr;</button>
+<button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR FRANSIQUIA &rarr;</button>
 </div>
 </section>
 
-<!-- PASSO 2: CATEGORIAS DO CLUBE -->
+<!-- PASSO 2: FRANQUIA CLUBE S.O.S -->
 <section class="card hidden" id="step-cat">
-<h2><span class="step-num" id="cat-step-num">02</span> Selecione a Categoria do Clube S.O.S</h2>
-<div class="info-box">
- <strong>Escala Comercial S.O.S:</strong> Escolha a franquia ideal para a escala do seu negócio. Clique em <strong>"Ver Detalhes e Regras"</strong> para visualizar a tabela de valores por serviço e regras de operação.
+<h2><span class="step-num" id="cat-step-num">02</span> Franquia Operacional CLUBE S.O.S</h2>
+<div id="infoBoxNovo" class="info-box">
+ <strong>Abertura de Vagas (20/11):</strong> São apenas <strong>15 vagas no total</strong> para o Clube S.O.S. Os novos clientes ocuparão as vagas remanescentes após o período exclusivo de renovação dos parceiros ativos.
 </div>
 <div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
-<strong>CONDIÇÃO DE RENOVAÇÃO ATIVADA:</strong> Tabela especial de serviços e anuidade de renovação com vaga garantida!
+<strong>Abertura Exclusiva de Renovação (10/10):</strong> Garanta a renovação da sua marca na bancada com prioridade de vaga antes da abertura para novos clientes!
 </div>
+
+<!-- PORTAL DO CLIENTE DESTAQUE -->
+<div class="portal-box">
+  <h4>💻 PORTAL DO CLIENTE S.O.S (GESTÃO COMPLETA)</h4>
+  <ul>
+    <li>🔹 <strong>Acesso Exclusivo por Login e Senha:</strong> Plataforma própria para acompanhar a jornada do seu produto.</li>
+    <li>🔹 <strong>Rastreamento de Lotes:</strong> Saiba exatamente em qual etapa seu lote está (Separação, Foto, CDE, Encarte, etc.).</li>
+    <li>🔹 <strong>Calendário & Agendamento:</strong> Programe o envio dos lotes e cadastre antecipadamente a mercadoria que chegará à bancada.</li>
+    <li>🔹 <strong>Relatórios Mensais de Inteligência:</strong> Dados estratégicos do seu volume movimentado e performance operacional.</li>
+  </ul>
+</div>
+
 <div class="grid-categories">
-<!-- CARD SIMPLES -->
-<div class="cat-card" id="card-simples" onclick="selectCategory('SIMPLES (Até 3kg/mês)', this)">
+<!-- CARD UNICO DO CLUBE -->
+<div class="cat-card active" id="card-clube" onclick="selectCategory('CLUBE S.O.S', this)">
 <div class="cat-badge-container">
-<span class="badge">Até 3kg/mês</span>
-<span class="badge-vagas" id="vagas-simples">2 Vagas</span>
-<span class="badge-discount" id="discount-simples">7% OFF</span>
+<span class="badge">Anuidade R$ 2.000,00</span>
+<span class="badge-vagas" id="badge-vagas-texto">15 Vagas Totais</span>
+<span class="badge-discount" id="badge-desconto-texto">Desconto por Volume (>600 peças)</span>
 </div>
-<h3>SIMPLES</h3>
-<p>Porta de entrada acessível para estruturação inicial do fluxo operacional.</p>
-<button type="button" class="btn-detalhes" onclick="openModal('simples', event)">Ver Detalhes e Regras</button>
-</div>
-<!-- CARD PRATA -->
-<div class="cat-card active" id="card-prata" onclick="selectCategory('PRATA (Até 5kg/mês)', this)">
-<div class="cat-badge-container">
-<span class="badge">Até 5kg/mês</span>
-<span class="badge-vagas" id="vagas-prata">4 Vagas</span>
-<span class="badge-discount" id="discount-prata">10% OFF</span>
-</div>
-<h3>PRATA</h3>
-<p>Para marcas em crescimento com demanda contínua de lotes.</p>
-<button type="button" class="btn-detalhes" onclick="openModal('prata', event)">Ver Detalhes e Regras</button>
-</div>
-<!-- CARD OURO -->
-<div class="cat-card" id="card-ouro" onclick="selectCategory('OURO (Até 10kg/mês)', this)">
-<div class="cat-badge-container">
-<span class="badge">Até 10kg/mês</span>
-<span class="badge-vagas" id="vagas-ouro">3 Vagas</span>
-<span class="badge-discount" id="discount-ouro">12% OFF</span>
-</div>
-<h3>OURO</h3>
-<p>Para operações consolidadas com lançamentos e alto volume de peças.</p>
-<button type="button" class="btn-detalhes" onclick="openModal('ouro', event)">Ver Detalhes e Regras</button>
-</div>
-<!-- CARD DIAMANTE -->
-<div class="cat-card" id="card-diamante" onclick="selectCategory('DIAMANTE (Até 20kg/mês)', this)">
-<div class="cat-badge-container">
-<span class="badge">Até 20kg/mês</span>
-<span class="badge-vagas" id="vagas-diamante">3 Vagas</span>
-<span class="badge-discount" id="discount-diamante">15% OFF</span>
-</div>
-<h3>DIAMANTE</h3>
-<p>Escala máxima para atacadistas e indústrias com menor tarifa unitária.</p>
-<button type="button" class="btn-detalhes" onclick="openModal('diamante', event)">Ver Detalhes e Regras</button>
+<h3>MEMBRO CLUBE S.O.S</h3>
+<p>Terceirização completa da bancada operacional. Prazos escalonados por volume, gerenciamento total de insumos, tecnologia de IA fotográfica e sistema exclusivo de acompanhamento.</p>
+<button type="button" class="btn-detalhes" onclick="openModal('clube', event)">Ver Detalhes, Valores, Prazos e Regras</button>
 </div>
 </div>
 <div class="btn-group">
 <button type="button" class="back-btn" onclick="goBackFromCat()">&lt; VOLTAR</button>
-<button type="button" class="next-btn" onclick="handleCatNext()">AVANÇAR COM A CATEGORIA SELECIONADA &rarr;</button>
+<button type="button" class="next-btn" onclick="handleCatNext()">AVANÇAR COM A SELEÇÃO &rarr;</button>
 </div>
 </section>
 
@@ -529,7 +556,7 @@ footer span {
 <section class="card hidden" id="step-diag">
 <h2><span class="step-num">03</span> Diagnóstico Operacional da Marca</h2>
 <div class="manifesto-box">
-<strong>Compromisso S.O.S:</strong> Nosso foco é organizar e dar padrão à sua operação. Preencha as informações abaixo para alinharmos a entrada da sua marca na bancada.
+<strong>Fila de Espera para Abertura em 20/11:</strong> Preencha os dados abaixo para cadastrar sua marca na lista oficial de aplicação. As vagas remanescentes das 15 vagas totais serão liberadas por ordem de análise.
 </div>
 <form id="quizForm" onsubmit="submitDiagnosis(event)">
 <div class="form-grid">
@@ -582,9 +609,9 @@ footer span {
 <div class="form-group full-width">
 <label>Quais são os principais gargalos e desafios operacionais hoje?</label>
 <div class="checkbox-group">
-<label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência de banho</label>
+<label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência pós-banho</label>
 <label><input type="checkbox" name="gargalos" value="Demora para fotografar e cadastrar"> Demora para fotografar e publicar catálogo</label>
-<label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Dificuldades na precificação e ficha técnica (CDE)</label>
+<label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Dificuldades no Cadastro do Produto e Custo do Banho (CDI/CDE)</label>
 <label><input type="checkbox" name="gargalos" value="Falta de equipe técnica na montagem/cravação"> Falta de equipe para montagem, cravação e colagem</label>
 <label><input type="checkbox" name="gargalos" value="Atraso nas entregas finais"> Peças com defeito chegando às revendedoras/clientes</label>
 </div>
@@ -593,28 +620,28 @@ footer span {
 <label>Quais soluções do CLUBE S.O.S sua marca mais precisa no momento?</label>
 <div class="checkbox-group">
 <label>
-  <input type="checkbox" name="solucoes" value="Inspeção Operacional"> 
-  Inspeção Operacional Obrigatória (Filtro de Qualidade + Separação + CDI)
+  <input type="checkbox" name="solucoes" value="Inspeção Operacional Completa"> 
+  Triagem Técnica Inicial (Separação + Filtro de Qualidade + CDI)
   <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('inspecao')">ℹ️ Ver Detalhes</button>
 </label>
 <label>
-  <input type="checkbox" name="solucoes" value="Fotografia de Catálogo"> 
-  Fotografia Profissional de Catálogo
+  <input type="checkbox" name="solucoes" value="Fotografia de Catálogo e IA"> 
+  Fotografia Profissional (Still / Cenário / Adicional de IA)
   <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('foto')">ℹ️ Ver Detalhes</button>
 </label>
 <label>
-  <input type="checkbox" name="solucoes" value="CDE (Cadastro e Precificação)"> 
-  CDE (Cadastro do Produto e Precificação)
+  <input type="checkbox" name="solucoes" value="CDE (Cadastro Direto no Sistema)"> 
+  CDE (Cadastro no Sistema/Site do Cliente e Precificação)
   <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cde')">ℹ️ Ver Detalhes</button>
 </label>
 <label>
   <input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> 
-  Etiquetagem e Encartelamento
+  Etiquetagem e Encartelamento (Tags e Saquinhos)
   <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('etiqueta_encarte')">ℹ️ Ver Detalhes</button>
 </label>
 <label>
   <input type="checkbox" name="solucoes" value="Cravação, Colagem e Montagem"> 
-  Cravação, Colagem e Montagem
+  Cravação, Colagem e Montagem (Gestão de Insumos)
   <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cravacao_montagem')">ℹ️ Ver Detalhes</button>
 </label>
 </div>
@@ -626,21 +653,21 @@ footer span {
 </div>
 <div class="btn-group">
 <button type="button" class="back-btn" onclick="goToStep('cat')">&lt; VOLTAR</button>
-<button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO PARA ANÁLISE &rarr;</button>
+<button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO PARA FILA DE ESPERA &rarr;</button>
 </div>
 </form>
 </section>
 
 <!-- PASSO FINAL DE RENOVAÇÃO -->
 <section class="card hidden" id="step-renovacao-confirm">
-<h2><span class="step-num">03</span> Confirmar Solicitação de Renovação</h2>
+<h2><span class="step-num">03</span> Confirmar Renovação de Vaga Exclusiva</h2>
 <div class="form-group full-width">
-<label>Confirme o seu WhatsApp com DDD para envio da proposta de renovação:*</label>
+<label>Confirme o seu WhatsApp com DDD para envio do contrato de renovação:*</label>
 <input type="tel" id="whatsapp_renovacao" placeholder="(00) 00000-0000" required>
 </div>
 <div class="btn-group">
 <button type="button" class="back-btn" onclick="goToStep('cat')">&lt; VOLTAR</button>
-<button type="button" class="cta-btn" id="submitRenovacaoBtn" onclick="submitRenovacaoDirect()">FINALIZAR RENOVAÇÃO &rarr;</button>
+<button type="button" class="cta-btn" id="submitRenovacaoBtn" onclick="submitRenovacaoDirect()">GARANTIR RENOVAÇÃO DA VAGA &rarr;</button>
 </div>
 </section>
 
@@ -648,9 +675,9 @@ footer span {
 <section class="card hidden" id="step-success">
 <div class="success-box">
 <h3 id="successTitle">SOLICITAÇÃO RECEBIDA!</h3>
-<p id="successMessage">O perfil da sua marca foi registrado com sucesso em nosso sistema.</p>
+<p id="successMessage">Os dados da sua marca foram registrados com sucesso em nosso sistema.</p>
 <br>
-<p style="color: var(--sidebar-dark); font-weight: bold;">Nossa equipe analisará os seus dados e entrará em contato via WhatsApp em breve!</p>
+<p style="color: var(--sidebar-dark); font-weight: bold;">Nossa equipe entrará em contato via WhatsApp para prosseguir com a validação!</p>
 </div>
 </section>
 </main>
@@ -660,11 +687,11 @@ Feito e criado por <span>Kelvin Lima - CEO S.O.S</span> | Todos os direitos rese
 </footer>
 </div>
 
-<!-- MODAL FLUTUANTE DE REGRAS E PREÇOS DAS CATEGORIAS -->
+<!-- MODAL FLUTUANTE DE REGRAS E PREÇOS -->
 <div class="modal-overlay hidden" id="categoryModal">
 <div class="modal-content">
 <div class="modal-header">
-<h3 id="modalTitle">Detalhes da Categoria</h3>
+<h3 id="modalTitle">Detalhes e Tabela de Valores</h3>
 <button class="close-modal" onclick="closeModal()">&times;</button>
 </div>
 <div class="modal-body" id="modalBody">
@@ -674,55 +701,74 @@ Feito e criado por <span>Kelvin Lima - CEO S.O.S</span> | Todos os direitos rese
 </div>
 
 <script>
-let userType = "NOVO";
-let currentPlan = "PRATA (Até 5kg/mês)";
+let userType = "RENOVACAO";
+let currentPlan = "CLUBE S.O.S";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKKDE_CS-Du-JuDXDULTpidilKtbRFKIsceubELzn-7KunYLx2/exec";
 
-// EXPLICAÇÕES DETALHADAS DOS SERVIÇOS
+// DETALHAMENTO DOS SERVIÇOS
 const servicosExplicacao = {
   inspecao: {
-    titulo: "🔍 Inspeção Operacional (Separação + Inspeção + CDI)",
+    titulo: "🔍 Triagem Técnica Inicial (Separação + Filtro + CDI)",
     descricao: `
-      <p style="margin-bottom: 12px; color: var(--text-dark);"><strong>A esteira de entrada do Clube S.O.S.</strong> Ao selecionar este item, sua operação conta com três etapas integradas:</p>
+      <p style="margin-bottom: 12px; color: var(--text-dark); line-height: 1.5;"><strong>Esteira de entrada padrão e obrigatória da bancada.</strong> Garantia de alinhamento físico e técnico antes do início da produção:</p>
       
       <div style="background: #f8fafc; border-left: 4px solid var(--orange-primary); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
-        <strong>1. Separação Técnica:</strong><br>
-        Conferência e separação por lotes para garantir organização e agilidade do processo.
+        <strong>1. Separação Técnica de Romaneio:</strong><br>
+        Triagem inicial minuciosa peça por peça, confrontando fisicamente o lote com a nota/romaneio de envio para garantir conferência de peças, códigos e modelos antes do início da produção.
       </div>
       
       <div style="background: #f8fafc; border-left: 4px solid var(--blue-accent); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
-        <strong>2. Inspeção Físico-Visual:</strong><br>
-        Filtro de qualidade pós-banho para identificar imperfeições antes de enviar as peças aos seus clientes.
+        <strong>2. Inspeção Físico-Visual de Qualidade:</strong><br>
+        Diagnóstico rigoroso pós-banho com filtro contra trincas, falhas de camada, manchas de oxidação, excessos ou imperfeições de montagem, impedindo que peças defeituosas cheguem à sua marca.
       </div>
 
       <div style="background: #f0fdf4; border-left: 4px solid var(--green-accent); padding: 12px; border-radius: 6px; font-size: 0.88rem; line-height: 1.5; color: #166534;">
         <strong>3. CDI (Cadastro de Dados de Entrada):</strong><br>
-        Mapeamento de dados de entrada da peça no sistema (peso, banho e especificações).
+        Mapeamento analítico e técnico do produto bruto: registro de pesos precisos, fornecedores, precificação de base e cálculo detalhado do custo real do banho aplicado (ouro, prata, paládio).
       </div>
     `
   },
   foto: {
-    titulo: "📸 Fotografia Profissional de Catálogo",
+    titulo: "📸 Fotografia Profissional & Inteligência Artificial",
     descricao: `
-      <p style="color: var(--text-dark); line-height: 1.5;">Fotos padrão catálogo por modelo (SKU), destacando os detalhes do produto para e-commerce e redes sociais.</p>
+      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 12px;">Produção em estúdio técnico estilo Still ou com cenário padrão para catálogo, e-commerce e redes sociais.</p>
+      
+      <div style="background: #f0f9ff; border: 1px solid var(--blue-accent); padding: 12px; border-radius: 8px; font-size: 0.88rem; color: #0369a1; line-height: 1.5;">
+        <strong>✨ Adicional de IA (+ R$ 1,00 por foto):</strong><br>
+        Tratamento com Inteligência Artificial de extrema qualidade para imagens ultra editadas e/ou inserção de modelos virtuais hiper-realistas. O cliente avisa previamente quais peças deseja com esse acabamento especial.
+      </div>
+
+      <div class="ia-sample-grid">
+        <div class="ia-sample-card">
+          <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400" alt="Exemplo Foto Still">
+          <span>Foto Still / Cenário Profissional</span>
+        </div>
+        <div class="ia-sample-card">
+          <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400" alt="Exemplo Foto com IA">
+          <span>Tratamento Ultra Editado & IA</span>
+        </div>
+      </div>
     `
   },
   cde: {
-    titulo: "📋 CDE (Cadastro de Produto e Precificação)",
+    titulo: "💻 CDE (Cadastro de Produtos Direto no Sistema do Cliente)",
     descricao: `
-      <p style="color: var(--text-dark); line-height: 1.5;">Cadastro técnico com precificação por modelo (SKU) pronto para alimentação de ERP/sistema de vendas.</p>
+      <p style="color: var(--text-dark); line-height: 1.5;">Cadastro completo realizado diretamente no sistema ERP ou e-commerce do cliente. Inclui parametrização customizada de dados, regra de precificação de margem e vinculação das fotos tratadas, com nosso setor de cadastro inteiramente à disposição.</p>
     `
   },
   etiqueta_encarte: {
-    titulo: "🏷️ Etiquetagem e Encartelamento",
+    titulo: "🏷️ Etiquetagem & Encartelamento Completo",
     descricao: `
-      <p style="color: var(--text-dark); line-height: 1.5;">Impressão e fixação de etiquetas de código de barras/preço e fixação do produto na cartela da marca.</p>
+      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Etiquetagem:</strong> Emissão e impressão técnica das etiquetas térmicas com código de barras, SKU e preço.</p>
+      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Encartelamento:</strong> Fixação das peças nas cartelas/tags próprias da sua marca e embalagem em saquinhos plásticos protetores selados (o cliente envia seus modelos de embalagem como referência).</p>
     `
   },
   cravacao_montagem: {
-    titulo: "💎 Cravação, Colagem e Montagem",
+    titulo: "💎 Cravação, Colagem & Montagem (Gestão de Insumos)",
     descricao: `
-      <p style="color: var(--text-dark); line-height: 1.5;">Serviços de montagem de correntes e fechos, cravação de pedras e colagens de acabamento pós-banho.</p>
+      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Gestão de Insumos S.O.S:</strong> A S.O.S gerencia o estoque de insumos dos clientes para máxima eficiência na bancada.</p>
+      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Cravação & Colagem:</strong> Execução técnica pós-banho. A S.O.S fornece alguns tamanhos de pedras sem custo adicional (caso não haja estoque da medida específica, o cliente envia as pedras necessárias).</p>
+      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Montagem:</strong> Junção de correntes, fechos e pingentes utilizando argolinhas do nosso estoque próprio, cobrado por unidade montada.</p>
     `
   }
 };
@@ -735,164 +781,23 @@ function abrirDetalhesServico(chave) {
   document.getElementById('categoryModal').classList.remove('hidden');
 }
 
-const catDetails = {
-  simples: {
-    title: "CATEGORIA SIMPLES (Até 3kg/mês)",
-    descricao: "Ideal para marcas em fase inicial organizando os primeiros fluxos operacionais.",
-    prazos: "• Prazos definidos conforme agendamento e volume do lote.",
-    relatorios: "• Relatórios operacionais por lote disponibilizados no sistema.",
-    anuidadeNovo: 1299.00,
-    anuidadeRenovacao: 1199.00,
-    descNovoTexto: "7%",
-    descRenovacaoTexto: "15%",
-    precosNovo: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,83" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,22" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,71" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,32" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,65" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,83" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,71" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,65" }
-    ],
-    precosRenovacao: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,03" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,47" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,29" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,65" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" }
-    ]
-  },
-  prata: {
-    title: "CATEGORIA PRATA (Até 5kg/mês)",
-    descricao: "Para marcas em ritmo constante de expansão e envio contínuo.",
-    prazos: "• Prazos de processamento ajustados conforme volume e variedade do lote.",
-    relatorios: "• Acompanhamento por lote e relatórios periódicos de volume.",
-    anuidadeNovo: 2199.00,
-    anuidadeRenovacao: 1999.00,
-    descNovoTexto: "10%",
-    descRenovacaoTexto: "20%",
-    precosNovo: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,80" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,15" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,62" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,31" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,63" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,80" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,68" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,63" }
-    ],
-    precosRenovacao: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,71" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,91" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,33" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,27" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,56" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,71" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,61" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,56" }
-    ]
-  },
-  ouro: {
-    title: "CATEGORIA OURO (Até 10kg/mês)",
-    descricao: "Para marcas consolidadas com alto giro de estoque e lançamentos recorrentes.",
-    prazos: "• Prazos otimizados com prioridade na bancada operacional.",
-    relatorios: "• Acompanhamento detalhado do fluxo de bancada e lançamentos.",
-    anuidadeNovo: 2599.00,
-    anuidadeRenovacao: 2299.00,
-    descNovoTexto: "12%",
-    descRenovacaoTexto: "22%",
-    precosNovo: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,78" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,10" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,56" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,30" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,62" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,78" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,67" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,62" }
-    ],
-    precosRenovacao: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,86" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,27" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,27" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,55" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,69" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,59" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,55" }
-    ]
-  },
-  diamante: {
-    title: "CATEGORIA DIAMANTE (Até 20kg/mês)",
-    descricao: "Escala total para indústrias e grandes marcas do mercado atacadista.",
-    prazos: "• Prazos e fluxo produtivo dedicados de acordo com demanda do cliente.",
-    relatorios: "• Relatórios consolidados e inteligência operacional completa.",
-    anuidadeNovo: 3199.00,
-    anuidadeRenovacao: 2999.00,
-    descNovoTexto: "15%",
-    descRenovacaoTexto: "25%",
-    precosNovo: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 2,03" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,47" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,29" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,76" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,65" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,60" }
-    ],
-    precosRenovacao: [
-      { srv: "Inspeção Operacional", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,67" },
-      { srv: "Fotografia de Catálogo", tipo: "Por Modelo", precoCheio: "R$ 2,39", precoDesc: "R$ 1,79" },
-      { srv: "CDE (Cadastro e Precificação)", tipo: "Por Modelo", precoCheio: "R$ 2,91", precoDesc: "R$ 2,18" },
-      { srv: "Etiqueta", tipo: "Por Peça", precoCheio: "R$ 0,34", precoDesc: "R$ 0,26" },
-      { srv: "Encarte", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,53" },
-      { srv: "Cravação", tipo: "Por Peça", precoCheio: "R$ 0,89", precoDesc: "R$ 0,67" },
-      { srv: "Colagem", tipo: "Por Peça", precoCheio: "R$ 0,76", precoDesc: "R$ 0,57" },
-      { srv: "Montagem", tipo: "Por Peça", precoCheio: "R$ 0,70", precoDesc: "R$ 0,53" }
-    ]
-  }
-};
-
 function startFlow(type) {
   userType = type;
-  const cardSimples = document.getElementById('card-simples');
-  const vagasSimples = document.getElementById('vagas-simples');
-  const discountSimples = document.getElementById('discount-simples');
-  const vagasPrata = document.getElementById('vagas-prata');
-  const discountPrata = document.getElementById('discount-prata');
-  const vagasOuro = document.getElementById('vagas-ouro');
-  const discountOuro = document.getElementById('discount-ouro');
-  const vagasDiamante = document.getElementById('vagas-diamante');
-  const discountDiamante = document.getElementById('discount-diamante');
+  const infoBoxNovo = document.getElementById('infoBoxNovo');
+  const discountBanner = document.getElementById('discountBanner');
+  const badgeVagas = document.getElementById('badge-vagas-texto');
 
   if (type === 'NOVO') {
     document.getElementById('cat-step-num').innerText = "02";
-    document.getElementById('discountBanner').classList.add('hidden');
-    cardSimples.classList.remove('hidden');
-    vagasSimples.innerText = "2 Vagas";
-    discountSimples.innerText = "7% OFF";
-    vagasPrata.innerText = "4 Vagas";
-    discountPrata.innerText = "10% OFF";
-    vagasOuro.innerText = "3 Vagas";
-    discountOuro.innerText = "12% OFF";
-    vagasDiamante.innerText = "3 Vagas";
-    discountDiamante.innerText = "15% OFF";
+    infoBoxNovo.classList.remove('hidden');
+    discountBanner.classList.add('hidden');
+    badgeVagas.innerText = "Vagas Remanescentes (Abertura 20/11)";
     goToStep('cat');
   } else {
     document.getElementById('cat-step-num').innerText = "03";
-    document.getElementById('discountBanner').classList.remove('hidden');
-    cardSimples.classList.add('hidden');
-    vagasPrata.innerText = "Vaga Garantida";
-    discountPrata.innerText = "20% OFF";
-    vagasOuro.innerText = "Vaga Garantida";
-    discountOuro.innerText = "22% OFF";
-    vagasDiamante.innerText = "Vaga Garantida";
-    discountDiamante.innerText = "25% OFF";
+    infoBoxNovo.classList.add('hidden');
+    discountBanner.classList.remove('hidden');
+    badgeVagas.innerText = "Prioridade de Renovação (Abertura 10/10)";
     goToStep('renovacao');
   }
 }
@@ -917,74 +822,81 @@ function selectCategory(planName, element) {
 
 function openModal(catKey, event) {
   event.stopPropagation();
-  const data = catDetails[catKey];
-  document.getElementById('modalTitle').innerText = data.title;
-  const listaPrecos = (userType === 'RENOVACAO') ? data.precosRenovacao : data.precosNovo;
-  const descPct = (userType === 'RENOVACAO') ? data.descRenovacaoTexto : data.descNovoTexto;
-  const labelDesconto = (userType === 'RENOVACAO') ? "Preço Serviços Renovação" : "Preço Serviços Novo Cliente";
-
-  let tableRows = listaPrecos.map(p => `
-    <tr>
-      <td><strong>${p.srv}</strong></td>
-      <td>${p.tipo}</td>
-      <td style="color: var(--text-muted); text-decoration: line-through;">${p.precoCheio}</td>
-      <td style="color: var(--orange-primary); font-weight: bold;">${p.precoDesc}</td>
-    </tr>
-  `).join('');
-
-  let htmlPagamento = '';
-  if (userType === 'RENOVACAO') {
-    const valorAnuidade = data.anuidadeRenovacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    htmlPagamento = `
-      <div class="price-card-box">
-        <h4>VALOR DA ANUIDADE & CONDIÇÕES (RENOVAÇÃO)</h4>
-        <ul>
-          <li><strong>Valor Exclusivo de Renovação:</strong> ${valorAnuidade}</li>
-          <li><strong>Parcelamento:</strong> Condições no cartão disponíveis sob consulta.</li>
-          <li><strong>Desconto nos Serviços:</strong> ${descPct} de desconto em todas as tabelas operacionais.</li>
-        </ul>
-      </div>
-    `;
-  } else {
-    const valorAnuidade = data.anuidadeNovo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    htmlPagamento = `
-      <div class="price-card-box">
-        <h4>VALOR DA ANUIDADE & CONDIÇÕES (CLIENTE NOVO)</h4>
-        <ul>
-          <li><strong>Valor da Anuidade:</strong> ${valorAnuidade}</li>
-          <li><strong>Parcelamento:</strong> Condições no cartão disponíveis sob consulta.</li>
-          <li><strong>Desconto nos Serviços:</strong> ${descPct} de desconto no valor por peça e modelo.</li>
-        </ul>
-      </div>
-    `;
-  }
-
-  document.getElementById('modalBody').innerHTML = `
-    <p style="margin-bottom: 12px; color: var(--text-dark);">${data.descricao}</p>
-    ${htmlPagamento}
-    <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; line-height: 1.5;">
-      <strong>Agendamento e Produção:</strong><br>
-      ${data.prazos}
+  
+  let headerHtml = `
+    <div class="price-card-box">
+      <h4>ESTRUTURA DE REGRAS E PRAZOS DO CLUBE</h4>
+      <ul>
+        <li><strong>Anuidade:</strong> R$ 2.000,00</li>
+        <li><strong>Prazo - Até 600 peças (até 100 modelos):</strong> 8 dias úteis</li>
+        <li><strong>Prazo - De 601 a 1.000 peças:</strong> 10 dias úteis</li>
+        <li><strong>Prazo - Acima de 1.000 peças:</strong> 13 dias úteis</li>
+        <li><strong>Gestão de Insumos:</strong> Controle total de estoque de tags, sacos e argolinhas na bancada S.O.S</li>
+      </ul>
     </div>
-    <div style="background: #f0fdf4; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #166534; font-size: 0.85rem;">
-      <strong>Relatórios e Gestão:</strong><br>${data.relatorios}
-    </div>
-    <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark);">TABELA DE PREÇOS POR SERVIÇO POR PEÇA/MODELO</h4>
+  `;
+
+  let tableHtml = `
+    <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark); margin-top: 15px;">TABELA DE VALORES POR SERVIÇO</h4>
     <table>
       <thead>
         <tr>
-          <th>Serviço</th>
+          <th>Serviço Operacional</th>
           <th>Métrica</th>
-          <th>Tabela Cheia</th>
-          <th>${labelDesconto} (${descPct})</th>
+          <th>Lote Até 600 peças</th>
+          <th>Lote Acima de 600 peças</th>
         </tr>
       </thead>
       <tbody>
-        ${tableRows}
+        <tr>
+          <td><strong>Triagem Técnica (Separação + Filtro + CDI)</strong></td>
+          <td>Por Peça</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,77</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
+        </tr>
+        <tr>
+          <td><strong>Fotografia Profissional (Still/Cenário)</strong></td>
+          <td>Por Foto</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 2,39</td>
+        </tr>
+        <tr>
+          <td><strong>CDE (Cadastro no Sistema/Site do Cliente)</strong></td>
+          <td>Por Cadastro</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 2,49</td>
+        </tr>
+        <tr>
+          <td><strong>Etiquetagem</strong></td>
+          <td>Por Peça</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,30</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,27</td>
+        </tr>
+        <tr>
+          <td><strong>Encartelamento (Tags em Saquinhos)</strong></td>
+          <td>Por Peça</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
+        </tr>
+        <tr>
+          <td><strong>Montagem de Peças</strong></td>
+          <td>Por Unidade</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,55</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,50</td>
+        </tr>
+        <tr>
+          <td><strong>Cravação ou Colagem Pós-Banho</strong></td>
+          <td>Por Peça</td>
+          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
+          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
+        </tr>
       </tbody>
     </table>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">* Adicional de Foto Ultra Editada com IA / Modelo Virtual: + R$ 1,00 por foto selecionada.</p>
   `;
 
+  document.getElementById('modalTitle').innerText = "CLUBE S.O.S - Regras, Prazos e Tabela de Valores";
+  document.getElementById('modalBody').innerHTML = headerHtml + tableHtml;
   document.getElementById('categoryModal').classList.remove('hidden');
 }
 
@@ -1026,10 +938,10 @@ function submitDiagnosis(e) {
   btn.disabled = true;
 
   const payload = {
-    tipo_cliente: "Cliente Novo",
+    tipo_cliente: "Novo Cliente (Fila 20/11)",
     cliente_renovacao_nome: "-",
     timestamp: new Date().toLocaleString('pt-BR'),
-    categoria: currentPlan,
+    categoria: "CLUBE S.O.S (Anuidade R$ 2.000)",
     nome_cargo: document.getElementById('nome_cargo').value,
     nome_marca: document.getElementById('nome_marca').value,
     instagram: document.getElementById('instagram').value,
@@ -1042,7 +954,7 @@ function submitDiagnosis(e) {
     whatsapp: document.getElementById('whatsapp').value
   };
 
-  sendToGoogle(payload, "Aplicação de Cliente Novo Registrada!");
+  sendToGoogle(payload, "Aplicação de Novo Cliente Registrada!");
 }
 
 function submitRenovacaoDirect() {
@@ -1056,10 +968,10 @@ function submitRenovacaoDirect() {
   btn.disabled = true;
 
   const payload = {
-    tipo_cliente: "Renovação Parceiro",
+    tipo_cliente: "Renovação Parceiro (Abertura 10/10)",
     cliente_renovacao_nome: document.getElementById('cliente_renovacao_nome').value,
     timestamp: new Date().toLocaleString('pt-BR'),
-    categoria: currentPlan,
+    categoria: "CLUBE S.O.S (Anuidade R$ 2.000)",
     nome_cargo: "Cliente Ativo",
     nome_marca: document.getElementById('cliente_renovacao_nome').value,
     instagram: "-",
@@ -1068,7 +980,7 @@ function submitRenovacaoDirect() {
     modelo_negocio: "-",
     volume_pecas: "-",
     gargalos: "Renovação de Contrato Anual",
-    solucoes: "Renovação de Plano com Desconto em Serviços",
+    solucoes: "Renovação de Vaga Exclusiva",
     whatsapp: wpp
   };
 
