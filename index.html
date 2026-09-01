@@ -172,6 +172,14 @@ header {
   border-radius: 4px;
   font-weight: bold;
 }
+.badge-minimo {
+  font-size: 0.75rem;
+  background: var(--sidebar-dark);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
 .cat-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--sidebar-dark); margin-bottom: 8px; }
 .cat-card p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
 .btn-detalhes {
@@ -572,6 +580,7 @@ footer span {
     <li>🔹 <strong>Acesso Exclusivo por Login e Senha:</strong> Plataforma própria para acompanhar a jornada do seu produto.</li>
     <li>🔹 <strong>Rastreamento de Lotes:</strong> Saiba exatamente em qual etapa seu lote está (Separação, Foto, CDE, Encarte, etc.).</li>
     <li>🔹 <strong>Calendário & Agendamento:</strong> Programe o envio dos lotes e cadastre antecipadamente a mercadoria que chegará à bancada.</li>
+    <li>🔹 <strong>Lote Mínimo Operacional:</strong> Lote mínimo de <strong>300 peças por envio</strong> para processamento na estrutura S.O.S.</li>
     <li>🔹 <strong>Relatórios Mensais de Inteligência:</strong> Dashboards operacionais com histórico de volume, rendimento do banho e métricas de produção.</li>
   </ul>
 </div>
@@ -582,10 +591,11 @@ footer span {
 <div class="cat-badge-container">
 <span class="badge" id="badge-anuidade-valor">Anuidade R$ 2.000,00</span>
 <span class="badge-vagas" id="badge-vagas-texto">15 Vagas Totais</span>
+<span class="badge-minimo">Lote Mínimo: 300 Pçs</span>
 <span class="badge-discount" id="badge-desconto-texto">Desconto por Volume (>600 peças)</span>
 </div>
 <h3>MEMBRO CLUBE S.O.S</h3>
-<p>Terceirização completa da bancada operacional. Prazos escalonados por volume, gerenciamento total de insumos (saquinhos, fechos, correntes, argolinhas, tags), IA fotográfica e portal exclusivo.</p>
+<p>Terceirização completa da bancada operacional (Lote mínimo: 300 peças). Prazos escalonados por volume, gerenciamento total de insumos (saquinhos, fechos, correntes, argolinhas, tags), IA fotográfica e portal exclusivo.</p>
 <button type="button" class="btn-detalhes" onclick="openModal('clube', event)">Ver Detalhes, Valores, Prazos e Regras</button>
 </div>
 </div>
@@ -640,10 +650,10 @@ footer span {
 </select>
 </div>
 <div class="form-group full-width">
-<label>Volume médio de peças movimentadas por mês:*</label>
+<label>Volume médio de peças movimentadas por mês:* (Lote Mínimo S.O.S = 300 pçs)</label>
 <select id="volume_pecas" required>
 <option value="">Selecione...</option>
-<option value="Até 500 peças/mês">Até 500 peças/mês</option>
+<option value="300 a 500 peças/mês">300 a 500 peças/mês</option>
 <option value="500 a 2.000 peças/mês">500 a 2.000 peças/mês</option>
 <option value="2.000 a 5.000 peças/mês">2.000 a 5.000 peças/mês</option>
 <option value="Mais de 5.000 peças/mês">Mais de 5.000 peças/mês</option>
@@ -790,7 +800,7 @@ const servicosExplicacao = {
     titulo: "🔍 Triagem Técnica Inicial (Separação + Filtro + CDI)",
     descricao: `
       <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Peça (R$ 0,77 / R$ 0,70)</p>
-      <p style="margin-bottom: 12px; color: var(--text-dark); line-height: 1.5;"><strong>Esteira de entrada padrão e obrigatória da bancada.</strong> Garantia de alinhamento físico e técnico antes do início da produção:</p>
+      <p style="margin-bottom: 12px; color: var(--text-dark); line-height: 1.5;"><strong>Esteira de entrada padrão e obrigatória da bancada.</strong> Garantia de alinhamento físico e técnico antes do início da produção (Lote mínimo: 300 peças):</p>
       
       <div style="background: #f8fafc; border-left: 4px solid var(--orange-primary); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
         <strong>1. Separação Técnica de Romaneio:</strong><br>
@@ -914,10 +924,11 @@ function openModal(catKey, event) {
 
   let headerHtml = `
     <div class="price-card-box">
-      <h4>ESTRUTURA DE REGRAS E PRAZOS DO CLUBE</h4>
+      <h4>ESTRUTURA DE REGRAS E PRAZOS DO CLUBE S.O.S</h4>
       <ul>
         <li><strong>Anuidade:</strong> ${valorAnuidade}</li>
-        <li><strong>Prazo - Até 600 peças (até 100 modelos):</strong> 8 dias úteis</li>
+        <li><strong>Lote Mínimo de Envio:</strong> 300 peças por lote para entrada e processamento na bancada.</li>
+        <li><strong>Prazo - De 300 a 600 peças (até 100 modelos):</strong> 8 dias úteis</li>
         <li><strong>Prazo - De 601 a 1.000 peças:</strong> 10 dias úteis</li>
         <li><strong>Prazo - Acima de 1.000 peças:</strong> 13 dias úteis</li>
         <li><strong>Gestão Completa de Insumos:</strong> Controle total de estoque de saquinhos, fechos, correntes, argolinhas, pedras e tags na bancada S.O.S</li>
