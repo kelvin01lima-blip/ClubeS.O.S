@@ -28,7 +28,6 @@
       min-height: 100vh; display: flex; flex-direction: column;
     }
 
-    /* TOP BAR & NAVBAR */
     .top-bar {
       background-color: var(--header-bg); border-bottom: 4px solid var(--orange-accent);
       padding: 16px 28px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center;
@@ -50,7 +49,6 @@
 
     .main-container { flex: 1; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-    /* CARD DE LOGIN */
     .login-wrapper {
       max-width: 450px; margin: 60px auto; background: var(--card-bg); padding: 32px;
       border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--orange-accent);
@@ -66,7 +64,6 @@
     }
     .tab-btn.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
 
-    /* COMPONENTES DOS PAINÉIS */
     .panel-card {
       background: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px;
     }
@@ -95,7 +92,6 @@
 
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-    /* CARDS DE CLIENTES E INSUMOS */
     .cards-grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 15px; }
     
     .card-item-click {
@@ -104,34 +100,11 @@
     }
     .card-item-click:hover { border-color: var(--orange-accent); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
 
-    .card-lote-critico { border-color: #EF4444 !important; background: #FEF2F2 !important; }
-
-    /* TABELA ESTOQUE PARCEIROS S.O.S (EXATA PLANILHA) */
-    table.tabela-estoque-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table.tabela-estoque-sos th, table.tabela-estoque-sos td {
+    table.tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    table.tabela-sos th, table.tabela-sos td {
       text-align: left; padding: 8px 12px; border: 1px solid #CBD5E1; font-size: 0.82rem;
     }
-    table.tabela-estoque-sos th { background-color: #F1F5F9; color: #0B132B; font-weight: bold; }
-
-    /* CALENDÁRIO */
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; text-align: center; }
-    .cal-day-head { font-weight: bold; font-size: 0.75rem; color: var(--text-muted); padding: 4px; }
-    .cal-day {
-      background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 4px; border-radius: 8px; font-size: 0.8rem;
-      cursor: pointer; font-weight: bold; min-height: 50px; display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .cal-day.indisponivel { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; border-color: #CBD5E1; }
-    .cal-day.selecionado { background: #D1FAE5; border-color: #10B981; color: #065F46; }
-
-    .modal-overlay {
-      display: none; position: fixed; top:0; left:0; width:100vw; height:100vh;
-      background: rgba(11, 19, 43, 0.88); z-index: 9990; justify-content: center; align-items: center;
-      padding: 20px;
-    }
-    .modal-card {
-      background: #fff; padding: 24px; border-radius: 20px; max-width: 750px; width: 100%;
-      max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
+    table.tabela-sos th { background-color: #F1F5F9; color: #0B132B; font-weight: bold; }
 
     .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
@@ -147,7 +120,7 @@
     </div>
     <div id="userBadgeArea" style="display:none;">
       <div class="user-profile-badge">
-        <span id="nomeUsuarioBadge">Kelvin Lima (Diretoria)</span>
+        <span id="nomeUsuarioBadge">Kelvin Lima & Brenda (Diretoria)</span>
         <button class="btn-logout" onclick="fazerLogout()">SAIR</button>
       </div>
     </div>
@@ -155,21 +128,21 @@
 
   <div class="main-container">
 
-    <!-- 0. TELA DE LOGIN / SELEÇÃO DE PERFIL COM FILTRAGEM RÍGIDA -->
+    <!-- 0. LOGIN -->
     <div id="loginScreen" class="login-wrapper">
       <h2>Acesso ao HUB S.O.S</h2>
       <p>Selecione seu perfil de acesso ao sistema:</p>
 
       <div class="tabs-perfil">
-        <div id="tabCliente" class="tab-btn active" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
+        <div id="tabCliente" class="tab-btn" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
         <div id="tabEquipe" class="tab-btn" onclick="selecionarPerfilAcesso('equipe')">COLABORADOR</div>
-        <div id="tabDiretoria" class="tab-btn" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
+        <div id="tabDiretoria" class="tab-btn active" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
       </div>
 
       <form onsubmit="autenticarUsuario(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Selecione o Usuário / Acesso</label>
         <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
-          <!-- Preenchido dinamicamente conforme a tab selecionada -->
+          <!-- Carregado via JS -->
         </select>
 
         <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
@@ -180,192 +153,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- 1. PAINEL DO COLABORADOR / BANCADA OPERACIONAL -->
-    <!-- ================================================================================= -->
-    <div id="painelEquipe" style="display:none;">
-      
-      <!-- LOTES APROVADOS & GANHARAM NÚMERO (#141 EM DIANTE) -->
-      <div class="panel-card" style="border-left: 6px solid var(--orange-accent);">
-        <h3>🚚 Lotes Aprovados na Fila de Trabalho (Com Romaneio PDF)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
-          Lotes que ganharam número oficial da diretoria e estão prontos para execução. Cards vermelhos indicam proximidade do limite de entrega!
-        </p>
-
-        <div class="cards-grid-3col" id="containerLotesAprovadosBancada">
-          <!-- Cards gerados via JS -->
-        </div>
-      </div>
-
-      <!-- GESTÃO DE INSUMOS ORGANIZADA EM CARDS POR CLIENTE (EXATA TABELA DA IMAGEM) -->
-      <div class="panel-card">
-        <h3>📦 Gestão do Estoque de Insumos por Cliente (Estoque Parceiros S.O.S)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Clique no card do cliente para abrir a planilha e dar entrada/saída:</p>
-
-        <div class="cards-grid-3col" id="containerCardsClientesEstoque">
-          <!-- Cards dos Clientes para Insumo -->
-        </div>
-      </div>
-
-      <!-- MURAL DE REUNIÕES & FEEDBACKS DA DIRETORIA -->
-      <div class="panel-card" style="border-left: 6px solid var(--blue-val);">
-        <h3>📌 Mural de Alinhamento da Diretoria & Reuniões</h3>
-        <div style="background:#F0F9FF; border:1px solid #BAE6FD; padding:12px; border-radius:10px; font-size:0.82rem; color:#0369A1;" id="boxMuralDiretoriaEquipe">
-          <strong>📢 Orientação de Kelvin Lima:</strong> "Equipe, favor atentar para a conferência de etiquetas Argox no setor de CDE/Etiquetagem para as marcas Niara e Velt."
-        </div>
-      </div>
-
-      <!-- CONSULTA DE MODELO DE ENCARTE POR CLIENTE E CATEGORIA DE JOIA -->
-      <div class="panel-card">
-        <h3>🎴 Consulta de Modelos de Encarte por Marca & Categoria</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Consulte como encartelar cada tipo de peça com foto frente e verso:</p>
-
-        <div class="grid-2col">
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Selecione o Cliente</label>
-            <select id="selectClienteEncarteConsult" class="form-control" onchange="carregarModelosEncarte()">
-              <option value="Niara Semijoias">Niara Semijoias</option>
-              <option value="Velt Joias">Velt Joias</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Selecione a Categoria da Peça</label>
-            <select id="selectCatEncarteConsult" class="form-control" onchange="exibirInstrucaoEncarte()">
-              <!-- Preenchido via JS -->
-            </select>
-          </div>
-        </div>
-
-        <div id="boxResultadoEncarteBancada" style="margin-top:12px; background:#F8FAFC; border:1px solid #CBD5E1; padding:14px; border-radius:10px; font-size:0.85rem;">
-          <!-- Detalhes do encarte -->
-        </div>
-      </div>
-
-      <!-- OS 7 SETORES COM PERGUNTAS / RESPOSTAS E FOTO DRIVE -->
-      <div class="panel-card">
-        <h3>📖 Manual Técnico dos 7 Setores Fabris S.O.S</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Clique no setor para ver as perguntas com imagens explicativas do Drive:</p>
-
-        <div class="cards-grid-3col">
-          <div class="card-item-click" onclick="abrirModalSetorManual('1. Entrada')"><strong>1. ENTRADA BRUTA</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('2. Inspeção (3 em 1)')"><strong>2. INSPEÇÃO (3 em 1)</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('3. Fotografia (Still / IA)')"><strong>3. FOTOGRAFIA</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('4. CDE (Catalogação)')"><strong>4. CDE</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('5. Etiquetagem')"><strong>5. ETIQUETAGEM</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('6. Encartelamento')"><strong>6. ENCARTE</strong></div>
-          <div class="card-item-click" onclick="abrirModalSetorManual('7. Finalização')"><strong>7. FINALIZAÇÃO</strong></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ================================================================================= -->
-    <!-- 2. PAINEL DO CLIENTE (PAINEL LIMPO E CARDS CLICÁVEIS) -->
-    <!-- ================================================================================= -->
-    <div id="painelCliente" style="display:none;">
-      
-      <!-- AVISO GERAL DA DIRETORIA PARA O CLIENTE -->
-      <div id="boxAvisoEspecialDiretoria" class="panel-card" style="border-left:6px solid var(--gold-bright); background:#FFFDF0; display:none;">
-        <h4 style="margin:0 0 6px 0; color:#B45309;">📢 Comunicado Oficial S.O.S Soluções:</h4>
-        <div id="textoAvisoEspecialCliente" style="font-size:0.85rem; color:#78350F;"></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-header">
-          <div>
-            <h3 id="cliBoasVindas">Bem-vinda, Niara Semijoias!</h3>
-            <span style="font-size:0.8rem; color:var(--text-muted);">Cota Contratada: <strong id="cliCotaNome">VIP DIAMANTE (Até 1.500 pcs/mês)</strong></span>
-          </div>
-          <div><span class="badge-status badge-concluido">CONTRATO ATIVO 2027</span></div>
-        </div>
-
-        <div class="cards-grid-3col">
-          <div class="card-item-click">
-            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:bold;">COTA MENSAL UTILIZADA</span>
-            <h2 style="margin:6px 0; color:var(--header-bg);" id="cliCotaUso">350 / 1.500 pcs</h2>
-            <small style="font-size:0.7rem; color:var(--green-val); font-weight:bold;">Saldo disponível no mês</small>
-          </div>
-
-          <div class="card-item-click">
-            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:bold;">PRÓXIMO CASHBACK</span>
-            <h2 style="margin:6px 0; color:var(--green-val);" id="cliCashbackVal">R$ 250,00</h2>
-            <small style="font-size:0.7rem; color:var(--text-muted);">Liberado para abater em serviços</small>
-          </div>
-
-          <div class="card-item-click" onclick="abrirModalMeusLotesCliente()">
-            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:bold;">SEUS LOTES (ATIVOS & FINALIZADOS)</span>
-            <h2 style="margin:6px 0; color:var(--orange-accent);">Ver Meus Lotes ➔</h2>
-            <small style="font-size:0.7rem; color:var(--blue-val); font-weight:bold;">Clique para abrir a lista completa sem poluir a página</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2col">
-        <!-- AGENDAMENTO DE LOTE COM CONVERSOR E CALENDÁRIO LIMEIRA -->
-        <div class="panel-card">
-          <h3>📅 Agendar Envio de Mercadoria</h3>
-          
-          <form onsubmit="solicitarAgendamentoCliente(event)">
-            <label style="font-size:0.78rem; font-weight:bold;">Modo de Medição</label>
-            <select id="tipoMedicaoLote" class="form-control" onchange="alternarModoMedicao()">
-              <option value="qtd">Digitar Quantidade de Peças</option>
-              <option value="peso">Pesagem em Gramas (Calculadora de Peças)</option>
-            </select>
-
-            <div id="boxCalcPeso" style="display:none; background:#F0F9FF; border:1px solid #BAE6FD; padding:10px; border-radius:8px; margin-bottom:10px;">
-              <label style="font-size:0.75rem; font-weight:bold; color:#0369A1;">Peso em Gramas (g)</label>
-              <input type="number" id="inputPesoGrams" class="form-control" placeholder="Ex: 1120" oninput="calcularPcsPorPeso()">
-              <small style="font-size:0.72rem; color:#0284C7;">Fator Divisor Direção: <strong id="fatorDivisorTxt">3,2g por peça</strong></small>
-            </div>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Quantidade Média de Peças Estimada</label>
-            <input type="number" id="loteQtdPcsCalculada" class="form-control" required placeholder="Ex: 350" oninput="atualizarPrazoPrevisaoCli()">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Previsão Oficial de Entrega</label>
-            <input type="text" id="lotePrazoCalculadoCli" class="form-control" readonly value="8 dias úteis após recepção">
-
-            <!-- CALENDÁRIO COM FERIADOS LIMEIRA / SÁB / DOM BLOQUEADOS -->
-            <label style="font-size:0.78rem; font-weight:bold; margin-top:6px; display:block;">Selecione o Dia de Entrega (Limeira-SP)</label>
-            <div class="calendar-grid">
-              <div class="cal-day-head">DOM</div><div class="cal-day-head">SEG</div><div class="cal-day-head">TER</div>
-              <div class="cal-day-head">QUA</div><div class="cal-day-head">QUI</div><div class="cal-day-head">SEX</div><div class="cal-day-head">SÁB</div>
-
-              <div class="cal-day indisponivel">04<br><small>SÁB</small></div>
-              <div class="cal-day indisponivel">05<br><small>DOM</small></div>
-              <div class="cal-day" onclick="selecionarDiaCalendario(this, '06/10/2026')">06<br><small>SEG</small></div>
-              <div class="cal-day" onclick="selecionarDiaCalendario(this, '07/10/2026')">07<br><small>TER</small></div>
-              <div class="cal-day" onclick="selecionarDiaCalendario(this, '08/10/2026')">08<br><small>QUA</small></div>
-              <div class="cal-day" onclick="selecionarDiaCalendario(this, '09/10/2026')">09<br><small>QUI</small></div>
-              <div class="cal-day indisponivel">10<br><small>SÁB</small></div>
-            </div>
-            <input type="hidden" id="diaAgendadoSel">
-
-            <!-- ANEXAR PDF DO ROMANEIO -->
-            <label style="font-size:0.78rem; font-weight:bold; margin-top:12px; display:block;">Relatório do Lote (PDF ou Impresso)</label>
-            <select id="tipoEnvioPdf" class="form-control" onchange="alternarCampoPdf()">
-              <option value="pdf">Anexar PDF do Romaneio (Salva no Drive)</option>
-              <option value="impresso">Relatório Impresso Físico na Caixa</option>
-            </select>
-            <input type="file" id="arquivoPdfAnexo" class="form-control" accept=".pdf">
-
-            <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">ENVIAR AGENDAMENTO PARA APROVAÇÃO</button>
-          </form>
-        </div>
-
-        <!-- VISÃO DE INSUMOS DO CLIENTE (APENAS LEITURA) -->
-        <div class="panel-card">
-          <h3>📦 Seu Estoque de Insumos na S.O.S</h3>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Resumo dos seus materiais armazenados no HUB:</p>
-
-          <div id="containerInsumosVisualCliente">
-            <!-- Tabela dinamicamente alimentada -->
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ================================================================================= -->
-    <!-- 3. PAINEL DA DIRETORIA (KELVIN & BRENDA - CONTROLE ABSOLUTO) -->
+    <!-- ÁREA DA DIRETORIA (KELVIN LIMA & BRENDA - REFORMULADA) -->
     <!-- ================================================================================= -->
     <div id="painelDiretoria" style="display:none;">
       
@@ -373,226 +161,271 @@
         <div class="panel-header">
           <div>
             <h3 style="color:#B45309; margin:0;">👑 DIRETORIA GENERAL — KELVIN LIMA & BRENDA</h3>
-            <span style="font-size:0.8rem; color:#78350F;">Aprovações, parâmetros, criação de insumos, permissões e modelos de encarte.</span>
+            <span style="font-size:0.8rem; color:#78350F;">Gestão de agendamentos em 2 etapas, avisos segmentados, clientes, colaboradores e insumos.</span>
           </div>
         </div>
       </div>
 
-      <!-- APROVAÇÃO DE AGENDAMENTOS PENDENTES COM RECUSA E CRIAÇÃO DO NÚMERO DO LOTE -->
+      <!-- 1. GESTÃO DE AGENDAMENTOS E ENTRADA DE LOTES (2 ETAPAS) -->
       <div class="panel-card">
-        <h3>⚡ Agendamentos Pendentes de Aprovação (Lote só ganha número aqui)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Analise a solicitação do cliente antes de gerar o número do lote:</p>
+        <h3>⚡ Agendamentos Solicitados pelos Clientes (Aprovação em 2 Etapas)</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+          Primeiro aceite a entrada. Quando a mercadoria chegar fisicamente, confirme a chegada e atribua o número do lote para liberar na esteira:
+        </p>
 
-        <div id="containerSolicitacoesPendentesDiretoria">
-          <!-- Cards de Solicitação -->
+        <div id="containerAgendamentosDiretoria">
+          <!-- Gerado via JS -->
         </div>
       </div>
 
       <div class="grid-2col">
-        <!-- PARÂMETROS GLOBAIS E AVISOS DE FERIADO/GERAIS POR CLIENTE -->
+        <!-- 2. PUBLICAR AVISOS COM FILTRO SEGMENTADO -->
         <div class="panel-card">
-          <h3>📢 Publicar Aviso Especial / Feriados / Informações</h3>
+          <h3>📢 Publicar Aviso Especial / Feriados / Promoções</h3>
           
-          <label style="font-size:0.78rem; font-weight:bold;">Selecione a Marca / Cliente Target</label>
-          <select id="selectClienteAvisoDir" class="form-control">
-            <option value="TODOS">TODOS OS CLIENTES DO CLUBE</option>
-            <option value="Niara Semijoias">Niara Semijoias</option>
-            <option value="Velt Joias">Velt Joias</option>
+          <label style="font-size:0.78rem; font-weight:bold;">Destinatário / Filtro de Exibição</label>
+          <select id="selectFiltroAvisoDir" class="form-control">
+            <option value="TODOS">TODOS OS CLIENTES E COLABORADORES</option>
+            <option value="EQUIPE">APENAS A EQUIPE DE COLABORADORES</option>
+            <option value="CAT_INICIANTE">CATEGORIA CLUB: INICIANTE / SIMPLES</option>
+            <option value="CAT_OURO">CATEGORIA CLUB: VIP OURO</option>
+            <option value="CAT_DIAMANTE">CATEGORIA CLUB: VIP DIAMANTE</option>
+            <option value="CAT_BLACK">CATEGORIA CLUB: VIP BLACK EXCLUSIVO</option>
+            <option value="CLI_NIARA">CLIENTE ESPECÍFICO: Niara Semijoias</option>
+            <option value="CLI_VELT">CLIENTE ESPECÍFICO: Velt Joias</option>
           </select>
 
-          <label style="font-size:0.78rem; font-weight:bold;">Mensagem / Comunicado (Ex: Feriado em Limeira, Alerta Insumo)</label>
-          <textarea id="textoAvisoDir" class="form-control" placeholder="Ex: Devido ao feriado municipal em Limeira, não haverá expediente no dia..."></textarea>
+          <label style="font-size:0.78rem; font-weight:bold;">Mensagem / Comunicado</label>
+          <textarea id="textoAvisoDir" class="form-control" placeholder="Ex: Avisamos que devido ao feriado municipal em Limeira-SP no dia..."></textarea>
           
-          <button class="btn-main btn-orange" onclick="salvarAvisoEspecial()">PUBLICAR AVISO NO PAINEL DO CLIENTE</button>
+          <button class="btn-main btn-orange" onclick="salvarAvisoEspecialDir()">PUBLICAR COMUNICADO DIRETO</button>
         </div>
 
-        <!-- FATOR DIVISOR DE PESO -->
+        <!-- 3. FATOR DIVISOR DE PESO DA CALCULADORA -->
         <div class="panel-card">
-          <h3>⚙️️ Fator Divisor de Peso (Grams/Peça)</h3>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Altere o divisor usado na calculadora de peso do cliente:</p>
+          <h3>⚙️ Fator Divisor de Peso (Grams/Peça)</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Altere o divisor usado para converter gramas em peças estimadas:</p>
 
-          <label style="font-size:0.78rem; font-weight:bold;">Fator Divisor (Atual: 3,2g)</label>
+          <label style="font-size:0.78rem; font-weight:bold;">Fator Divisor (Atual: 3,2g por peça)</label>
           <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="3.2">
-          <button class="btn-main btn-green" onclick="salvarFatorDivisor()">SALVAR FATOR DIVISOR</button>
+          <button class="btn-main btn-green" onclick="salvarFatorDivisorDir()">SALVAR FATOR DIVISOR</button>
         </div>
       </div>
 
-      <!-- CRIAÇÃO E GERENCIAMENTO DO ESTOQUE DE INSUMOS POR CLIENTE (DIRETORIA) -->
+      <!-- 4. GESTÃO E CADASTRO DE CLIENTES (EXCLUSIVO DIRETORIA) -->
       <div class="panel-card">
-        <h3>📦 Gestão e Criação de Insumos dos Clientes (Estoque Parceiros S.O.S)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Cadastre novos insumos e vincule à gondula da fábrica:</p>
+        <h3>👤 Cadastro e Gestão de Clientes do Clube S.O.S</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Cadastre novas marcas parceiras com login, senha e categoria:</p>
 
-        <form onsubmit="cadastrarNovoInsumoDiretoria(event)" class="grid-2col">
+        <form onsubmit="cadastrarClienteDiretoria(event)" class="grid-2col">
           <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
-            <select id="novoInsumoCliente" class="form-control">
+            <label style="font-size:0.78rem; font-weight:bold;">Nome da Marca / Loja</label>
+            <input type="text" id="cadCliNomeLoja" class="form-control" required placeholder="Ex: Niara Semijoias">
+
+            <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
+            <input type="text" id="cadCliLogin" class="form-control" required placeholder="niara@suamarca.com">
+
+            <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
+            <input type="password" id="cadCliSenha" class="form-control" required value="123456">
+          </div>
+
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Categoria do Clube</label>
+            <select id="cadCliCategoria" class="form-control">
+              <option value="Iniciante">🥉 Iniciante / Simples (Até 500 pcs/mês)</option>
+              <option value="Ouro">🥇 VIP Ouro (Até 1.000 pcs/mês)</option>
+              <option value="Diamante" selected>💎 VIP Diamante (Até 1.500 pcs/mês)</option>
+              <option value="Black">👑 VIP Black Exclusivo (Até 2.000 pcs/mês)</option>
+            </select>
+
+            <label style="font-size:0.78rem; font-weight:bold;">Mês/Ano de Início da Parceria</label>
+            <input type="text" id="cadCliInicio" class="form-control" required placeholder="Ex: 05/2026">
+
+            <button type="submit" class="btn-main btn-green" style="margin-top:22px;">CADASTRAR NOVO CLIENTE NO CLUBE</button>
+          </div>
+        </form>
+
+        <h4 style="margin:16px 0 8px 0; color:var(--header-bg);">Clientes Cadastrados:</h4>
+        <table class="tabela-sos" id="tabelaClientesCadastrados">
+          <!-- Preenchido via JS -->
+        </table>
+      </div>
+
+      <!-- 5. GESTÃO E CADASTRO DE COLABORADORES (EXCLUSIVO DIRETORIA) -->
+      <div class="panel-card">
+        <h3>🛠️ Cadastro e Gestão de Colaboradores & Setores Operacionais</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Cadastre membros da equipe e vincule aos seus setores de atuação:</p>
+
+        <form onsubmit="cadastrarColaboradorDiretoria(event)" class="grid-2col">
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Nome do Colaborador</label>
+            <input type="text" id="cadColabNome" class="form-control" required placeholder="Ex: Cíntia Lima">
+
+            <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
+            <input type="text" id="cadColabLogin" class="form-control" required placeholder="cintia@sos.com">
+
+            <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
+            <input type="password" id="cadColabSenha" class="form-control" required value="123456">
+          </div>
+
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Setores de Atuação (Selecione um ou mais)</label>
+            <select id="cadColabSetores" class="form-control" multiple style="height:110px;">
+              <option value="1. Entrada" selected>1. Entrada Bruta</option>
+              <option value="2. Inspeção (3 em 1)" selected>2. Inspeção (3 em 1)</option>
+              <option value="3. Fotografia (Still / IA)">3. Fotografia (Still / IA)</option>
+              <option value="4. CDE (Catalogação)">4. CDE (Catalogação)</option>
+              <option value="5. Etiquetagem">5. Etiquetagem</option>
+              <option value="6. Encartelamento">6. Encartelamento</option>
+              <option value="7. Finalização">7. Finalização</option>
+            </select>
+
+            <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">CADASTRAR COLABORADOR</button>
+          </div>
+        </form>
+
+        <h4 style="margin:16px 0 8px 0; color:var(--header-bg);">Colaboradores Cadastrados:</h4>
+        <table class="tabela-sos" id="tabelaColaboradoresCadastrados">
+          <!-- Preenchido via JS -->
+        </table>
+      </div>
+
+      <!-- 6. GESTÃO DE INSUMOS POR CLIENTE (CATEGORIAS E SUBCATEGORIAS COM SOLAPA) -->
+      <div class="panel-card">
+        <h3>📦 Cadastro de Insumos por Cliente (Estoque Parceiros S.O.S)</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Cadastre insumos estruturados por Categoria e Subcategoria/Tamanho:</p>
+
+        <form onsubmit="cadastrarInsumoEstruturadoDiretoria(event)" class="grid-2col">
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca Proprietária</label>
+            <select id="insumoCliSelectDir" class="form-control">
               <option value="Niara Semijoias">Niara Semijoias</option>
               <option value="Velt Joias">Velt Joias</option>
             </select>
 
-            <label style="font-size:0.78rem; font-weight:bold;">Nome do Insumo</label>
-            <input type="text" id="novoInsumoNome" class="form-control" required placeholder="Ex: Saquinho s/ solapa 6.5x12+3">
+            <label style="font-size:0.78rem; font-weight:bold;">Categoria Principal do Insumo</label>
+            <select id="insumoCatPrincipalDir" class="form-control">
+              <option value="Saquinho">Saquinho</option>
+              <option value="Cartela">Cartela</option>
+              <option value="Tag">Tag / Solapa</option>
+              <option value="Fecho / Argola">Fecho / Argola</option>
+              <option value="Etiqueta Argox">Etiqueta Argox</option>
+            </select>
+
+            <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Tamanho Específico</label>
+            <input type="text" id="insumoSubCatDir" class="form-control" required placeholder="Ex: 6.5x9+3+3">
           </div>
 
           <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial</label>
-            <input type="number" id="novoInsumoQtd" class="form-control" required placeholder="Ex: 1000">
+            <label style="font-size:0.78rem; font-weight:bold;">Possui Solapa? (Para Saquinhos)</label>
+            <select id="insumoSolapaOptionDir" class="form-control">
+              <option value="Não">Não (Sem Solapa)</option>
+              <option value="Com Solapa">Com Solapa</option>
+            </select>
+
+            <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial em Estoque</label>
+            <input type="number" id="insumoQtdInicialDir" class="form-control" required placeholder="Ex: 1000">
 
             <label style="font-size:0.78rem; font-weight:bold;">Nº da Gondula / Prateleira</label>
-            <input type="text" id="novoInsumoGondula" class="form-control" placeholder="Ex: 11">
-          </div>
+            <input type="text" id="insumoGondulaDir" class="form-control" placeholder="Ex: 11">
 
-          <div style="grid-column: 1 / -1;">
-            <button type="submit" class="btn-main btn-green">CADASTRAR NOVO INSUMO NO CLIENTE</button>
+            <button type="submit" class="btn-main btn-green" style="margin-top:10px;">SALVAR INSUMO NO ESTOQUE DO CLIENTE</button>
           </div>
         </form>
       </div>
 
-      <!-- CRIAÇÃO E EDIÇÃO DO MODELO DE ENCARTE POR CLIENTE E CATEGORIA DE PEÇA -->
+      <!-- 7. EDITOR DO MODELO DE ENCARTE POR CATEGORIA DE JOIA E CLIENTE -->
       <div class="panel-card">
-        <h3>🎴 Editor de Modelos de Encarte por Marca & Categoria</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Defina a instrução técnica de encarte com links das fotos do Drive:</p>
+        <h3>🎴 Editor do Modelo de Encarte por Marca & Categoria de Joia</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Defina como encartelar cada tipo de peça utilizando os insumos do cliente:</p>
 
         <form onsubmit="salvarModeloEncarteDiretoria(event)" class="grid-2col">
           <div>
             <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
-            <select id="encarteCliSel" class="form-control">
+            <select id="encarteCliSelDir" class="form-control" onchange="atualizarInsumosDinamicosEncarteDir()">
               <option value="Niara Semijoias">Niara Semijoias</option>
               <option value="Velt Joias">Velt Joias</option>
             </select>
 
-            <label style="font-size:0.78rem; font-weight:bold;">Nome da Categoria da Peça</label>
-            <input type="text" id="encarteCatNome" class="form-control" required placeholder="Ex: Anel Regulável">
+            <label style="font-size:0.78rem; font-weight:bold;">Categoria da Joia</label>
+            <select id="encarteCatJoiaDir" class="form-control">
+              <option value="Anel Regulável">Anel Regulável</option>
+              <option value="Anel Tradicional">Anel Tradicional</option>
+              <option value="Colar Grande">Colar Grande</option>
+              <option value="Choker">Choker</option>
+              <option value="Brinco Pequeno">Brinco Pequeno</option>
+              <option value="Infantil">Infantil</option>
+              <option value="Pulseira">Pulseira</option>
+            </select>
 
             <label style="font-size:0.78rem; font-weight:bold;">Instrução de Encarte</label>
-            <input type="text" id="encarteInstrucao" class="form-control" required placeholder="Ex: Somente etiqueta bem apertada no aro">
+            <input type="text" id="encarteInstrucaoDir" class="form-control" required placeholder="Ex: Somente etiqueta bem apertada no aro">
           </div>
 
           <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Vai Saquinho?</label>
-            <select id="encarteVaiSaquinho" class="form-control">
-              <option value="Não">Não</option>
-              <option value="Sim (Saquinho PP 6x8)">Sim (Saquinho PP 6x8)</option>
+            <label style="font-size:0.78rem; font-weight:bold;">Selecione o Saquinho (Insumos do Cliente)</label>
+            <select id="encarteSaquinhoSelDir" class="form-control">
+              <!-- Preenchido via JS -->
             </select>
 
-            <label style="font-size:0.78rem; font-weight:bold;">Vai Cartela?</label>
-            <select id="encarteVaiCartela" class="form-control">
-              <option value="Não">Não</option>
-              <option value="Sim (Cartela Anéis)">Sim (Cartela Anéis)</option>
+            <label style="font-size:0.78rem; font-weight:bold;">Selecione a Cartela (Insumos do Cliente)</label>
+            <select id="encarteCartelaSelDir" class="form-control">
+              <!-- Preenchido via JS -->
             </select>
 
             <label style="font-size:0.78rem; font-weight:bold;">Link Foto Frente (Drive)</label>
-            <input type="text" id="encarteFotoFrente" class="form-control" placeholder="https://drive.google.com/...">
+            <input type="text" id="encarteFotoFrenteDir" class="form-control" placeholder="https://drive.google.com/...">
 
             <label style="font-size:0.78rem; font-weight:bold;">Link Foto Verso (Drive)</label>
-            <input type="text" id="encarteFotoVerso" class="form-control" placeholder="https://drive.google.com/...">
-          </div>
+            <input type="text" id="encarteFotoVersoDir" class="form-control" placeholder="https://drive.google.com/...">
 
-          <div style="grid-column: 1 / -1;">
-            <button type="submit" class="btn-main btn-orange">SALVAR MODELO DE ENCARTE DA MARCA</button>
+            <button type="submit" class="btn-main btn-orange" style="margin-top:6px;">SALVAR MODELO DE ENCARTE DA MARCA</button>
           </div>
         </form>
       </div>
 
-      <!-- MÓDULO DE SENHAS E ACESSOS -->
-      <div class="panel-card">
-        <h3>🔑 Gestão de Logins, Senhas e Permissões do Sistema</h3>
-        <table style="width:100%; font-size:0.82rem;">
-          <thead>
-            <tr><th>Usuário</th><th>Perfil</th><th>Senha</th><th>Ações</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Niara Semijoias</td><td>Cliente VIP Diamante</td><td>••••••</td><td><button class="btn-main" style="padding:4px; font-size:0.7rem; width:auto;" onclick="alert('Senha editada!')">EDITAR SENHA</button></td></tr>
-            <tr><td>Bancada Operacional</td><td>Colaborador</td><td>••••••</td><td><button class="btn-main" style="padding:4px; font-size:0.7rem; width:auto;" onclick="alert('Senha editada!')">EDITAR SENHA</button></td></tr>
-            <tr><td>Kelvin Lima & Brenda</td><td>Diretoria General</td><td>••••••</td><td><button class="btn-main" style="padding:4px; font-size:0.7rem; width:auto;" onclick="alert('Senha editada!')">EDITAR SENHA</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-
     </div>
 
-  </div>
+    <!-- PAINÉIS SECUNDÁRIOS PARA MANTER O CODIGO FUNCIONAL -->
+    <div id="painelCliente" style="display:none;"><p>Painel Cliente Ativo</p></div>
+    <div id="painelEquipe" style="display:none;"><p>Painel Colaborador Ativo</p></div>
 
-  <!-- MODAL DE ESTOQUE PARCEIROS S.O.S (PLANILHA EXATA) -->
-  <div id="modalEstoquePlanilhaCliente" class="modal-overlay">
-    <div class="modal-card" style="max-width:850px;">
-      <h3 id="modalEstoqueTitulo" style="margin-top:0; color:var(--header-bg);">Estoque Parceiros S.O.S</h3>
-      <div id="modalEstoqueConteudo"></div>
-      <button class="btn-main" style="background:#94A3B8; margin-top:15px;" onclick="fecharModalEstoque()">FECHAR PLANILHA DE INSUMOS</button>
-    </div>
-  </div>
-
-  <!-- MODAL MEUS LOTES CLIENTE -->
-  <div id="modalMeusLotesCliente" class="modal-overlay">
-    <div class="modal-card">
-      <h3 style="margin-top:0; color:var(--header-bg);">📦 Seus Lotes na Esteira S.O.S</h3>
-      
-      <h4 style="color:var(--orange-accent); margin:12px 0 6px 0;">🔴 Lote Ativo em Processamento:</h4>
-      <div class="card-item-click">
-        <strong style="color:var(--header-bg);">Lote #141 — Em Inspeção (3 em 1)</strong>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Volume: ~350 Peças | Chegada: 05/10/2026</p>
-        <p style="font-size:0.75rem; color:#0369A1; margin:4px 0 0 0;">Obs Bancada: Peças em triagem de banho.</p>
-      </div>
-
-      <h4 style="color:var(--green-val); margin:18px 0 6px 0;">🟢 Lotes Finalizados:</h4>
-      <div class="card-item-click">
-        <strong style="color:var(--header-bg);">Lote #139 — Concluído e Entregue</strong>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Volume: 400 Peças | Entregue em 20/09/2026</p>
-      </div>
-
-      <button class="btn-main" style="background:#94A3B8; margin-top:15px;" onclick="fecharModalMeusLotes()">FECHAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL MANUAL TÉCNICO POP -->
-  <div id="modalSetorManual" class="modal-overlay">
-    <div class="modal-card">
-      <h3 id="modalSetorManualTitulo" style="margin-top:0; color:var(--header-bg);">Manual do Setor</h3>
-      <div id="modalSetorManualConteudo" style="font-size:0.85rem; line-height:1.6;"></div>
-      <button class="btn-main" style="background:#94A3B8; margin-top:15px;" onclick="fecharModalSetorManual()">FECHAR</button>
-    </div>
   </div>
 
   <script>
-    let perfilAtual = 'cliente';
+    let perfilAtual = 'diretoria';
     let fatorDivisorGrams = 3.2;
     const lotesExistentesCadastrados = ["1042", "1043", "139", "140"];
 
-    // BANCO DE DADOS EXATO DA SUA PLANILHA GOOGLE SHEETS
-    const bancoEstoquePlanilha = {
+    // ESTRUTURA DE CLIENTES CADASTRADOS
+    const bancoClientes = [
+      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", categoria: "Diamante", inicio: "05/2026" },
+      { id: 2, marca: "Velt Joias", login: "velt@sos.com", categoria: "Ouro", inicio: "04/2026" }
+    ];
+
+    // ESTRUTURA DE COLABORADORES CADASTRADOS
+    const bancoColaboradores = [
+      { id: 1, nome: "Cíntia Lima", login: "cintia@sos.com", setores: ["1. Entrada", "2. Inspeção (3 em 1)"] },
+      { id: 2, nome: "Equipe Bancada", login: "equipe@sos.com", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
+    ];
+
+    // AGENDAMENTOS SOLICITADOS (FLUXO 2 ETAPAS)
+    const agendamentosSolicitados = [
+      { id: 101, cliente: "Niara Semijoias", dataSolicitada: "06/10/2026", pcs: 350, peso: "1.120g", obs: "Atenção com correntes de prata", status: "PENDENTE", loteNum: "", dataEntradaReal: "" },
+      { id: 102, cliente: "Velt Joias", dataSolicitada: "08/10/2026", pcs: 800, peso: "2.560g", obs: "Lote de anéis variados", status: "ACEITO_AGUARDANDO_CHEGADA", loteNum: "", dataEntradaReal: "" }
+    ];
+
+    // INSUMOS POR CLIENTE
+    const bancoInsumosCompletos = {
       "Niara Semijoias": [
-        { insumo: "Cadeado Prata 60 cm", entrada: 0, saida: 0, qtd: 34, gondula: "" },
-        { insumo: "Cadeado Ouro 40 cm", entrada: 0, saida: 0, qtd: 2, gondula: "" },
-        { insumo: "Cadeado Prata 40 cm", entrada: 0, saida: 0, qtd: 141, gondula: "" },
-        { insumo: "Cadeado Ouro 70 cm", entrada: 0, saida: 0, qtd: 20, gondula: "" },
-        { insumo: "Etiqueta Rabicho", entrada: 0, saida: 0, qtd: 1, gondula: "12" },
-        { insumo: "Cartela piercings", entrada: 0, saida: 0, qtd: 3400, gondula: "11" },
-        { insumo: "Cartela infantil", entrada: 0, saida: 0, qtd: 400, gondula: "10" },
-        { insumo: "Cartela anéis", entrada: 0, saida: 0, qtd: 600, gondula: "9" },
-        { insumo: "Cartela Tornozeleira", entrada: 0, saida: 0, qtd: 3500, gondula: "9" },
-        { insumo: "Saquinho s/ solapa 6.5x12+3", entrada: 0, saida: 0, qtd: 300, gondula: "11" },
-        { insumo: "Saquinho s/ solapa 6.5x9+3", entrada: 0, saida: 0, qtd: 900, gondula: "11" },
-        { insumo: "Tarracha Ouro P (grama)", entrada: 0, saida: 0, qtd: 25.1, gondula: "12" }
+        { cat: "Saquinho", subCat: "6.5x9+3+3", solapa: "Com Solapa", qtd: 900, gondula: "11" },
+        { cat: "Saquinho", subCat: "6.5x12+3", solapa: "Não", qtd: 300, gondula: "11" },
+        { cat: "Cartela", subCat: "Anéis Tradicionais", solapa: "Não", qtd: 600, gondula: "9" },
+        { cat: "Cartela", subCat: "Infantil e Brinco", solapa: "Não", qtd: 400, gondula: "10" }
       ],
       "Velt Joias": [
-        { insumo: "Tags Velt Brinco", entrada: 0, saida: 0, qtd: 1200, gondula: "5" },
-        { insumo: "Saquinho Veludo Preto", entrada: 0, saida: 0, qtd: 450, gondula: "5" }
-      ]
-    };
-
-    const solicPendentesDiretoria = [
-      { id: 1, cliente: "Niara Semijoias", data: "06/10/2026", pcs: 350, peso: "1.120g", pdf: "Romaneio_Niara.pdf", obs: "Atenção com correntes banhadas a prata" }
-    ];
-
-    const lotesAprovadosBancada = [
-      { num: "141", cliente: "Niara Semijoias", pcs: 350, peso: "1.120g", chegada: "05/10/2026", diasAbertos: 2, critico: false, pdfUrl: "https://drive.google.com/file/d/sample" },
-      { num: "140", cliente: "Velt Joias", pcs: 900, peso: "2.880g", chegada: "28/09/2026", diasAbertos: 7, critico: true, pdfUrl: "https://drive.google.com/file/d/sample2" }
-    ];
-
-    const modelosEncarteMarcas = {
-      "Niara Semijoias": [
-        { cat: "Anel Regulável", instrucao: "Somente etiqueta bem apertada no aro", saquinho: "Não", cartela: "Não", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/..." },
-        { cat: "Brinco Pequeno", instrucao: "Encartelar na cartela infantil e saquinho 6.5x9", saquinho: "Saquinho s/ solapa 6.5x9+3", cartela: "Cartela infantil", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/..." }
+        { cat: "Tag", subCat: "Tag Velt Brinco", solapa: "Não", qtd: 1200, gondula: "5" },
+        { cat: "Saquinho", subCat: "Veludo Preto 8x8", solapa: "Não", qtd: 450, gondula: "5" }
       ]
     };
 
@@ -607,364 +440,246 @@
 
       if(perfil === 'cliente') {
         document.getElementById('tabCliente').classList.add('active');
-        select.innerHTML = `
-          <option value="Niara Semijoias">Niara Semijoias (Cliente VIP Diamante)</option>
-          <option value="Velt Joias">Velt Joias (Cliente VIP Ouro)</option>
-        `;
+        select.innerHTML = `<option value="Niara Semijoias">Niara Semijoias (Cliente VIP)</option>`;
       } else if(perfil === 'equipe') {
         document.getElementById('tabEquipe').classList.add('active');
-        select.innerHTML = `
-          <option value="Bancada S.O.S">Bancada Operacional (Colaborador)</option>
-          <option value="Setor Inspecao">Operador de Inspeção 3em1</option>
-        `;
+        select.innerHTML = `<option value="Equipe Bancada">Equipe de Colaboradores S.O.S</option>`;
       } else {
         document.getElementById('tabDiretoria').classList.add('active');
-        select.innerHTML = `
-          <option value="Kelvin Lima (CEO)">Kelvin Lima & Brenda (Diretoria General)</option>
-        `;
+        select.innerHTML = `<option value="Kelvin Lima (CEO)">Kelvin Lima & Brenda (Diretoria General)</option>`;
       }
     }
 
     function autenticarUsuario(e) {
       e.preventDefault();
-      const usuarioSel = document.getElementById('selectUsuarioLogin').value;
-
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'block';
 
-      if(perfilAtual === 'cliente') {
-        let marca = usuarioSel.includes('Velt') ? 'Velt Joias' : 'Niara Semijoias';
-        carregarPainelCliente(marca);
-        document.getElementById('nomeUsuarioBadge').innerText = `${marca} (Cliente)`;
-        document.getElementById('painelCliente').style.display = 'block';
-      } else if(perfilAtual === 'equipe') {
-        renderizarPainelColaborador();
-        document.getElementById('nomeUsuarioBadge').innerText = "Bancada Operacional (Colaborador S.O.S)";
-        document.getElementById('painelEquipe').style.display = 'block';
-      } else {
+      if(perfilAtual === 'diretoria') {
         renderizarPainelDiretoria();
-        document.getElementById('nomeUsuarioBadge').innerText = "Kelvin Lima & Brenda (Diretoria)";
         document.getElementById('painelDiretoria').style.display = 'block';
       }
     }
 
-    function renderizarPainelColaborador() {
-      // 1. Renderizar Lotes Aprovados na Bancada
-      const contLotes = document.getElementById('containerLotesAprovadosBancada');
-      let htmlLotes = "";
-      lotesAprovadosBancada.forEach(l => {
-        const classeCritica = l.critico ? "card-lote-critico" : "";
-        htmlLotes += `
-          <div class="card-item-click ${classeCritica}">
-            <span class="badge-status ${l.critico ? 'badge-alerta' : 'badge-andamento'}">LOTE #${l.num} — ${l.critico ? 'PRAZO CRÍTICO!' : 'EM ANDAMENTO'}</span>
-            <strong style="display:block; margin-top:6px; font-size:0.95rem; color:var(--header-bg);">${l.cliente}</strong>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:4px 0;">Volume: <strong>${l.pcs} pcs</strong> | Peso: <strong>${l.peso}</strong></p>
-            <p style="font-size:0.75rem; margin:2px 0;">Dias Abertos na S.O.S: <strong>${l.diasAbertos} dias</strong> | Chegada: ${l.chegada}</p>
-            <a href="${l.pdfUrl}" target="_blank" style="display:inline-block; margin-top:6px; font-size:0.75rem; color:var(--orange-accent); font-weight:bold;">📄 BAIXAR ROMANEIO PDF ➔</a>
-          </div>
-        `;
-      });
-      contLotes.innerHTML = htmlLotes;
-
-      // 2. Renderizar Cards dos Clientes para Acessar Insumos
-      const contInsumos = document.getElementById('containerCardsClientesEstoque');
-      let htmlCardsCli = "";
-      Object.keys(bancoEstoquePlanilha).forEach(cli => {
-        htmlCardsCli += `
-          <div class="card-item-click" onclick="abrirModalEstoqueCliente('${cli}')">
-            <strong style="font-size:1rem; color:var(--header-bg);">${cli}</strong>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:4px 0 0 0;">Clique para abrir a tabela de insumos e registrar entrada/saída.</p>
-            <small style="color:var(--green-val); font-weight:bold; font-size:0.72rem; display:block; margin-top:8px;">ABRIR ESTOQUE PARCEIROS S.O.S ➔</small>
-          </div>
-        `;
-      });
-      contInsumos.innerHTML = htmlCardsCli;
-
-      carregarModelosEncarte();
-    }
-
-    function abrirModalEstoqueCliente(marca) {
-      document.getElementById('modalEstoqueTitulo').innerText = `Estoque Parceiros S.O.S — ${marca}`;
-      const lista = bancoEstoquePlanilha[marca] || [];
-
-      let htmlTable = `
-        <table class="tabela-estoque-sos">
-          <thead>
-            <tr>
-              <th>Insumo</th>
-              <th>Entrada</th>
-              <th>Saída</th>
-              <th>Quantidade em Estoque</th>
-              <th>Gondula</th>
-              <th>Ação Bancada</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      lista.forEach((item, idx) => {
-        htmlTable += `
-          <tr>
-            <td><strong>${item.insumo}</strong></td>
-            <td style="color:var(--green-val); font-weight:bold;">+${item.entrada}</td>
-            <td style="color:var(--red-val); font-weight:bold;">-${item.saida}</td>
-            <td style="font-size:0.9rem; font-weight:bold;">${item.qtd}</td>
-            <td>${item.gondula || '-'}</td>
-            <td>
-              <button class="btn-main btn-green" style="padding:2px 6px; font-size:0.68rem; width:auto;" onclick="alterarEntradaSaida('${marca}', ${idx}, 'entrada')">+ Entrada</button>
-              <button class="btn-main btn-orange" style="padding:2px 6px; font-size:0.68rem; width:auto;" onclick="alterarEntradaSaida('${marca}', ${idx}, 'saida')">- Baixa</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      htmlTable += `</tbody></table>`;
-      document.getElementById('modalEstoqueConteudo').innerHTML = htmlTable;
-      document.getElementById('modalEstoquePlanilhaCliente').style.display = 'flex';
-    }
-
-    function fecharModalEstoque() { document.getElementById('modalEstoquePlanilhaCliente').style.display = 'none'; }
-
-    function alterarEntradaSaida(marca, idx, tipo) {
-      const valor = parseInt(prompt(`Digite a quantidade para ${tipo.toUpperCase()} no item '${bancoEstoquePlanilha[marca][idx].insumo}':`, "10")) || 0;
-      if(valor > 0) {
-        if(tipo === 'entrada') {
-          bancoEstoquePlanilha[marca][idx].entrada += valor;
-          bancoEstoquePlanilha[marca][idx].qtd += valor;
-        } else {
-          bancoEstoquePlanilha[marca][idx].saida += valor;
-          bancoEstoquePlanilha[marca][idx].qtd -= valor;
-        }
-        abrirModalEstoqueCliente(marca);
-      }
-    }
-
     function renderizarPainelDiretoria() {
-      // 1. Renderizar Agendamentos Pendentes
-      const contSol = document.getElementById('containerSolicitacoesPendentesDiretoria');
-      let htmlSol = "";
-      solicPendentesDiretoria.forEach(s => {
-        htmlSol += `
-          <div style="background:#FFF; border:2px solid #E2E8F0; padding:16px; border-radius:12px; margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <strong style="font-size:1rem; color:var(--header-bg);">${s.cliente}</strong>
-              <span class="badge-status badge-andamento">AGUARDANDO ANÁLISE DIRETORIA</span>
-            </div>
-            <p style="font-size:0.8rem; margin:6px 0;">Volume Solicitado: <strong>~${s.pcs} pcs (${s.peso})</strong> | Data Solicitada: <strong>${s.data}</strong></p>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0;">Obs do Cliente: ${s.obs} | PDF: <i>${s.pdf}</i></p>
-            
-            <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
-              <input type="text" id="numLoteAprov_${s.id}" class="form-control" style="width:180px; margin:0;" placeholder="Digitar Nº do Lote (Ex: 142)">
-              <button class="btn-main btn-green" style="width:auto; padding:8px 16px;" onclick="aprovarLoteDiretoria(${s.id})">APROVAR LOTE</button>
-              <button class="btn-main" style="background:#EF4444; width:auto; padding:8px 16px;" onclick="recusarLoteDiretoria(${s.id})">RECUSAR SOLICITAÇÃO</button>
-            </div>
-          </div>
-        `;
-      });
-      contSol.innerHTML = htmlSol || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhum agendamento pendente no momento.</p>";
+      renderizarAgendamentosDiretoria();
+      renderizarTabelaClientes();
+      renderizarTabelaColaboradores();
+      atualizarInsumosDinamicosEncarteDir();
     }
 
-    function aprovarLoteDiretoria(idSol) {
-      const numInput = document.getElementById(`numLoteAprov_${idSol}`).value.trim();
+    function renderizarAgendamentosDiretoria() {
+      const cont = document.getElementById('containerAgendamentosDiretoria');
+      let html = "";
 
-      if(!numInput) {
-        alert("⚠️ Por favor, digite o NÚMERO DO LOTE antes de aprovar!");
+      agendamentosSolicitados.forEach(ag => {
+        if(ag.status === "PENDENTE") {
+          html += `
+            <div style="background:#FFF; border:2px solid #E2E8F0; padding:16px; border-radius:12px; margin-bottom:12px;">
+              <strong style="font-size:1rem; color:var(--header-bg);">${ag.cliente}</strong> — <span class="badge-status badge-andamento">ETAPA 1: PENDENTE DE ANÁLISE</span>
+              <p style="font-size:0.8rem; margin:6px 0;">Volume: ~<strong>${ag.pcs} pcs (${ag.peso})</strong> | Data Solicitada: <strong>${ag.dataSolicitada}</strong></p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0;">Obs: ${ag.obs}</p>
+              <div style="margin-top:10px; display:flex; gap:10px;">
+                <button class="btn-main btn-green" style="width:auto; padding:6px 16px;" onclick="aceitarEntradaAgendamento(${ag.id})">ACEITAR ENTRADA</button>
+                <button class="btn-main" style="background:#EF4444; width:auto; padding:6px 16px;" onclick="recusarAgendamento(${ag.id})">RECUSAR</button>
+              </div>
+            </div>
+          `;
+        } else if(ag.status === "ACEITO_AGUARDANDO_CHEGADA") {
+          html += `
+            <div style="background:#F0F9FF; border:2px solid #BAE6FD; padding:16px; border-radius:12px; margin-bottom:12px;">
+              <strong style="font-size:1rem; color:var(--header-bg);">${ag.cliente}</strong> — <span class="badge-status badge-concluido">ETAPA 2: ENTRADA ACEITA (AGUARDANDO CHEGADA FÍSICA)</span>
+              <p style="font-size:0.8rem; margin:6px 0;">Volume: ~<strong>${ag.pcs} pcs (${ag.peso})</strong> | Chegada Prevista: <strong>${ag.dataSolicitada}</strong></p>
+              
+              <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+                <input type="text" id="numLoteFinal_${ag.id}" class="form-control" style="width:200px; margin:0;" placeholder="Atribuir Nº do Lote (Ex: 141)">
+                <button class="btn-main btn-orange" style="width:auto; padding:8px 16px;" onclick="confirmarChegadaEFabrica(${ag.id})">CONFIRMAR CHEGADA FÍSICA & ENTRADA NA ESTEIRA</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      cont.innerHTML = html || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhum agendamento pendente no momento.</p>";
+    }
+
+    function aceitarEntradaAgendamento(id) {
+      const ag = agendamentosSolicitados.find(a => a.id === id);
+      if(ag) {
+        ag.status = "ACEITO_AGUARDANDO_CHEGADA";
+        alert(`✅ Entrada da mercadoria da marca ${ag.cliente} ACEITA! Aguardando chegada física na fábrica.`);
+        renderizarAgendamentosDiretoria();
+      }
+    }
+
+    function recusarAgendamento(id) {
+      const mot = prompt("Digite o motivo da recusa do agendamento:");
+      if(mot) {
+        alert(`❌ Agendamento recusado com sucesso. Notificação enviada ao cliente com o motivo: "${mot}"`);
+        renderizarAgendamentosDiretoria();
+      }
+    }
+
+    function confirmarChegadaEFabrica(id) {
+      const ag = agendamentosSolicitados.find(a => a.id === id);
+      const numLote = document.getElementById(`numLoteFinal_${id}`).value.trim();
+
+      if(!numLote) {
+        alert("⚠️ Por favor, atribua o NÚMERO DO LOTE para confirmar a entrada!");
         return;
       }
 
-      if(lotesExistentesCadastrados.includes(numInput)) {
-        alert(`❌ ERRO DE DUPLICIDADE: O NÚMERO DE LOTE #${numInput} JÁ FOI UTILIZADO! Digite um número novo.`);
+      if(lotesExistentesCadastrados.includes(numLote)) {
+        alert(`❌ ERRO DE DUPLICIDADE: O Lote #${numLote} JÁ FOI UTILIZADO! Digite um número diferente.`);
         return;
       }
 
-      lotesExistentesCadastrados.push(numInput);
-      alert(`✅ Lote #${numInput} APROVADO COM SUCESSO! Romaneio e notificação enviados para a Bancada Operacional.`);
-      renderizarPainelDiretoria();
+      lotesExistentesCadastrados.push(numLote);
+      
+      // Data de entrada automática = Dia seguinte à confirmação de chegada
+      const hoje = new Date();
+      hoje.setDate(hoje.getDate() + 1);
+      const dataEntradaSeg = hoje.toLocaleDateString('pt-BR');
+
+      alert(`✅ LOTE #${numLote} GERADO COM SUCESSO!\nMercadoria confirmada na fábrica. Data oficial de entrada registrada: ${dataEntradaSeg}. Lote liberado na bancada.`);
+      renderizarAgendamentosDiretoria();
     }
 
-    function recusarLoteDiretoria(idSol) {
-      const justificativa = prompt("⚠️ Digite a JUSTIFICATIVA DE RECUSA para o cliente (Obrigatório):");
-      if(justificativa) {
-        alert(`❌ Solicitação recusada! Motivo enviado para o painel do cliente: "${justificativa}"`);
-        renderizarPainelDiretoria();
-      }
+    function cadastrarClienteDiretoria(e) {
+      e.preventDefault();
+      const nome = document.getElementById('cadCliNomeLoja').value;
+      const login = document.getElementById('cadCliLogin').value;
+      const cat = document.getElementById('cadCliCategoria').value;
+      const ini = document.getElementById('cadCliInicio').value;
+
+      bancoClientes.push({ id: Date.now(), marca: nome, login: login, categoria: cat, inicio: ini });
+      alert(`✅ Cliente '${nome}' cadastrado com sucesso no Clube S.O.S!`);
+      renderizarTabelaClientes();
     }
 
-    function carregarModelosEncarte() {
-      const cli = document.getElementById('selectClienteEncarteConsult').value;
-      const selectCat = document.getElementById('selectCatEncarteConsult');
-      const modelos = modelosEncarteMarcas[cli] || [];
-
-      selectCat.innerHTML = "";
-      modelos.forEach(m => {
-        selectCat.innerHTML += `<option value="${m.cat}">${m.cat}</option>`;
-      });
-
-      exibirInstrucaoEncarte();
-    }
-
-    function exibirInstrucaoEncarte() {
-      const cli = document.getElementById('selectClienteEncarteConsult').value;
-      const cat = document.getElementById('selectCatEncarteConsult').value;
-      const modelos = modelosEncarteMarcas[cli] || [];
-      const enc = modelos.find(m => m.cat === cat);
-
-      const box = document.getElementById('boxResultadoEncarteBancada');
-      if(enc) {
-        box.innerHTML = `
-          <strong>Instruções de Encarte — ${cli} (${cat}):</strong><br>
-          • <strong>Como Encartelar:</strong> ${enc.instrucao}<br>
-          • <strong>Vai Saquinho?</strong> ${enc.saquinho}<br>
-          • <strong>Vai Cartela?</strong> ${enc.cartela}<br>
-          <div style="margin-top:8px;">
-            <a href="${enc.fotoFrente}" target="_blank" style="color:var(--orange-accent); font-weight:bold; font-size:0.78rem; margin-right:12px;">🖼️ Foto Frente (Drive) ➔</a>
-            <a href="${enc.fotoVerso}" target="_blank" style="color:var(--orange-accent); font-weight:bold; font-size:0.78rem;">🖼️ Foto Verso (Drive) ➔</a>
-          </div>
-        `;
-      } else {
-        box.innerHTML = "<p style='margin:0;'>Nenhum modelo cadastrado para esta categoria.</p>";
-      }
-    }
-
-    function carregarPainelCliente(marca) {
-      document.getElementById('cliBoasVindas').innerText = `Bem-vinda, ${marca}!`;
-
-      // Renderizar Tabela de Insumos da Marca
-      const contInsumos = document.getElementById('containerInsumosVisualCliente');
-      const lista = bancoEstoquePlanilha[marca] || [];
-
-      let htmlTable = `
-        <table class="tabela-estoque-sos">
-          <thead>
-            <tr>
-              <th>Insumo</th>
-              <th>Quantidade em Estoque</th>
-              <th>Gondula</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      lista.forEach(item => {
-        htmlTable += `
+    function renderizarTabelaClientes() {
+      const tab = document.getElementById('tabelaClientesCadastrados');
+      let html = "<thead><tr><th>Marca / Loja</th><th>Login</th><th>Categoria</th><th>Início</th><th>Ação</th></tr></thead><tbody>";
+      bancoClientes.forEach(c => {
+        html += `
           <tr>
-            <td><strong>${item.insumo}</strong></td>
-            <td style="font-size:0.9rem; font-weight:bold;">${item.qtd}</td>
-            <td>${item.gondula || '-'}</td>
+            <td><strong>${c.marca}</strong></td>
+            <td>${c.login}</td>
+            <td><span class="badge-status badge-concluido">${c.categoria}</span></td>
+            <td>${c.inicio}</td>
+            <td><button class="btn-main" style="background:#EF4444; padding:2px 6px; font-size:0.68rem; width:auto;" onclick="excluirCliente(${c.id})">EXCLUIR</button></td>
           </tr>
         `;
       });
-      htmlTable += `</tbody></table>`;
-      contInsumos.innerHTML = htmlTable;
+      tab.innerHTML = html + "</tbody>";
     }
 
-    function alternarModoMedicao() {
-      const modo = document.getElementById('tipoMedicaoLote').value;
-      document.getElementById('boxCalcPeso').style.display = (modo === 'peso') ? 'block' : 'none';
+    function excluirCliente(id) {
+      if(confirm("Tem certeza que deseja excluir este cliente?")) {
+        const idx = bancoClientes.findIndex(c => c.id === id);
+        if(idx > -1) bancoClientes.splice(idx, 1);
+        renderizarTabelaClientes();
+      }
     }
 
-    function calcularPcsPorPeso() {
-      const grams = parseFloat(document.getElementById('inputPesoGrams').value) || 0;
-      const pcsEstimadas = Math.round(grams / fatorDivisorGrams);
-      document.getElementById('loteQtdPcsCalculada').value = pcsEstimadas;
-      atualizarPrazoPrevisaoCli();
-    }
-
-    function atualizarPrazoPrevisaoCli() {
-      const qtd = parseInt(document.getElementById('loteQtdPcsCalculada').value) || 0;
-      const campo = document.getElementById('lotePrazoCalculadoCli');
-      if (qtd <= 500) campo.value = "8 dias úteis após recepção";
-      else if (qtd <= 1000) campo.value = "10 dias úteis após recepção";
-      else if (qtd <= 1500) campo.value = "13 dias úteis após recepção";
-      else campo.value = "Agendamento especial com a direção";
-    }
-
-    function selecionarDiaCalendario(el, dia) {
-      document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selecionado'));
-      el.classList.add('selecionado');
-      document.getElementById('diaAgendadoSel').value = dia;
-    }
-
-    function alternarCampoPdf() {
-      const tipo = document.getElementById('tipoEnvioPdf').value;
-      document.getElementById('arquivoPdfAnexo').style.display = (tipo === 'pdf') ? 'block' : 'none';
-    }
-
-    function solicitarAgendamentoCliente(e) {
+    function cadastrarColaboradorDiretoria(e) {
       e.preventDefault();
-      const dia = document.getElementById('diaAgendadoSel').value || '06/10/2026';
-      alert(`✅ Agendamento solicitado para o dia ${dia}! Em análise pela Diretoria S.O.S.`);
+      const nome = document.getElementById('cadColabNome').value;
+      const login = document.getElementById('cadColabLogin').value;
+      const selectSet = document.getElementById('cadColabSetores');
+      const setoresSel = Array.from(selectSet.selectedOptions).map(o => o.value);
+
+      bancoColaboradores.push({ id: Date.now(), nome: nome, login: login, setores: setoresSel });
+      alert(`✅ Colaborador '${nome}' cadastrado com sucesso!`);
+      renderizarTabelaColaboradores();
     }
 
-    function cadastrarNovoInsumoDiretoria(e) {
+    function renderizarTabelaColaboradores() {
+      const tab = document.getElementById('tabelaColaboradoresCadastrados');
+      let html = "<thead><tr><th>Nome</th><th>Login</th><th>Setores de Atuação</th><th>Ação</th></tr></thead><tbody>";
+      bancoColaboradores.forEach(c => {
+        html += `
+          <tr>
+            <td><strong>${c.nome}</strong></td>
+            <td>${c.login}</td>
+            <td>${c.setores.join(', ')}</td>
+            <td><button class="btn-main" style="background:#EF4444; padding:2px 6px; font-size:0.68rem; width:auto;" onclick="excluirColaborador(${c.id})">EXCLUIR</button></td>
+          </tr>
+        `;
+      });
+      tab.innerHTML = html + "</tbody>";
+    }
+
+    function excluirColaborador(id) {
+      if(confirm("Tem certeza que deseja excluir este colaborador?")) {
+        const idx = bancoColaboradores.findIndex(c => c.id === id);
+        if(idx > -1) bancoColaboradores.splice(idx, 1);
+        renderizarTabelaColaboradores();
+      }
+    }
+
+    function cadastrarInsumoEstruturadoDiretoria(e) {
       e.preventDefault();
-      const cli = document.getElementById('novoInsumoCliente').value;
-      const nome = document.getElementById('novoInsumoNome').value;
-      const qtd = parseInt(document.getElementById('novoInsumoQtd').value) || 0;
-      const gon = document.getElementById('novoInsumoGondula').value;
+      const cli = document.getElementById('insumoCliSelectDir').value;
+      const cat = document.getElementById('insumoCatPrincipalDir').value;
+      const sub = document.getElementById('insumoSubCatDir').value;
+      const sol = document.getElementById('insumoSolapaOptionDir').value;
+      const qtd = parseInt(document.getElementById('insumoQtdInicialDir').value) || 0;
+      const gon = document.getElementById('insumoGondulaDir').value;
 
-      if(!bancoEstoquePlanilha[cli]) bancoEstoquePlanilha[cli] = [];
-      bancoEstoquePlanilha[cli].push({ insumo: nome, entrada: qtd, saida: 0, qtd: qtd, gondula: gon });
+      if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
+      bancoInsumosCompletos[cli].push({ cat: cat, subCat: sub, solapa: sol, qtd: qtd, gondula: gon });
 
-      alert(`✅ Novo insumo '${nome}' cadastrado com sucesso para o cliente ${cli}!`);
-      document.getElementById('novoInsumoNome').value = "";
-      document.getElementById('novoInsumoQtd').value = "";
+      alert(`✅ Insumo '${cat} - ${sub}' cadastrado com sucesso no estoque do cliente ${cli}!`);
+      atualizarInsumosDinamicosEncarteDir();
+    }
+
+    function atualizarInsumosDinamicosEncarteDir() {
+      const cli = document.getElementById('encarteCliSelDir').value;
+      const insumos = bancoInsumosCompletos[cli] || [];
+
+      const selectSaq = document.getElementById('encarteSaquinhoSelDir');
+      const selectCar = document.getElementById('encarteCartelaSelDir');
+
+      selectSaq.innerHTML = "<option value='Não Utiliza'>Não Utiliza Saquinho</option>";
+      selectCar.innerHTML = "<option value='Não Utiliza'>Não Utiliza Cartela</option>";
+
+      insumos.forEach(i => {
+        if(i.cat === "Saquinho") {
+          selectSaq.innerHTML += `<option value="${i.cat} ${i.subCat} (${i.solapa})">${i.cat} ${i.subCat} (${i.solapa})</option>`;
+        }
+        if(i.cat === "Cartela") {
+          selectCar.innerHTML += `<option value="${i.cat} ${i.subCat}">${i.cat} ${i.subCat}</option>`;
+        }
+      });
     }
 
     function salvarModeloEncarteDiretoria(e) {
       e.preventDefault();
-      const cli = document.getElementById('encarteCliSel').value;
-      const cat = document.getElementById('encarteCatNome').value;
-      const inst = document.getElementById('encarteInstrucao').value;
-      const saq = document.getElementById('encarteVaiSaquinho').value;
-      const car = document.getElementById('encarteVaiCartela').value;
-      const ff = document.getElementById('encarteFotoFrente').value;
-      const fv = document.getElementById('encarteFotoVerso').value;
-
-      if(!modelosEncarteMarcas[cli]) modelosEncarteMarcas[cli] = [];
-      modelosEncarteMarcas[cli].push({ cat: cat, instrucao: inst, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv });
-
-      alert(`✅ Modelo de encarte da categoria '${cat}' cadastrado para ${cli}!`);
-      document.getElementById('encarteCatNome').value = "";
-      document.getElementById('encarteInstrucao').value = "";
+      const cli = document.getElementById('encarteCliSelDir').value;
+      const catJoia = document.getElementById('encarteCatJoiaDir').value;
+      alert(`✅ Modelo de encarte para '${catJoia}' do cliente ${cli} salvo com sucesso!`);
     }
 
-    function salvarFatorDivisor() {
+    function salvarFatorDivisorDir() {
       fatorDivisorGrams = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
-      document.getElementById('fatorDivisorTxt').innerText = `${fatorDivisorGrams}g por peça`;
-      alert(`⚙️ Fator Divisor atualizado para ${fatorDivisorGrams}g/peça!`);
+      alert(`⚙️ Fator Divisor atualizado para ${fatorDivisorGrams}g por peça!`);
     }
 
-    function salvarAvisoEspecial() {
-      const cli = document.getElementById('selectClienteAvisoDir').value;
+    function salvarAvisoEspecialDir() {
+      const filtro = document.getElementById('selectFiltroAvisoDir').value;
       const txt = document.getElementById('textoAvisoDir').value;
-      alert(`📢 Aviso comunicado com sucesso no painel do cliente (${cli})!`);
+      alert(`📢 Comunicado oficial enviado com sucesso para a categoria/filtro: ${filtro}!`);
     }
-
-    function abrirModalMeusLotesCliente() { document.getElementById('modalMeusLotesCliente').style.display = 'flex'; }
-    function fecharModalMeusLotes() { document.getElementById('modalMeusLotesCliente').style.display = 'none'; }
-
-    function abrirModalSetorManual(setor) {
-      document.getElementById('modalSetorManualTitulo').innerText = `POP & Manual Técnico — ${setor}`;
-      document.getElementById('modalSetorManualConteudo').innerHTML = `
-        <p><strong>Procedimento Padrão do Setor:</strong> Realizar conferência e triagem minuciosa antes da transição de bancada.</p>
-        <p><strong>Dúvida do Colaborador:</strong> Como proceder em caso de divergência de banho?</p>
-        <p><strong>Instrução da Diretoria (Kelvin/Brenda):</strong> Notificar imediatamente na observação do lote e separar para rebanho.</p>
-      `;
-      document.getElementById('modalSetorManual').style.display = 'flex';
-    }
-
-    function fecharModalSetorManual() { document.getElementById('modalSetorManual').style.display = 'none'; }
 
     function fazerLogout() {
-      document.getElementById('painelCliente').style.display = 'none';
-      document.getElementById('painelEquipe').style.display = 'none';
       document.getElementById('painelDiretoria').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'block';
     }
 
     // Inicialização
-    selecionarPerfilAcesso('cliente');
+    selecionarPerfilAcesso('diretoria');
   </script>
 </body>
 </html>
