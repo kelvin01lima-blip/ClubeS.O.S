@@ -88,9 +88,6 @@
     }
     .badge-andamento { background: #FEF3C7; color: #92400E; }
     .badge-concluido { background: #D1FAE5; color: #065F46; }
-    .badge-alerta { background: #FEE2E2; color: #991B1B; animation: pulse 2s infinite; }
-
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
     .cards-grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 15px; }
     
@@ -100,11 +97,21 @@
     }
     .card-item-click:hover { border-color: var(--orange-accent); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
 
-    table.tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table.tabela-sos th, table.tabela-sos td {
-      text-align: left; padding: 8px 12px; border: 1px solid #CBD5E1; font-size: 0.82rem;
+    .tag-setor-btn {
+      display: inline-block; padding: 6px 10px; border-radius: 8px; border: 1px solid #CBD5E1;
+      background: #F1F5F9; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin: 2px;
     }
-    table.tabela-sos th { background-color: #F1F5F9; color: #0B132B; font-weight: bold; }
+    .tag-setor-btn.selected { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
+
+    .modal-overlay {
+      display: none; position: fixed; top:0; left:0; width:100vw; height:100vh;
+      background: rgba(11, 19, 43, 0.88); z-index: 9990; justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .modal-card {
+      background: #fff; padding: 24px; border-radius: 20px; max-width: 800px; width: 100%;
+      max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
 
     .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
@@ -140,7 +147,7 @@
       </div>
 
       <form onsubmit="autenticarUsuario(event)">
-        <label style="font-size:0.78rem; font-weight:bold;">Selecione o Usuário / Acesso</label>
+        <label style="font-size:0.78rem; font-weight:bold;">Selecione o Acesso</label>
         <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
           <!-- Carregado via JS -->
         </select>
@@ -153,7 +160,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- ÁREA DA DIRETORIA (KELVIN LIMA & BRENDA - REFORMULADA) -->
+    <!-- ÁREA DA DIRETORIA GENERAL — REFORMULADA EM CARDS SEPARADOS -->
     <!-- ================================================================================= -->
     <div id="painelDiretoria" style="display:none;">
       
@@ -161,515 +168,577 @@
         <div class="panel-header">
           <div>
             <h3 style="color:#B45309; margin:0;">👑 DIRETORIA GENERAL — KELVIN LIMA & BRENDA</h3>
-            <span style="font-size:0.8rem; color:#78350F;">Gestão de agendamentos em 2 etapas, avisos segmentados, clientes, colaboradores e insumos.</span>
+            <span style="font-size:0.8rem; color:#78350F;">Visão em Cards Clicáveis: Clientes, Colaboradores, Insumos por Cliente, Encartes e Lotes.</span>
           </div>
         </div>
       </div>
 
-      <!-- 1. GESTÃO DE AGENDAMENTOS E ENTRADA DE LOTES (2 ETAPAS) -->
+      <!-- 1. ACOMPANHAMENTO GERAL DE LOTES EM 4 ETAPAS (EM CARDS POR CLIENTE E GERAL) -->
       <div class="panel-card">
-        <h3>⚡ Agendamentos Solicitados pelos Clientes (Aprovação em 2 Etapas)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
-          Primeiro aceite a entrada. Quando a mercadoria chegar fisicamente, confirme a chegada e atribua o número do lote para liberar na esteira:
-        </p>
+        <div class="panel-header">
+          <h3>📦 Painel Geral de Lotes (4 Etapas de Acompanhamento)</h3>
+          <div>
+            <select id="filtroClienteLotesGeral" class="form-control" style="margin:0; width:220px;" onchange="renderizarPainelLotesGeral()">
+              <option value="TODOS">TODAS AS MARCAS (GERAL)</option>
+              <option value="Niara Semijoias">Niara Semijoias</option>
+              <option value="Velt Joias">Velt Joias</option>
+            </select>
+          </div>
+        </div>
 
-        <div id="containerAgendamentosDiretoria">
-          <!-- Gerado via JS -->
+        <div id="containerLotesGeral4Etapas">
+          <!-- Gerado via JS com as 4 Etapas: 1. Aguardando Aprovação, 2. Aguardando Chegada, 3. Cadastrados/Em Andamento, 4. Finalizados -->
         </div>
       </div>
 
       <div class="grid-2col">
-        <!-- 2. PUBLICAR AVISOS COM FILTRO SEGMENTADO -->
+        <!-- 2. CLIENTES CADASTRADOS (SEÇÃO CARDS) -->
         <div class="panel-card">
-          <h3>📢 Publicar Aviso Especial / Feriados / Promoções</h3>
-          
-          <label style="font-size:0.78rem; font-weight:bold;">Destinatário / Filtro de Exibição</label>
+          <div class="panel-header">
+            <h3>👤 Clientes do Clube S.O.S</h3>
+            <button class="btn-main btn-green" style="width:auto; padding:6px 12px; font-size:0.75rem;" onclick="abrirModalCadastrarCliente()">+ NOVO CLIENTE</button>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Clique para ver os dados do cliente e categoria:</p>
+
+          <div class="cards-grid-3col" id="containerCardsClientes">
+            <!-- Cards de Clientes gerados via JS -->
+          </div>
+        </div>
+
+        <!-- 3. COLABORADORES CADASTRADOS (SEÇÃO CARDS) -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>🛠️️ Meus Colaboradores</h3>
+            <button class="btn-main btn-orange" style="width:auto; padding:6px 12px; font-size:0.75rem;" onclick="abrirModalCadastrarColaborador()">+ NOVO COLABORADOR</button>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Colaboradores e seus setores de atuação:</p>
+
+          <div class="cards-grid-3col" id="containerCardsColaboradores">
+            <!-- Cards de Colaboradores gerados via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. GESTÃO DE INSUMOS POR CLIENTE (CARDS CLICÁVEIS COM EDITAR/EXCLUIR) -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3>📦 Insumos dos Clientes (Cards por Marca & Categoria)</h3>
+          <button class="btn-main btn-green" style="width:auto; padding:6px 12px; font-size:0.75rem;" onclick="abrirModalCadastrarInsumo()">+ NOVO INSUMO</button>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Clique no card do cliente para visualizar/editar o estoque de insumos:</p>
+
+        <div class="cards-grid-3col" id="containerCardsInsumosClientes">
+          <!-- Cards por Marca gerados via JS -->
+        </div>
+      </div>
+
+      <!-- 5. MODELOS DE ENCARTE POR CLIENTE & CATEGORIA DE JOIA -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3>🎴 Modelos de Encarte por Cliente & Categoria de Joia</h3>
+          <button class="btn-main btn-orange" style="width:auto; padding:6px 12px; font-size:0.75rem;" onclick="abrirModalCadastrarModeloEncarte()">+ NOVO MODELO ENCARTE</button>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Consulte como encartelar por cliente com link de fotos e saldo dos insumos:</p>
+
+        <div id="containerCardsModelosEncarte">
+          <!-- Cards de Modelos por Cliente gerados via JS -->
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <!-- 6. PUBLICAR AVISO SEGMENTADO -->
+        <div class="panel-card">
+          <h3>📢 Publicar Comunicado / Feriados / Promoções</h3>
+          <label style="font-size:0.78rem; font-weight:bold;">Filtro de Exibição</label>
           <select id="selectFiltroAvisoDir" class="form-control">
             <option value="TODOS">TODOS OS CLIENTES E COLABORADORES</option>
-            <option value="EQUIPE">APENAS A EQUIPE DE COLABORADORES</option>
-            <option value="CAT_INICIANTE">CATEGORIA CLUB: INICIANTE / SIMPLES</option>
-            <option value="CAT_OURO">CATEGORIA CLUB: VIP OURO</option>
-            <option value="CAT_DIAMANTE">CATEGORIA CLUB: VIP DIAMANTE</option>
-            <option value="CAT_BLACK">CATEGORIA CLUB: VIP BLACK EXCLUSIVO</option>
-            <option value="CLI_NIARA">CLIENTE ESPECÍFICO: Niara Semijoias</option>
-            <option value="CLI_VELT">CLIENTE ESPECÍFICO: Velt Joias</option>
+            <option value="EQUIPE">EQUIPE DE COLABORADORES</option>
+            <option value="CAT_INICIANTE">CATEGORIA: INICIANTE / SIMPLES</option>
+            <option value="CAT_OURO">CATEGORIA: VIP OURO</option>
+            <option value="CAT_DIAMANTE">CATEGORIA: VIP DIAMANTE</option>
+            <option value="CAT_BLACK">CATEGORIA: VIP BLACK EXCLUSIVO</option>
           </select>
 
-          <label style="font-size:0.78rem; font-weight:bold;">Mensagem / Comunicado</label>
-          <textarea id="textoAvisoDir" class="form-control" placeholder="Ex: Avisamos que devido ao feriado municipal em Limeira-SP no dia..."></textarea>
-          
-          <button class="btn-main btn-orange" onclick="salvarAvisoEspecialDir()">PUBLICAR COMUNICADO DIRETO</button>
+          <label style="font-size:0.78rem; font-weight:bold;">Mensagem</label>
+          <textarea id="textoAvisoDir" class="form-control" placeholder="Ex: Informamos o feriado em Limeira..."></textarea>
+          <button class="btn-main btn-orange" onclick="alert('Comunicado publicado com sucesso!')">PUBLICAR COMUNICADO</button>
         </div>
 
-        <!-- 3. FATOR DIVISOR DE PESO DA CALCULADORA -->
+        <!-- 7. FATOR DIVISOR DE PESO -->
         <div class="panel-card">
           <h3>⚙️ Fator Divisor de Peso (Grams/Peça)</h3>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Altere o divisor usado para converter gramas em peças estimadas:</p>
-
-          <label style="font-size:0.78rem; font-weight:bold;">Fator Divisor (Atual: 3,2g por peça)</label>
+          <label style="font-size:0.78rem; font-weight:bold;">Fator Divisor (Atual: 3,2g)</label>
           <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="3.2">
-          <button class="btn-main btn-green" onclick="salvarFatorDivisorDir()">SALVAR FATOR DIVISOR</button>
+          <button class="btn-main btn-green" onclick="alert('Fator Divisor atualizado para 3,2g!')">SALVAR FATOR DIVISOR</button>
         </div>
-      </div>
-
-      <!-- 4. GESTÃO E CADASTRO DE CLIENTES (EXCLUSIVO DIRETORIA) -->
-      <div class="panel-card">
-        <h3>👤 Cadastro e Gestão de Clientes do Clube S.O.S</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Cadastre novas marcas parceiras com login, senha e categoria:</p>
-
-        <form onsubmit="cadastrarClienteDiretoria(event)" class="grid-2col">
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Nome da Marca / Loja</label>
-            <input type="text" id="cadCliNomeLoja" class="form-control" required placeholder="Ex: Niara Semijoias">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
-            <input type="text" id="cadCliLogin" class="form-control" required placeholder="niara@suamarca.com">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-            <input type="password" id="cadCliSenha" class="form-control" required value="123456">
-          </div>
-
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Categoria do Clube</label>
-            <select id="cadCliCategoria" class="form-control">
-              <option value="Iniciante">🥉 Iniciante / Simples (Até 500 pcs/mês)</option>
-              <option value="Ouro">🥇 VIP Ouro (Até 1.000 pcs/mês)</option>
-              <option value="Diamante" selected>💎 VIP Diamante (Até 1.500 pcs/mês)</option>
-              <option value="Black">👑 VIP Black Exclusivo (Até 2.000 pcs/mês)</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Mês/Ano de Início da Parceria</label>
-            <input type="text" id="cadCliInicio" class="form-control" required placeholder="Ex: 05/2026">
-
-            <button type="submit" class="btn-main btn-green" style="margin-top:22px;">CADASTRAR NOVO CLIENTE NO CLUBE</button>
-          </div>
-        </form>
-
-        <h4 style="margin:16px 0 8px 0; color:var(--header-bg);">Clientes Cadastrados:</h4>
-        <table class="tabela-sos" id="tabelaClientesCadastrados">
-          <!-- Preenchido via JS -->
-        </table>
-      </div>
-
-      <!-- 5. GESTÃO E CADASTRO DE COLABORADORES (EXCLUSIVO DIRETORIA) -->
-      <div class="panel-card">
-        <h3>🛠️ Cadastro e Gestão de Colaboradores & Setores Operacionais</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Cadastre membros da equipe e vincule aos seus setores de atuação:</p>
-
-        <form onsubmit="cadastrarColaboradorDiretoria(event)" class="grid-2col">
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Nome do Colaborador</label>
-            <input type="text" id="cadColabNome" class="form-control" required placeholder="Ex: Cíntia Lima">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
-            <input type="text" id="cadColabLogin" class="form-control" required placeholder="cintia@sos.com">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-            <input type="password" id="cadColabSenha" class="form-control" required value="123456">
-          </div>
-
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Setores de Atuação (Selecione um ou mais)</label>
-            <select id="cadColabSetores" class="form-control" multiple style="height:110px;">
-              <option value="1. Entrada" selected>1. Entrada Bruta</option>
-              <option value="2. Inspeção (3 em 1)" selected>2. Inspeção (3 em 1)</option>
-              <option value="3. Fotografia (Still / IA)">3. Fotografia (Still / IA)</option>
-              <option value="4. CDE (Catalogação)">4. CDE (Catalogação)</option>
-              <option value="5. Etiquetagem">5. Etiquetagem</option>
-              <option value="6. Encartelamento">6. Encartelamento</option>
-              <option value="7. Finalização">7. Finalização</option>
-            </select>
-
-            <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">CADASTRAR COLABORADOR</button>
-          </div>
-        </form>
-
-        <h4 style="margin:16px 0 8px 0; color:var(--header-bg);">Colaboradores Cadastrados:</h4>
-        <table class="tabela-sos" id="tabelaColaboradoresCadastrados">
-          <!-- Preenchido via JS -->
-        </table>
-      </div>
-
-      <!-- 6. GESTÃO DE INSUMOS POR CLIENTE (CATEGORIAS E SUBCATEGORIAS COM SOLAPA) -->
-      <div class="panel-card">
-        <h3>📦 Cadastro de Insumos por Cliente (Estoque Parceiros S.O.S)</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Cadastre insumos estruturados por Categoria e Subcategoria/Tamanho:</p>
-
-        <form onsubmit="cadastrarInsumoEstruturadoDiretoria(event)" class="grid-2col">
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca Proprietária</label>
-            <select id="insumoCliSelectDir" class="form-control">
-              <option value="Niara Semijoias">Niara Semijoias</option>
-              <option value="Velt Joias">Velt Joias</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Categoria Principal do Insumo</label>
-            <select id="insumoCatPrincipalDir" class="form-control">
-              <option value="Saquinho">Saquinho</option>
-              <option value="Cartela">Cartela</option>
-              <option value="Tag">Tag / Solapa</option>
-              <option value="Fecho / Argola">Fecho / Argola</option>
-              <option value="Etiqueta Argox">Etiqueta Argox</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Tamanho Específico</label>
-            <input type="text" id="insumoSubCatDir" class="form-control" required placeholder="Ex: 6.5x9+3+3">
-          </div>
-
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Possui Solapa? (Para Saquinhos)</label>
-            <select id="insumoSolapaOptionDir" class="form-control">
-              <option value="Não">Não (Sem Solapa)</option>
-              <option value="Com Solapa">Com Solapa</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial em Estoque</label>
-            <input type="number" id="insumoQtdInicialDir" class="form-control" required placeholder="Ex: 1000">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Nº da Gondula / Prateleira</label>
-            <input type="text" id="insumoGondulaDir" class="form-control" placeholder="Ex: 11">
-
-            <button type="submit" class="btn-main btn-green" style="margin-top:10px;">SALVAR INSUMO NO ESTOQUE DO CLIENTE</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- 7. EDITOR DO MODELO DE ENCARTE POR CATEGORIA DE JOIA E CLIENTE -->
-      <div class="panel-card">
-        <h3>🎴 Editor do Modelo de Encarte por Marca & Categoria de Joia</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Defina como encartelar cada tipo de peça utilizando os insumos do cliente:</p>
-
-        <form onsubmit="salvarModeloEncarteDiretoria(event)" class="grid-2col">
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
-            <select id="encarteCliSelDir" class="form-control" onchange="atualizarInsumosDinamicosEncarteDir()">
-              <option value="Niara Semijoias">Niara Semijoias</option>
-              <option value="Velt Joias">Velt Joias</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Categoria da Joia</label>
-            <select id="encarteCatJoiaDir" class="form-control">
-              <option value="Anel Regulável">Anel Regulável</option>
-              <option value="Anel Tradicional">Anel Tradicional</option>
-              <option value="Colar Grande">Colar Grande</option>
-              <option value="Choker">Choker</option>
-              <option value="Brinco Pequeno">Brinco Pequeno</option>
-              <option value="Infantil">Infantil</option>
-              <option value="Pulseira">Pulseira</option>
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Instrução de Encarte</label>
-            <input type="text" id="encarteInstrucaoDir" class="form-control" required placeholder="Ex: Somente etiqueta bem apertada no aro">
-          </div>
-
-          <div>
-            <label style="font-size:0.78rem; font-weight:bold;">Selecione o Saquinho (Insumos do Cliente)</label>
-            <select id="encarteSaquinhoSelDir" class="form-control">
-              <!-- Preenchido via JS -->
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Selecione a Cartela (Insumos do Cliente)</label>
-            <select id="encarteCartelaSelDir" class="form-control">
-              <!-- Preenchido via JS -->
-            </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Link Foto Frente (Drive)</label>
-            <input type="text" id="encarteFotoFrenteDir" class="form-control" placeholder="https://drive.google.com/...">
-
-            <label style="font-size:0.78rem; font-weight:bold;">Link Foto Verso (Drive)</label>
-            <input type="text" id="encarteFotoVersoDir" class="form-control" placeholder="https://drive.google.com/...">
-
-            <button type="submit" class="btn-main btn-orange" style="margin-top:6px;">SALVAR MODELO DE ENCARTE DA MARCA</button>
-          </div>
-        </form>
       </div>
 
     </div>
 
-    <!-- PAINÉIS SECUNDÁRIOS PARA MANTER O CODIGO FUNCIONAL -->
-    <div id="painelCliente" style="display:none;"><p>Painel Cliente Ativo</p></div>
-    <div id="painelEquipe" style="display:none;"><p>Painel Colaborador Ativo</p></div>
+  </div>
 
+  <!-- MODAL CADASTRO DE NOVO CLIENTE -->
+  <div id="modalCadCliente" class="modal-overlay">
+    <div class="modal-card" style="max-width:550px;">
+      <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Cliente do Clube</h3>
+      <form onsubmit="salvarNovoClienteSubmit(event)">
+        <label style="font-size:0.78rem; font-weight:bold;">Nome da Marca / Loja</label>
+        <input type="text" id="mCadCliNome" class="form-control" required placeholder="Ex: Niara Semijoias">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail</label>
+        <input type="text" id="mCadCliLogin" class="form-control" required placeholder="niara@sos.com">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Senha</label>
+        <input type="password" id="mCadCliSenha" class="form-control" required value="123456">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Categoria do Clube</label>
+        <select id="mCadCliCat" class="form-control">
+          <option value="Iniciante">Iniciante / Simples</option>
+          <option value="Ouro">VIP Ouro</option>
+          <option value="Diamante" selected>VIP Diamante</option>
+          <option value="Black">VIP Black Exclusivo</option>
+        </select>
+
+        <label style="font-size:0.78rem; font-weight:bold;">Mês/Ano Início Parceria</label>
+        <input type="text" id="mCadCliInicio" class="form-control" required placeholder="05/2026">
+
+        <button type="submit" class="btn-main btn-green">SALVAR CLIENTE</button>
+        <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadCliente()">CANCELAR</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CADASTRO DE NOVO COLABORADOR -->
+  <div id="modalCadColaborador" class="modal-overlay">
+    <div class="modal-card" style="max-width:550px;">
+      <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Colaborador</h3>
+      <form onsubmit="salvarNovoColaboradorSubmit(event)">
+        <label style="font-size:0.78rem; font-weight:bold;">Nome do Colaborador</label>
+        <input type="text" id="mCadColabNome" class="form-control" required placeholder="Ex: Cíntia Lima">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail</label>
+        <input type="text" id="mCadColabLogin" class="form-control" required placeholder="cintia@sos.com">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Senha</label>
+        <input type="password" id="mCadColabSenha" class="form-control" required value="123456">
+
+        <label style="font-size:0.78rem; font-weight:bold; display:block; margin-bottom:6px;">Clique para Selecionar os Setores de Atuação:</label>
+        <div id="boxSetoresTagsColab">
+          <span class="tag-setor-btn selected" onclick="toggleSetorTag(this, '1. Entrada')">1. Entrada</span>
+          <span class="tag-setor-btn selected" onclick="toggleSetorTag(this, '2. Inspeção (3 em 1)')">2. Inspeção (3em1)</span>
+          <span class="tag-setor-btn" onclick="toggleSetorTag(this, '3. Fotografia')">3. Foto</span>
+          <span class="tag-setor-btn" onclick="toggleSetorTag(this, '4. CDE')">4. CDE</span>
+          <span class="tag-setor-btn" onclick="toggleSetorTag(this, '5. Etiquetagem')">5. Etiqueta</span>
+          <span class="tag-setor-btn" onclick="toggleSetorTag(this, '6. Encartelamento')">6. Encarte</span>
+          <span class="tag-setor-btn" onclick="toggleSetorTag(this, '7. Finalização')">7. Finalização</span>
+        </div>
+
+        <button type="submit" class="btn-main btn-orange" style="margin-top:15px;">SALVAR COLABORADOR</button>
+        <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadColaborador()">CANCELAR</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL VISUALIZAR/EDITAR INSUMOS DO CLIENTE -->
+  <div id="modalInsumosClienteDetalhe" class="modal-overlay">
+    <div class="modal-card">
+      <h3 id="modalInsumosTituloCli" style="margin-top:0; color:var(--header-bg);">Insumos do Cliente</h3>
+      <div id="modalInsumosConteudoCli"></div>
+      <button class="btn-main" style="background:#94A3B8; margin-top:15px;" onclick="fecharModalInsumosCliente()">FECHAR</button>
+    </div>
+  </div>
+
+  <!-- MODAL CADASTRO DE INSUMO -->
+  <div id="modalCadInsumo" class="modal-overlay">
+    <div class="modal-card" style="max-width:550px;">
+      <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Insumo</h3>
+      <form onsubmit="salvarNovoInsumoSubmit(event)">
+        <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
+        <select id="mCadInsCli" class="form-control">
+          <option value="Niara Semijoias">Niara Semijoias</option>
+          <option value="Velt Joias">Velt Joias</option>
+        </select>
+
+        <label style="font-size:0.78rem; font-weight:bold;">Categoria do Insumo</label>
+        <select id="mCadInsCat" class="form-control">
+          <option value="Cartela">Cartela</option>
+          <option value="Saquinho">Saquinho</option>
+          <option value="Tag / Solapa">Tag / Solapa</option>
+          <option value="Fecho / Argola">Fecho / Argola</option>
+        </select>
+
+        <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Tamanho Específico</label>
+        <input type="text" id="mCadInsSub" class="form-control" required placeholder="Ex: 6.5x9+3+3 c/ solapa">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial</label>
+        <input type="number" id="mCadInsQtd" class="form-control" required placeholder="1000">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Nº Gondula</label>
+        <input type="text" id="mCadInsGondula" class="form-control" placeholder="11">
+
+        <label style="font-size:0.78rem; font-weight:bold;">Link Foto Cartela/Saquinho (Drive)</label>
+        <input type="text" id="mCadInsFoto" class="form-control" placeholder="https://drive.google.com/...">
+
+        <button type="submit" class="btn-main btn-green">SALVAR INSUMO</button>
+        <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadInsumo()">CANCELAR</button>
+      </form>
+    </div>
   </div>
 
   <script>
     let perfilAtual = 'diretoria';
-    let fatorDivisorGrams = 3.2;
     const lotesExistentesCadastrados = ["1042", "1043", "139", "140"];
 
-    // ESTRUTURA DE CLIENTES CADASTRADOS
+    // BANCO DE DADOS CLIENTES
     const bancoClientes = [
-      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", categoria: "Diamante", inicio: "05/2026" },
-      { id: 2, marca: "Velt Joias", login: "velt@sos.com", categoria: "Ouro", inicio: "04/2026" }
+      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", categoria: "VIP Diamante", inicio: "05/2026" },
+      { id: 2, marca: "Velt Joias", login: "velt@sos.com", categoria: "VIP Ouro", inicio: "04/2026" }
     ];
 
-    // ESTRUTURA DE COLABORADORES CADASTRADOS
+    // BANCO DE DADOS COLABORADORES
     const bancoColaboradores = [
-      { id: 1, nome: "Cíntia Lima", login: "cintia@sos.com", setores: ["1. Entrada", "2. Inspeção (3 em 1)"] },
-      { id: 2, nome: "Equipe Bancada", login: "equipe@sos.com", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
+      { id: 1, nome: "Cíntia Lima", login: "cintia@sos.com", setores: ["1. Entrada", "2. Inspeção (3em1)"] },
+      { id: 2, nome: "Equipe Bancada", login: "equipe@sos.com", setores: ["3. Foto", "5. Etiqueta", "6. Encarte"] }
     ];
 
-    // AGENDAMENTOS SOLICITADOS (FLUXO 2 ETAPAS)
-    const agendamentosSolicitados = [
-      { id: 101, cliente: "Niara Semijoias", dataSolicitada: "06/10/2026", pcs: 350, peso: "1.120g", obs: "Atenção com correntes de prata", status: "PENDENTE", loteNum: "", dataEntradaReal: "" },
-      { id: 102, cliente: "Velt Joias", dataSolicitada: "08/10/2026", pcs: 800, peso: "2.560g", obs: "Lote de anéis variados", status: "ACEITO_AGUARDANDO_CHEGADA", loteNum: "", dataEntradaReal: "" }
-    ];
-
-    // INSUMOS POR CLIENTE
+    // BANCO DE DADOS DE INSUMOS POR CLIENTE
     const bancoInsumosCompletos = {
       "Niara Semijoias": [
-        { cat: "Saquinho", subCat: "6.5x9+3+3", solapa: "Com Solapa", qtd: 900, gondula: "11" },
-        { cat: "Saquinho", subCat: "6.5x12+3", solapa: "Não", qtd: 300, gondula: "11" },
-        { cat: "Cartela", subCat: "Anéis Tradicionais", solapa: "Não", qtd: 600, gondula: "9" },
-        { cat: "Cartela", subCat: "Infantil e Brinco", solapa: "Não", qtd: 400, gondula: "10" }
+        { id: 10, cat: "Saquinho", sub: "6.5x9+3+3 c/ solapa", qtd: 900, gondula: "11", foto: "https://drive.google.com/..." },
+        { id: 11, cat: "Cartela", sub: "Anéis Tradicionais", qtd: 600, gondula: "9", foto: "https://drive.google.com/..." }
       ],
       "Velt Joias": [
-        { cat: "Tag", subCat: "Tag Velt Brinco", solapa: "Não", qtd: 1200, gondula: "5" },
-        { cat: "Saquinho", subCat: "Veludo Preto 8x8", solapa: "Não", qtd: 450, gondula: "5" }
+        { id: 20, cat: "Tag / Solapa", sub: "Tag Velt Brinco", qtd: 1200, gondula: "5", foto: "https://drive.google.com/..." }
       ]
     };
 
-    function selecionarPerfilAcesso(perfil) {
-      perfilAtual = perfil;
-      document.getElementById('tabCliente').classList.remove('active');
-      document.getElementById('tabEquipe').classList.remove('active');
-      document.getElementById('tabDiretoria').classList.remove('active');
+    // BANCO DE MODELOS DE ENCARTE
+    const bancoModelosEncarte = {
+      "Niara Semijoias": [
+        { catJoia: "Anel Regulável", comoFazer: "Somente etiqueta bem apertada no aro", saquinho: "Não utiliza saquinho", cartela: "Cartela Anéis (Qtd: 600)", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Sem solapa" },
+        { catJoia: "Brinco Pequeno", comoFazer: "Encartelar na cartela e embalar no saquinho", saquinho: "Saquinho 6.5x9+3+3 (Qtd: 900)", cartela: "Cartela Infantil (Qtd: 400)", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Dobrar bem a aba" }
+      ]
+    };
 
+    // BANCO DE LOTES NAS 4 ETAPAS
+    const bancoLotes4Etapas = [
+      { id: 1, cliente: "Niara Semijoias", etapa: 1, label: "Aguardando Aprovação", pcs: 350, peso: "1.120g", data: "06/10/2026", obs: "Correntes de prata" },
+      { id: 2, cliente: "Velt Joias", etapa: 2, label: "Aguardando Chegada Física", pcs: 800, peso: "2.560g", data: "08/10/2026", obs: "Caixa via Sedex" },
+      { id: 3, cliente: "Niara Semijoias", etapa: 3, label: "Cadastrado / Em Andamento", numLote: "141", pcs: 350, peso: "1.120g", entrada: "05/10/2026", setorAtual: "2. Inspeção 3em1" },
+      { id: 4, cliente: "Velt Joias", etapa: 4, label: "Finalizado", numLote: "139", pcs: 400, peso: "1.280g", entrada: "15/09/2026", setorAtual: "7. Finalização / Liberado" }
+    ];
+
+    function selecionarPerfilAcesso(p) {
+      perfilAtual = p;
       const select = document.getElementById('selectUsuarioLogin');
-      select.innerHTML = "";
-
-      if(perfil === 'cliente') {
-        document.getElementById('tabCliente').classList.add('active');
-        select.innerHTML = `<option value="Niara Semijoias">Niara Semijoias (Cliente VIP)</option>`;
-      } else if(perfil === 'equipe') {
-        document.getElementById('tabEquipe').classList.add('active');
-        select.innerHTML = `<option value="Equipe Bancada">Equipe de Colaboradores S.O.S</option>`;
-      } else {
-        document.getElementById('tabDiretoria').classList.add('active');
-        select.innerHTML = `<option value="Kelvin Lima (CEO)">Kelvin Lima & Brenda (Diretoria General)</option>`;
-      }
+      select.innerHTML = `<option value="Kelvin Lima">Kelvin Lima & Brenda (Diretoria General)</option>`;
     }
 
     function autenticarUsuario(e) {
       e.preventDefault();
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'block';
-
-      if(perfilAtual === 'diretoria') {
-        renderizarPainelDiretoria();
-        document.getElementById('painelDiretoria').style.display = 'block';
-      }
+      renderizarPainelDiretoria();
+      document.getElementById('painelDiretoria').style.display = 'block';
     }
 
     function renderizarPainelDiretoria() {
-      renderizarAgendamentosDiretoria();
-      renderizarTabelaClientes();
-      renderizarTabelaColaboradores();
-      atualizarInsumosDinamicosEncarteDir();
+      renderizarPainelLotesGeral();
+      renderizarCardsClientes();
+      renderizarCardsColaboradores();
+      renderizarCardsInsumosClientes();
+      renderizarCardsModelosEncarte();
     }
 
-    function renderizarAgendamentosDiretoria() {
-      const cont = document.getElementById('containerAgendamentosDiretoria');
-      let html = "";
+    // 1. LOTES EM 4 ETAPAS
+    function renderizarPainelLotesGeral() {
+      const filtro = document.getElementById('filtroClienteLotesGeral').value;
+      const cont = document.getElementById('containerLotesGeral4Etapas');
 
-      agendamentosSolicitados.forEach(ag => {
-        if(ag.status === "PENDENTE") {
-          html += `
-            <div style="background:#FFF; border:2px solid #E2E8F0; padding:16px; border-radius:12px; margin-bottom:12px;">
-              <strong style="font-size:1rem; color:var(--header-bg);">${ag.cliente}</strong> — <span class="badge-status badge-andamento">ETAPA 1: PENDENTE DE ANÁLISE</span>
-              <p style="font-size:0.8rem; margin:6px 0;">Volume: ~<strong>${ag.pcs} pcs (${ag.peso})</strong> | Data Solicitada: <strong>${ag.dataSolicitada}</strong></p>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0;">Obs: ${ag.obs}</p>
-              <div style="margin-top:10px; display:flex; gap:10px;">
-                <button class="btn-main btn-green" style="width:auto; padding:6px 16px;" onclick="aceitarEntradaAgendamento(${ag.id})">ACEITAR ENTRADA</button>
-                <button class="btn-main" style="background:#EF4444; width:auto; padding:6px 16px;" onclick="recusarAgendamento(${ag.id})">RECUSAR</button>
-              </div>
-            </div>
-          `;
-        } else if(ag.status === "ACEITO_AGUARDANDO_CHEGADA") {
-          html += `
-            <div style="background:#F0F9FF; border:2px solid #BAE6FD; padding:16px; border-radius:12px; margin-bottom:12px;">
-              <strong style="font-size:1rem; color:var(--header-bg);">${ag.cliente}</strong> — <span class="badge-status badge-concluido">ETAPA 2: ENTRADA ACEITA (AGUARDANDO CHEGADA FÍSICA)</span>
-              <p style="font-size:0.8rem; margin:6px 0;">Volume: ~<strong>${ag.pcs} pcs (${ag.peso})</strong> | Chegada Prevista: <strong>${ag.dataSolicitada}</strong></p>
-              
-              <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
-                <input type="text" id="numLoteFinal_${ag.id}" class="form-control" style="width:200px; margin:0;" placeholder="Atribuir Nº do Lote (Ex: 141)">
-                <button class="btn-main btn-orange" style="width:auto; padding:8px 16px;" onclick="confirmarChegadaEFabrica(${ag.id})">CONFIRMAR CHEGADA FÍSICA & ENTRADA NA ESTEIRA</button>
-              </div>
-            </div>
-          `;
-        }
-      });
+      const lotesFiltrados = (filtro === "TODOS") ? bancoLotes4Etapas : bancoLotes4Etapas.filter(l => l.cliente === filtro);
 
-      cont.innerHTML = html || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhum agendamento pendente no momento.</p>";
-    }
-
-    function aceitarEntradaAgendamento(id) {
-      const ag = agendamentosSolicitados.find(a => a.id === id);
-      if(ag) {
-        ag.status = "ACEITO_AGUARDANDO_CHEGADA";
-        alert(`✅ Entrada da mercadoria da marca ${ag.cliente} ACEITA! Aguardando chegada física na fábrica.`);
-        renderizarAgendamentosDiretoria();
-      }
-    }
-
-    function recusarAgendamento(id) {
-      const mot = prompt("Digite o motivo da recusa do agendamento:");
-      if(mot) {
-        alert(`❌ Agendamento recusado com sucesso. Notificação enviada ao cliente com o motivo: "${mot}"`);
-        renderizarAgendamentosDiretoria();
-      }
-    }
-
-    function confirmarChegadaEFabrica(id) {
-      const ag = agendamentosSolicitados.find(a => a.id === id);
-      const numLote = document.getElementById(`numLoteFinal_${id}`).value.trim();
-
-      if(!numLote) {
-        alert("⚠️ Por favor, atribua o NÚMERO DO LOTE para confirmar a entrada!");
-        return;
-      }
-
-      if(lotesExistentesCadastrados.includes(numLote)) {
-        alert(`❌ ERRO DE DUPLICIDADE: O Lote #${numLote} JÁ FOI UTILIZADO! Digite um número diferente.`);
-        return;
-      }
-
-      lotesExistentesCadastrados.push(numLote);
+      let html = `<div class="cards-grid-3col">`;
       
-      // Data de entrada automática = Dia seguinte à confirmação de chegada
-      const hoje = new Date();
-      hoje.setDate(hoje.getDate() + 1);
-      const dataEntradaSeg = hoje.toLocaleDateString('pt-BR');
-
-      alert(`✅ LOTE #${numLote} GERADO COM SUCESSO!\nMercadoria confirmada na fábrica. Data oficial de entrada registrada: ${dataEntradaSeg}. Lote liberado na bancada.`);
-      renderizarAgendamentosDiretoria();
-    }
-
-    function cadastrarClienteDiretoria(e) {
-      e.preventDefault();
-      const nome = document.getElementById('cadCliNomeLoja').value;
-      const login = document.getElementById('cadCliLogin').value;
-      const cat = document.getElementById('cadCliCategoria').value;
-      const ini = document.getElementById('cadCliInicio').value;
-
-      bancoClientes.push({ id: Date.now(), marca: nome, login: login, categoria: cat, inicio: ini });
-      alert(`✅ Cliente '${nome}' cadastrado com sucesso no Clube S.O.S!`);
-      renderizarTabelaClientes();
-    }
-
-    function renderizarTabelaClientes() {
-      const tab = document.getElementById('tabelaClientesCadastrados');
-      let html = "<thead><tr><th>Marca / Loja</th><th>Login</th><th>Categoria</th><th>Início</th><th>Ação</th></tr></thead><tbody>";
-      bancoClientes.forEach(c => {
+      // Etapa 1: Aguardando Aprovação
+      html += `<div style="background:#FFF3ED; border:2px solid #FFD8C2; border-radius:12px; padding:14px;">
+        <h4 style="margin:0 0 10px 0; color:#C2410C;">1. Aguardando Aprovação</h4>`;
+      lotesFiltrados.filter(l => l.etapa === 1).forEach(l => {
         html += `
-          <tr>
-            <td><strong>${c.marca}</strong></td>
-            <td>${c.login}</td>
-            <td><span class="badge-status badge-concluido">${c.categoria}</span></td>
-            <td>${c.inicio}</td>
-            <td><button class="btn-main" style="background:#EF4444; padding:2px 6px; font-size:0.68rem; width:auto;" onclick="excluirCliente(${c.id})">EXCLUIR</button></td>
-          </tr>
+          <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #FFBD9B; margin-bottom:8px;">
+            <strong>${l.cliente}</strong><br>
+            <span style="font-size:0.78rem;">Volume: ~${l.pcs} pcs (${l.peso})</span><br>
+            <button class="btn-main btn-green" style="padding:4px; font-size:0.7rem; margin-top:6px;" onclick="aprovarAgendamentoEtapa1(${l.id})">ACEITAR ENTRADA</button>
+          </div>
         `;
       });
-      tab.innerHTML = html + "</tbody>";
+      html += `</div>`;
+
+      // Etapa 2: Aguardando Chegada Física
+      html += `<div style="background:#E0F2FE; border:2px solid #BAE6FD; border-radius:12px; padding:14px;">
+        <h4 style="margin:0 0 10px 0; color:#0369A1;">2. Aguardando Chegada Física</h4>`;
+      lotesFiltrados.filter(l => l.etapa === 2).forEach(l => {
+        html += `
+          <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #7DD3FC; margin-bottom:8px;">
+            <strong>${l.cliente}</strong><br>
+            <span style="font-size:0.78rem;">Previsto: ${l.data}</span><br>
+            <input type="text" id="numLoteInput_${l.id}" class="form-control" placeholder="Atribuir Nº Lote (Ex: 142)" style="margin:4px 0; padding:4px; font-size:0.75rem;">
+            <button class="btn-main btn-orange" style="padding:4px; font-size:0.7rem;" onclick="confirmarChegadaEtapa2(${l.id})">CONFIRMAR CHEGADA FÍSICA</button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+
+      // Etapa 3: Cadastrados / Em Andamento
+      html += `<div style="background:#FEF3C7; border:2px solid #FDE68A; border-radius:12px; padding:14px;">
+        <h4 style="margin:0 0 10px 0; color:#B45309;">3. Cadastrados & Em Andamento</h4>`;
+      lotesFiltrados.filter(l => l.etapa === 3).forEach(l => {
+        html += `
+          <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #FCD34D; margin-bottom:8px;">
+            <strong>LOTE #${l.numLote} — ${l.cliente}</strong><br>
+            <span style="font-size:0.78rem;">Setor Atual: <strong>${l.setorAtual}</strong></span><br>
+            <small style="font-size:0.7rem; color:var(--text-muted);">Entrada: ${l.entrada}</small>
+          </div>
+        `;
+      });
+      html += `</div>`;
+
+      // Etapa 4: Finalizados
+      html += `<div style="background:#D1FAE5; border:2px solid #A7F3D0; border-radius:12px; padding:14px;">
+        <h4 style="margin:0 0 10px 0; color:#065F46;">4. Lotes Finalizados</h4>`;
+      lotesFiltrados.filter(l => l.etapa === 4).forEach(l => {
+        html += `
+          <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #6EE7B7; margin-bottom:8px;">
+            <strong>LOTE #${l.numLote} — ${l.cliente}</strong><br>
+            <span style="font-size:0.78rem;">Volume: ${l.pcs} pcs</span>
+          </div>
+        `;
+      });
+      html += `</div>`;
+
+      html += `</div>`;
+      cont.innerHTML = html;
+    }
+
+    function aprovarAgendamentoEtapa1(id) {
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) { l.etapa = 2; renderizarPainelLotesGeral(); }
+    }
+
+    function confirmarChegadaEtapa2(id) {
+      const num = document.getElementById(`numLoteInput_${id}`).value.trim();
+      if(!num) { alert("⚠️ Digite o número do lote!"); return; }
+      if(lotesExistentesCadastrados.includes(num)) { alert("❌ Número de lote já existente!"); return; }
+
+      lotesExistentesCadastrados.push(num);
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        l.etapa = 3;
+        l.numLote = num;
+        l.setorAtual = "1. Entrada Bruta";
+        l.entrada = "06/10/2026 (Dia seguinte)";
+        alert(`✅ Lote #${num} confirmado e cadastrado na esteira fabril!`);
+        renderizarPainelLotesGeral();
+      }
+    }
+
+    // 2. CLIENTES EM CARDS
+    function renderizarCardsClientes() {
+      const cont = document.getElementById('containerCardsClientes');
+      let html = "";
+      bancoClientes.forEach(c => {
+        html += `
+          <div class="card-item-click">
+            <span class="badge-status badge-concluido">${c.categoria}</span>
+            <strong style="display:block; font-size:1.05rem; margin-top:6px; color:var(--header-bg);">${c.marca}</strong>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:4px 0;">Login: ${c.login}</p>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Início: ${c.inicio}</p>
+            <button class="btn-main" style="background:#EF4444; padding:3px 8px; font-size:0.68rem; margin-top:8px; width:auto;" onclick="excluirCliente(${c.id})">EXCLUIR</button>
+          </div>
+        `;
+      });
+      cont.innerHTML = html;
     }
 
     function excluirCliente(id) {
-      if(confirm("Tem certeza que deseja excluir este cliente?")) {
+      if(confirm("Deseja excluir este cliente?")) {
         const idx = bancoClientes.findIndex(c => c.id === id);
         if(idx > -1) bancoClientes.splice(idx, 1);
-        renderizarTabelaClientes();
+        renderizarCardsClientes();
       }
     }
 
-    function cadastrarColaboradorDiretoria(e) {
-      e.preventDefault();
-      const nome = document.getElementById('cadColabNome').value;
-      const login = document.getElementById('cadColabLogin').value;
-      const selectSet = document.getElementById('cadColabSetores');
-      const setoresSel = Array.from(selectSet.selectedOptions).map(o => o.value);
-
-      bancoColaboradores.push({ id: Date.now(), nome: nome, login: login, setores: setoresSel });
-      alert(`✅ Colaborador '${nome}' cadastrado com sucesso!`);
-      renderizarTabelaColaboradores();
-    }
-
-    function renderizarTabelaColaboradores() {
-      const tab = document.getElementById('tabelaColaboradoresCadastrados');
-      let html = "<thead><tr><th>Nome</th><th>Login</th><th>Setores de Atuação</th><th>Ação</th></tr></thead><tbody>";
+    // 3. COLABORADORES EM CARDS
+    function renderizarCardsColaboradores() {
+      const cont = document.getElementById('containerCardsColaboradores');
+      let html = "";
       bancoColaboradores.forEach(c => {
         html += `
-          <tr>
-            <td><strong>${c.nome}</strong></td>
-            <td>${c.login}</td>
-            <td>${c.setores.join(', ')}</td>
-            <td><button class="btn-main" style="background:#EF4444; padding:2px 6px; font-size:0.68rem; width:auto;" onclick="excluirColaborador(${c.id})">EXCLUIR</button></td>
-          </tr>
+          <div class="card-item-click">
+            <strong style="font-size:1.05rem; color:var(--header-bg);">${c.nome}</strong>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:4px 0;">Login: ${c.login}</p>
+            <p style="font-size:0.75rem; margin:4px 0;"><strong>Setores:</strong> ${c.setores.join(', ')}</p>
+            <button class="btn-main" style="background:#EF4444; padding:3px 8px; font-size:0.68rem; margin-top:8px; width:auto;" onclick="excluirColaborador(${c.id})">EXCLUIR</button>
+          </div>
         `;
       });
-      tab.innerHTML = html + "</tbody>";
+      cont.innerHTML = html;
     }
 
     function excluirColaborador(id) {
-      if(confirm("Tem certeza que deseja excluir este colaborador?")) {
+      if(confirm("Deseja excluir este colaborador?")) {
         const idx = bancoColaboradores.findIndex(c => c.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
-        renderizarTabelaColaboradores();
+        renderizarCardsColaboradores();
       }
     }
 
-    function cadastrarInsumoEstruturadoDiretoria(e) {
+    // 4. INSUMOS EM CARDS POR MARCA
+    function renderizarCardsInsumosClientes() {
+      const cont = document.getElementById('containerCardsInsumosClientes');
+      let html = "";
+      Object.keys(bancoInsumosCompletos).forEach(cli => {
+        const qtdItens = bancoInsumosCompletos[cli].length;
+        html += `
+          <div class="card-item-click" onclick="abrirModalInsumosCliente('${cli}')">
+            <strong style="font-size:1.05rem; color:var(--header-bg);">${cli}</strong>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0;">Total de Insumos Cadastrados: <strong>${qtdItens} itens</strong></p>
+            <small style="color:var(--green-val); font-weight:bold; font-size:0.75rem;">VER / EDITAR ESTOQUE DA MARCA ➔</small>
+          </div>
+        `;
+      });
+      cont.innerHTML = html;
+    }
+
+    function abrirModalInsumosCliente(cli) {
+      document.getElementById('modalInsumosTituloCli').innerText = `Gestão de Insumos — ${cli}`;
+      const lista = bancoInsumosCompletos[cli] || [];
+
+      let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
+      lista.forEach((ins, idx) => {
+        html += `
+          <div style="background:#F8FAFC; border:1px solid #CBD5E1; border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong style="font-size:0.9rem; color:var(--header-bg);">${ins.cat} — ${ins.sub}</strong><br>
+              <span style="font-size:0.78rem;">Quantidade em Estoque: <input type="number" value="${ins.qtd}" style="width:80px; padding:2px; font-weight:bold;" onchange="editarQtdInsumoDirect('${cli}', ${idx}, this.value)"></span> | 
+              <span style="font-size:0.78rem;">Gondula: <strong>${ins.gondula || '-'}</strong></span>
+            </div>
+            <div>
+              <a href="${ins.foto}" target="_blank" style="font-size:0.75rem; color:var(--orange-accent); font-weight:bold; margin-right:10px;">🖼️ Foto Drive</a>
+              <button class="btn-main" style="background:#EF4444; padding:3px 8px; font-size:0.68rem; width:auto;" onclick="excluirInsumoDirect('${cli}', ${idx})">EXCLUIR</button>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+
+      document.getElementById('modalInsumosConteudoCli').innerHTML = html;
+      document.getElementById('modalInsumosClienteDetalhe').style.display = 'flex';
+    }
+
+    function editarQtdInsumoDirect(cli, idx, novaQtd) {
+      bancoInsumosCompletos[cli][idx].qtd = parseInt(novaQtd) || 0;
+      alert("✅ Quantidade atualizada no estoque!");
+    }
+
+    function excluirInsumoDirect(cli, idx) {
+      if(confirm("Tem certeza que deseja excluir este insumo?")) {
+        bancoInsumosCompletos[cli].splice(idx, 1);
+        abrirModalInsumosCliente(cli);
+        renderizarCardsInsumosClientes();
+      }
+    }
+
+    function fecharModalInsumosCliente() { document.getElementById('modalInsumosClienteDetalhe').style.display = 'none'; }
+
+    // 5. MODELOS DE ENCARTE
+    function renderizarCardsModelosEncarte() {
+      const cont = document.getElementById('containerCardsModelosEncarte');
+      let html = "";
+
+      Object.keys(bancoModelosEncarte).forEach(cli => {
+        const lista = bancoModelosEncarte[cli];
+        html += `<div style="margin-bottom:15px; background:#F8FAFC; border:1px solid #CBD5E1; border-radius:12px; padding:16px;">
+          <h4 style="margin:0 0 10px 0; color:var(--header-bg); font-size:1rem;">Marca: ${cli}</h4>
+          <div class="cards-grid-3col">`;
+
+        lista.forEach(m => {
+          html += `
+            <div class="card-item-click" style="background:#FFF;">
+              <strong style="color:var(--orange-accent); font-size:0.95rem;">CATEGORIA: ${m.catJoia.toUpperCase()}</strong>
+              <p style="font-size:0.78rem; margin:6px 0;"><strong>Como Encartelar:</strong> ${m.comoFazer}</p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0;">• Saquinho: ${m.saquinho}</p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0;">• Cartela: ${m.cartela}</p>
+              <p style="font-size:0.75rem; color:#78350F; margin:2px 0;">• Obs: ${m.obs}</p>
+              <div style="margin-top:8px;">
+                <a href="${m.fotoFrente}" target="_blank" style="font-size:0.72rem; color:var(--blue-val); font-weight:bold; margin-right:8px;">🖼️ Foto Frente</a>
+                <a href="${m.fotoVerso}" target="_blank" style="font-size:0.72rem; color:var(--blue-val); font-weight:bold;">🖼️ Foto Verso</a>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div></div>`;
+      });
+
+      cont.innerHTML = html;
+    }
+
+    // MODAIS DE CRIAÇÃO
+    function abrirModalCadCliente() { document.getElementById('modalCadCliente').style.display = 'flex'; }
+    function fecharModalCadCliente() { document.getElementById('modalCadCliente').style.display = 'none'; }
+
+    function salvarNovoClienteSubmit(e) {
       e.preventDefault();
-      const cli = document.getElementById('insumoCliSelectDir').value;
-      const cat = document.getElementById('insumoCatPrincipalDir').value;
-      const sub = document.getElementById('insumoSubCatDir').value;
-      const sol = document.getElementById('insumoSolapaOptionDir').value;
-      const qtd = parseInt(document.getElementById('insumoQtdInicialDir').value) || 0;
-      const gon = document.getElementById('insumoGondulaDir').value;
+      const nome = document.getElementById('mCadCliNome').value;
+      const login = document.getElementById('mCadCliLogin').value;
+      const cat = document.getElementById('mCadCliCat').value;
+      const ini = document.getElementById('mCadCliInicio').value;
+
+      bancoClientes.push({ id: Date.now(), marca: nome, login: login, categoria: cat, inicio: ini });
+      alert(`✅ Cliente '${nome}' cadastrado com sucesso!`);
+      fecharModalCadCliente();
+      renderizarCardsClientes();
+    }
+
+    function abrirModalCadColaborador() { document.getElementById('modalCadColaborador').style.display = 'flex'; }
+    function fecharModalCadColaborador() { document.getElementById('modalCadColaborador').style.display = 'none'; }
+
+    function toggleSetorTag(el, setor) { el.classList.toggle('selected'); }
+
+    function salvarNovoColaboradorSubmit(e) {
+      e.preventDefault();
+      const nome = document.getElementById('mCadColabNome').value;
+      const login = document.getElementById('mCadColabLogin').value;
+      const tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(el => el.innerText);
+
+      bancoColaboradores.push({ id: Date.now(), nome: nome, login: login, setores: tags });
+      alert(`✅ Colaborador '${nome}' cadastrado!`);
+      fecharModalCadColaborador();
+      renderizarCardsColaboradores();
+    }
+
+    function abrirModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'flex'; }
+    function fecharModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'none'; }
+
+    function salvarNovoInsumoSubmit(e) {
+      e.preventDefault();
+      const cli = document.getElementById('mCadInsCli').value;
+      const cat = document.getElementById('mCadInsCat').value;
+      const sub = document.getElementById('mCadInsSub').value;
+      const qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
+      const gon = document.getElementById('mCadInsGondula').value;
+      const foto = document.getElementById('mCadInsFoto').value;
 
       if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
-      bancoInsumosCompletos[cli].push({ cat: cat, subCat: sub, solapa: sol, qtd: qtd, gondula: gon });
+      bancoInsumosCompletos[cli].push({ id: Date.now(), cat: cat, sub: sub, qtd: qtd, gondula: gon, foto: foto });
 
-      alert(`✅ Insumo '${cat} - ${sub}' cadastrado com sucesso no estoque do cliente ${cli}!`);
-      atualizarInsumosDinamicosEncarteDir();
+      alert(`✅ Insumo cadastrado com sucesso!`);
+      fecharModalCadInsumo();
+      renderizarCardsInsumosClientes();
     }
 
-    function atualizarInsumosDinamicosEncarteDir() {
-      const cli = document.getElementById('encarteCliSelDir').value;
-      const insumos = bancoInsumosCompletos[cli] || [];
-
-      const selectSaq = document.getElementById('encarteSaquinhoSelDir');
-      const selectCar = document.getElementById('encarteCartelaSelDir');
-
-      selectSaq.innerHTML = "<option value='Não Utiliza'>Não Utiliza Saquinho</option>";
-      selectCar.innerHTML = "<option value='Não Utiliza'>Não Utiliza Cartela</option>";
-
-      insumos.forEach(i => {
-        if(i.cat === "Saquinho") {
-          selectSaq.innerHTML += `<option value="${i.cat} ${i.subCat} (${i.solapa})">${i.cat} ${i.subCat} (${i.solapa})</option>`;
-        }
-        if(i.cat === "Cartela") {
-          selectCar.innerHTML += `<option value="${i.cat} ${i.subCat}">${i.cat} ${i.subCat}</option>`;
-        }
-      });
-    }
-
-    function salvarModeloEncarteDiretoria(e) {
-      e.preventDefault();
-      const cli = document.getElementById('encarteCliSelDir').value;
-      const catJoia = document.getElementById('encarteCatJoiaDir').value;
-      alert(`✅ Modelo de encarte para '${catJoia}' do cliente ${cli} salvo com sucesso!`);
-    }
-
-    function salvarFatorDivisorDir() {
-      fatorDivisorGrams = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
-      alert(`⚙️ Fator Divisor atualizado para ${fatorDivisorGrams}g por peça!`);
-    }
-
-    function salvarAvisoEspecialDir() {
-      const filtro = document.getElementById('selectFiltroAvisoDir').value;
-      const txt = document.getElementById('textoAvisoDir').value;
-      alert(`📢 Comunicado oficial enviado com sucesso para a categoria/filtro: ${filtro}!`);
+    function abrirModalCadastrarModeloEncarte() {
+      alert("💡 Utilize o formulário do editor para cadastrar um novo modelo de encarte da marca!");
     }
 
     function fazerLogout() {
