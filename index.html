@@ -1,1105 +1,621 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLUBE S.O.S - Sistema Operacional de Setores</title>
-<link href="https://fonts.googleapis.com/css?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-light: #f1f3f6;
-  --card-bg: #ffffff;
-  --sidebar-dark: #1e293b;
-  --text-dark: #0f172a;
-  --text-muted: #64748b;
-  --orange-primary: #ff5500;
-  --orange-hover: #e04b00;
-  --blue-accent: #0284c7;
-  --green-accent: #16a34a;
-  --border-color: #e2e8f0;
-  --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-body {
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-  padding: 20px 20px 0 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.container { max-width: 950px; margin: 0 auto; flex: 1; width: 100%; }
-header {
-  text-align: center;
-  margin-bottom: 25px;
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-soft);
-}
-.logo {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: var(--sidebar-dark);
-  letter-spacing: 2px;
-}
-.logo span { color: var(--orange-primary); }
-.subtitle {
-  color: var(--blue-accent);
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
-  font-weight: 700;
-}
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: var(--shadow-soft);
-  margin-bottom: 20px;
-}
-.hidden { display: none !important; }
-.card h2 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.25rem;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--sidebar-dark);
-}
-.step-num {
-  background: var(--orange-primary);
-  color: #fff;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: bold;
-}
-.grid-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.type-btn-wrapper { position: relative; }
-.type-btn {
-  background: #f8fafc;
-  border: 2px solid var(--border-color);
-  padding: 25px 20px;
-  border-radius: 12px;
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  height: 100%;
-}
-.type-btn:hover {
-  border-color: var(--orange-primary);
-  background: #fff;
-  box-shadow: 0 10px 20px rgba(255, 85, 0, 0.12);
-  transform: translateY(-2px);
-}
-.type-btn h3 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--sidebar-dark); }
-.type-btn p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUB S.O.S 2027 — Sistema Interno Operacional</title>
+  <style>
+    :root {
+      --header-bg: #0B132B;
+      --orange-accent: #FF5722;
+      --body-bg: #F0F4F8;
+      --card-bg: #FFFFFF;
+      --input-bg: #F8FAFC;
+      --text-dark: #0B132B;
+      --text-muted: #64748B;
+      --green-val: #10B981;
+      --red-val: #EF4444;
+      --blue-val: #3B82F6;
+      --gold-val: #D97706;
+      --gold-bright: #FFB703;
+      --silver-val: #64748B;
+    }
 
-.tooltip-info {
-  background: var(--sidebar-dark);
-  color: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  margin-top: 10px;
-  line-height: 1.4;
-  display: block;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
+    * { box-sizing: border-box; font-family: 'Montserrat', -apple-system, sans-serif; }
 
-.grid-categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 25px;
-}
-.cat-card {
-  background: #f8fafc;
-  border: 2px solid var(--border-color);
-  padding: 25px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.cat-card:hover, .cat-card.active {
-  border-color: var(--orange-primary);
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(255, 85, 0, 0.15);
-}
-.cat-badge-container {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-.badge {
-  font-size: 0.75rem;
-  background: var(--blue-accent);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-.badge-vagas {
-  font-size: 0.75rem;
-  background: var(--orange-primary);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-.badge-discount {
-  font-size: 0.75rem;
-  background: var(--green-accent);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-.badge-minimo {
-  font-size: 0.75rem;
-  background: var(--sidebar-dark);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-.cat-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--sidebar-dark); margin-bottom: 8px; }
-.cat-card p { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
-.btn-detalhes {
-  background: transparent;
-  border: 1px dashed var(--blue-accent);
-  color: var(--blue-accent);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: auto;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-.btn-detalhes:hover {
-  background: var(--blue-accent);
-  color: #fff;
-}
+    body {
+      margin: 0; padding: 0; background-color: var(--body-bg); color: var(--text-dark);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
-}
-.full-width { grid-column: 1/-1; }
-.form-group label {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--sidebar-dark);
-}
-.form-group input[type="text"],
-.form-group input[type="tel"],
-.form-group select {
-  width: 100%;
-  padding: 12px;
-  background: #f8fafc;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-dark);
-  font-size: 0.95rem;
-  outline: none;
-  font-weight: 600;
-}
-.form-group input:focus, .form-group select:focus {
-  border-color: var(--orange-primary);
-  background: #fff;
-}
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #f8fafc;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-}
-.service-item-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-.checkbox-label-hover {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--text-dark);
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
-}
-.checkbox-label-hover:hover {
-  background: #e2e8f0;
-}
-.checkbox-label-hover input { accent-color: var(--orange-primary); width: 18px; height: 18px; }
+    /* TOP BAR & NAVBAR */
+    .top-bar {
+      background-color: var(--header-bg); border-bottom: 4px solid var(--orange-accent);
+      padding: 16px 28px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center;
+    }
 
-/* HOVER TOOLTIP NOS SERVIÇOS */
-.service-hover-card {
-  display: none;
-  position: absolute;
-  left: 0;
-  top: 100%;
-  z-index: 50;
-  width: 100%;
-  background: var(--sidebar-dark);
-  color: #fff;
-  padding: 12px 15px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-  border-left: 4px solid var(--orange-primary);
-  margin-top: 4px;
-}
-.service-item-wrapper:hover .service-hover-card {
-  display: block;
-}
-.service-hover-card .charge-badge {
-  display: inline-block;
-  background: var(--orange-primary);
-  color: #fff;
-  font-weight: bold;
-  font-size: 0.72rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-bottom: 5px;
-}
+    .top-bar h1 { margin: 0; font-size: 1.4rem; font-weight: 900; }
+    .top-bar p { margin: 2px 0 0 0; color: var(--orange-accent); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; }
 
-.info-btn-inline {
-  background: #e0f2fe;
-  color: #0284c7;
-  border: 1px solid #0284c7;
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 6px;
-  transition: all 0.2s ease;
-}
-.info-btn-inline:hover {
-  background: #0284c7;
-  color: #fff;
-}
+    .user-profile-badge {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: #FFF;
+      display: flex; align-items: center; gap: 10px;
+    }
 
-.info-box {
-  background: #f0f9ff;
-  border-left: 4px solid var(--blue-accent);
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  color: #0369a1;
-  line-height: 1.5;
-}
-.manifesto-box {
-  background: #fff7ed;
-  border-left: 4px solid var(--orange-primary);
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  color: #9a3412;
-  line-height: 1.5;
-}
-.portal-box {
-  background: #f8fafc;
-  border: 2px solid var(--blue-accent);
-  padding: 18px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-.portal-box h4 {
-  font-family: 'Orbitron', sans-serif;
-  color: var(--blue-accent);
-  font-size: 1rem;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.portal-box ul {
-  list-style: none;
-  font-size: 0.88rem;
-  color: var(--text-dark);
-  line-height: 1.5;
-}
-.portal-box ul li {
-  margin-bottom: 6px;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
+    .btn-logout {
+      background: #EF4444; border: none; color: #FFF; padding: 4px 10px; border-radius: 6px;
+      font-size: 0.72rem; cursor: pointer; font-weight: bold;
+    }
 
-.btn-group { display: flex; gap: 15px; margin-top: 25px; }
-.next-btn, .cta-btn {
-  width: 100%;
-  padding: 16px;
-  background: var(--orange-primary);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 85, 0, 0.25);
-  transition: all 0.2s ease;
-}
-.next-btn:hover, .cta-btn:hover {
-  background: var(--orange-hover);
-  transform: translateY(-1px);
-}
-.back-btn {
-  width: 30%;
-  padding: 16px;
-  background: #f1f5f9;
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  border-radius: 8px;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .main-container { flex: 1; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  padding: 20px;
-}
-.modal-content {
-  background: #fff;
-  width: 100%;
-  max-width: 750px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 10px;
-}
-.modal-header h3 { font-family: 'Orbitron', sans-serif; color: var(--sidebar-dark); font-size: 1.3rem; }
-.close-modal { background: none; border: none; font-size: 1.5rem; font-weight: bold; cursor: pointer; color: var(--text-muted); }
-.modal-body table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 15px 0;
-  font-size: 0.88rem;
-}
-.modal-body th, .modal-body td {
-  border: 1px solid var(--border-color);
-  padding: 10px;
-  text-align: left;
-}
-.modal-body th { background: #f8fafc; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: var(--sidebar-dark); }
-.price-card-box {
-  background: #fff7ed;
-  border: 2px solid var(--orange-primary);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-.price-card-box h4 {
-  font-family: 'Orbitron', sans-serif;
-  color: var(--orange-primary);
-  font-size: 1rem;
-  margin-bottom: 8px;
-}
-.price-card-box ul {
-  list-style: none;
-  font-size: 0.9rem;
-  color: var(--text-dark);
-  line-height: 1.6;
-}
-.price-card-box ul li {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ia-sample-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 15px;
-}
-.ia-sample-card {
-  background: #f8fafc;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-}
-.ia-sample-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-.ia-sample-card span {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--sidebar-dark);
-}
-.success-box { text-align: center; padding: 40px 20px; }
-.success-box h3 { font-family: 'Orbitron', sans-serif; color: var(--orange-primary); font-size: 1.8rem; margin-bottom: 15px; }
-.success-box p { font-size: 1.1rem; color: var(--text-muted); font-weight: 600; }
+    /* CARD DE LOGIN & ACESSO */
+    .login-wrapper {
+      max-width: 450px; margin: 60px auto; background: var(--card-bg); padding: 32px;
+      border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--orange-accent);
+    }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  margin-top: 30px;
-  border-top: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-footer span {
-  color: var(--orange-primary);
-  font-weight: 700;
-}
-</style>
+    .login-wrapper h2 { margin: 0 0 8px 0; color: var(--header-bg); text-align: center; }
+    .login-wrapper p { margin: 0 0 20px 0; color: var(--text-muted); text-align: center; font-size: 0.85rem; }
+
+    .tabs-perfil { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn {
+      flex: 1; padding: 10px 6px; border: 1px solid #E2E8F0; background: var(--input-bg);
+      border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer; text-align: center;
+    }
+    .tab-btn.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
+
+    /* COMPONENTES DOS PAINÉIS */
+    .panel-card {
+      background: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px;
+    }
+
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .panel-header h3 { margin: 0; color: var(--header-bg); font-size: 1.2rem; }
+
+    .form-control {
+      width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #E2E8F0;
+      background-color: var(--input-bg); color: var(--text-dark); font-size: 0.88rem; margin-bottom: 12px; outline: none;
+    }
+
+    .btn-main {
+      width: 100%; padding: 12px; border-radius: 10px; border: none; background-color: var(--header-bg);
+      color: #FFFFFF; font-size: 0.88rem; font-weight: 900; text-transform: uppercase; cursor: pointer;
+    }
+    .btn-orange { background-color: var(--orange-accent); }
+    .btn-green { background-color: var(--green-val); }
+
+    /* ESTEIRA E RASTREIO */
+    .esteira-tracker { display: flex; justify-content: space-between; gap: 6px; margin: 15px 0; overflow-x: auto; }
+    .esteira-step {
+      flex: 1; background: #F1F5F9; border-radius: 8px; padding: 10px 4px; text-align: center; font-size: 0.7rem;
+      font-weight: bold; color: var(--text-muted); border: 2px solid #E2E8F0; min-width: 90px;
+    }
+    .esteira-step.concluido { background: #ECFDF5; border-color: #10B981; color: #065F46; }
+    .esteira-step.andamento { background: #FFF7ED; border-color: #FF5722; color: #9A3412; animation: pulse 2s infinite; }
+
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+    /* TABELAS */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #E2E8F0; font-size: 0.82rem; }
+    th { background-color: var(--input-bg); color: var(--text-muted); font-weight: bold; }
+
+    .badge-status {
+      padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; display: inline-block; text-transform: uppercase;
+    }
+    .badge-andamento { background: #FEF3C7; color: #92400E; }
+    .badge-concluido { background: #D1FAE5; color: #065F46; }
+    .badge-aguardando { background: #E0F2FE; color: #0369A1; }
+
+    .grid-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .metric-card { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 16px; border-radius: 12px; }
+    .metric-card h4 { margin: 0 0 6px 0; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+    .metric-card span { font-size: 1.5rem; font-weight: 900; color: var(--header-bg); }
+
+    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-<div class="container">
-<header>
-<div class="logo">S.O.S <span>CLUBE</span></div>
-<p class="subtitle">SISTEMA OPERACIONAL DE SETORES | PAINEL DE ADESÃO</p>
-</header>
-<main>
-<!-- PASSO 0: IDENTIFICAÇÃO DE PERFIL -->
-<section class="card" id="step-0">
-<h2><span class="step-num">01</span> Selecione o seu Perfil</h2>
-<p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 600;">Escolha a opção correspondente para acessar as condições de adesão:</p>
-<div class="grid-options">
-<div class="type-btn-wrapper">
-<div class="type-btn" onclick="startFlow('RENOVACAO')">
-<h3>JÁ SOU PARCEIRO S.O.S</h3>
-<p>Abertura das Vagas Exclusivas de Renovação</p>
-</div>
-<div class="tooltip-info">
-<strong>Abertura em 10/10:</strong> Prioridade garantida para parceiros ativos garantirem a renovação do seu contrato anual (Anuidade: R$ 2.000,00).
-</div>
-</div>
-<div class="type-btn-wrapper">
-<div class="type-btn" onclick="startFlow('NOVO')">
-<h3>NOVO CLIENTE</h3>
-<p>Abertura Geral das Vagas Remanescentes</p>
-</div>
-<div class="tooltip-info">
-<strong>Abertura oficial em 20/11:</strong> Inscrição para novas marcas ocuparem as vagas remanescentes das 15 vagas oficiais do Clube (Anuidade: R$ 2.500,00).
-</div>
-</div>
-</div>
-</section>
 
-<!-- PASSO 1: SELEÇÃO DE CLIENTE DE RENOVAÇÃO -->
-<section class="card hidden" id="step-renovacao">
-<h2><span class="step-num">02</span> Identificação da Conta Corporativa</h2>
-<div class="form-group full-width">
-<label>Selecione a sua marca na lista de parceiros ativos:*</label>
-<select id="cliente_renovacao_nome" onchange="enableCategoryNextBtn()">
-<option value="">Selecione sua marca na lista...</option>
-<option value="Anela Acessórios">Anela Acessórios</option>
-<option value="Stillo Semijoias">Stillo Semijoias</option>
-<option value="Elisangela Joias">Elisangela Joias</option>
-<option value="Musser Joias">Musser Joias</option>
-<option value="Jane Fernandes Acessórios">Jane Fernandes Acessórios</option>
-<option value="Ulli Joias">Ulli Joias</option>
-<option value="Quilatts Semijoias">Quilatts Semijoias</option>
-<option value="Zeglam semijoias">Zeglam semijoias</option>
-<option value="Majoris semijoias">Majoris semijoias</option>
-<option value="Niara Joias">Niara Joias</option>
-<option value="Vaillant">Vaillant</option>
-<option value="Ourolux semijoias">Ourolux semijoias</option>
-<option value="Orli acessórios">Orli acessórios</option>
-<option value="Evoe">Evoe</option>
-<option value="Madame Nina">Madame Nina</option>
-</select>
-</div>
-<div class="btn-group">
-<button type="button" class="back-btn" onclick="goToStep(0)">&lt; VOLTAR</button>
-<button type="button" class="next-btn" id="btnNextRenovacao" onclick="goToStep('cat')" disabled style="opacity: 0.5;">SELECIONAR FRANQUIA &rarr;</button>
-</div>
-</section>
-
-<!-- PASSO 2: FRANQUIA CLUBE S.O.S -->
-<section class="card hidden" id="step-cat">
-<h2><span class="step-num" id="cat-step-num">02</span> Franquia Operacional CLUBE S.O.S</h2>
-<div id="infoBoxNovo" class="info-box">
- <strong>Abertura de Vagas (20/11):</strong> São apenas <strong>15 vagas no total</strong> para o Clube S.O.S. Os novos clientes ocuparão as vagas remanescentes após o período exclusivo de renovação. Anuidade para novos membros: <strong>R$ 2.500,00</strong>.
-</div>
-<div id="discountBanner" class="info-box hidden" style="background: #f0fdf4; border-left-color: var(--green-accent); color: #166534;">
-<strong>Abertura Exclusiva de Renovação (10/10):</strong> Garanta a renovação da sua marca na bancada com prioridade de vaga antes da abertura para novos clientes! Valor especial de renovação: <strong>R$ 2.000,00</strong>.
-</div>
-
-<!-- PORTAL DO CLIENTE DESTAQUE -->
-<div class="portal-box">
-  <h4>💻 PORTAL DO CLIENTE S.O.S (GESTÃO COMPLETA)</h4>
-  <ul>
-    <li>🔹 <strong>Acesso Exclusivo por Login e Senha:</strong> Plataforma própria para acompanhar a jornada do seu produto.</li>
-    <li>🔹 <strong>Rastreamento de Lotes:</strong> Saiba exatamente em qual etapa seu lote está (Separação, Foto, CDE, Encarte, etc.).</li>
-    <li>🔹 <strong>Calendário & Agendamento:</strong> Programe o envio dos lotes e cadastre antecipadamente a mercadoria que chegará à bancada.</li>
-    <li>🔹 <strong>Lote Mínimo Operacional:</strong> Lote mínimo de <strong>300 peças por envio</strong> para processamento na estrutura S.O.S.</li>
-    <li>🔹 <strong>Relatórios Mensais de Inteligência:</strong> Dashboards operacionais com histórico de volume, rendimento do banho e métricas de produção.</li>
-  </ul>
-</div>
-
-<div class="grid-categories">
-<!-- CARD UNICO DO CLUBE -->
-<div class="cat-card active" id="card-clube" onclick="selectCategory('CLUBE S.O.S', this)">
-<div class="cat-badge-container">
-<span class="badge" id="badge-anuidade-valor">Anuidade R$ 2.000,00</span>
-<span class="badge-vagas" id="badge-vagas-texto">15 Vagas Totais</span>
-<span class="badge-minimo">Lote Mínimo: 300 Pçs</span>
-<span class="badge-discount" id="badge-desconto-texto">Desconto por Volume (>600 peças)</span>
-</div>
-<h3>MEMBRO CLUBE S.O.S</h3>
-<p>Terceirização completa da bancada operacional (Lote mínimo: 300 peças). Prazos escalonados por volume, gerenciamento total de insumos (saquinhos, fechos, correntes, argolinhas, tags), IA fotográfica e portal exclusivo.</p>
-<button type="button" class="btn-detalhes" onclick="openModal('clube', event)">Ver Detalhes, Valores, Prazos e Regras</button>
-</div>
-</div>
-<div class="btn-group">
-<button type="button" class="back-btn" onclick="goBackFromCat()">&lt; VOLTAR</button>
-<button type="button" class="next-btn" onclick="handleCatNext()">AVANÇAR COM A SELEÇÃO &rarr;</button>
-</div>
-</section>
-
-<!-- PASSO 3: DIAGNÓSTICO (EXCLUSIVO CLIENTE NOVO) -->
-<section class="card hidden" id="step-diag">
-<h2><span class="step-num">03</span> Diagnóstico Operacional da Marca</h2>
-<div class="manifesto-box">
-<strong>Fila de Espera para Abertura em 20/11:</strong> Preencha os dados abaixo para cadastrar sua marca na lista oficial de aplicação. As vagas remanescentes das 15 vagas totais serão liberadas por ordem de análise.
-</div>
-<form id="quizForm" onsubmit="submitDiagnosis(event)">
-<div class="form-grid">
-<div class="form-group">
-<label>Seu nome e cargo na empresa:*</label>
-<input type="text" id="nome_cargo" placeholder="Ex: Ana Silva - Diretora Comercial" required>
-</div>
-<div class="form-group">
-<label>Nome da sua marca de semijoias:*</label>
-<input type="text" id="nome_marca" placeholder="Ex: Niara Joias" required>
-</div>
-<div class="form-group">
-<label>Perfil do Instagram da marca:*</label>
-<input type="text" id="instagram" placeholder="Ex: @suamarca" required>
-</div>
-<div class="form-group">
-<label>Cidade e Estado:*</label>
-<input type="text" id="cidade_estado" placeholder="Ex: Limeira / SP" required>
-</div>
-<div class="form-group">
-<label>Tempo de atuação no mercado:*</label>
-<select id="tempo_mercado" required>
-<option value="">Selecione...</option>
-<option value="Menos de 1 ano">Menos de 1 ano</option>
-<option value="1 a 3 anos">1 a 3 anos</option>
-<option value="3 a 5 anos">3 a 5 anos</option>
-<option value="Mais de 5 anos">Mais de 5 anos</option>
-</select>
-</div>
-<div class="form-group">
-<label>Modelo principal do negócio hoje:*</label>
-<select id="modelo_negocio" required>
-<option value="">Selecione...</option>
-<option value="Atacado / Revenda">Atacado / Revenda</option>
-<option value="Varejo / E-commerce">Varejo / E-commerce</option>
-<option value="Fabricação / Banho">Fabricação / Banho</option>
-<option value="Híbrido (Varejo + Atacado)">Híbrido (Varejo + Atacado)</option>
-</select>
-</div>
-<div class="form-group full-width">
-<label>Volume médio de peças movimentadas por mês:* (Lote Mínimo S.O.S = 300 pçs)</label>
-<select id="volume_pecas" required>
-<option value="">Selecione...</option>
-<option value="300 a 500 peças/mês">300 a 500 peças/mês</option>
-<option value="500 a 2.000 peças/mês">500 a 2.000 peças/mês</option>
-<option value="2.000 a 5.000 peças/mês">2.000 a 5.000 peças/mês</option>
-<option value="Mais de 5.000 peças/mês">Mais de 5.000 peças/mês</option>
-</select>
-</div>
-<div class="form-group full-width">
-<label>Quais são os principais gargalos e desafios operacionais hoje?</label>
-<div class="checkbox-group">
-<label><input type="checkbox" name="gargalos" value="Lentidão na triagem e conferência"> Lentidão na triagem e conferência pós-banho</label>
-<label><input type="checkbox" name="gargalos" value="Demora para fotografar e cadastrar"> Demora para fotografar e publicar catálogo</label>
-<label><input type="checkbox" name="gargalos" value="Dificuldade na precificação/CDE"> Dificuldades no Cadastro do Produto e Custo do Banho (CDI/CDE)</label>
-<label><input type="checkbox" name="gargalos" value="Falta de equipe técnica na montagem/cravação"> Falta de equipe para montagem, cravação e colagem</label>
-<label><input type="checkbox" name="gargalos" value="Atraso nas entregas finais"> Peças com defeito chegando às revendedoras/clientes</label>
-</div>
-</div>
-<div class="form-group full-width">
-<label>Quais soluções do CLUBE S.O.S sua marca mais precisa no momento? (Passe o mouse para ver detalhes):</label>
-<div class="checkbox-group">
-  
-  <!-- SERVIÇO 1 -->
-  <div class="service-item-wrapper">
-    <label class="checkbox-label-hover">
-      <span><input type="checkbox" name="solucoes" value="Inspeção Operacional Completa"> Triagem Técnica Inicial (Separação + Filtro + CDI)</span>
-      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('inspecao')">ℹ️ Detalhes</button>
-    </label>
-    <div class="service-hover-card">
-      <span class="charge-badge">COBRANÇA: POR PEÇA (R$ 0,77 / R$ 0,70)</span>
-      <p>Triagem minuciosa peça por peça, conferência de romaneio, filtro rigoroso de defeitos pós-banho e cálculo técnico do custo real do banho (ouro/prata/paládio).</p>
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div>
+      <h1>S.O.S SOLUÇÕES</h1>
+      <p>SISTEMA OPERACIONAL DE SETORES & HUB DE ESTOQUE 2027</p>
+    </div>
+    <div id="userBadgeArea" style="display:none;">
+      <div class="user-profile-badge">
+        <span id="nomeUsuarioBadge">Kelvin Lima (Diretoria)</span>
+        <button class="btn-logout" onclick="fazerLogout()">SAIR</button>
+      </div>
     </div>
   </div>
 
-  <!-- SERVIÇO 2 -->
-  <div class="service-item-wrapper">
-    <label class="checkbox-label-hover">
-      <span><input type="checkbox" name="solucoes" value="Fotografia de Catálogo e IA"> Fotografia Profissional (Still / Cenário / Adicional de IA)</span>
-      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('foto')">ℹ️ Detalhes</button>
-    </label>
-    <div class="service-hover-card">
-      <span class="charge-badge">COBRANÇA: POR FOTO (R$ 2,59 / R$ 2,39)</span>
-      <p>Estúdio Still e cenário técnico para e-commerce e catálogo. Adicional opcional de IA (+ R$ 1,00/foto) para fotos ultra editadas e modelos virtuais hiper-realistas.</p>
+  <div class="main-container">
+
+    <!-- 0. TELA DE LOGIN / SELEÇÃO DE PERFIL -->
+    <div id="loginScreen" class="login-wrapper">
+      <h2>Acesso ao HUB S.O.S</h2>
+      <p>Selecione seu perfil de acesso para entrar no painel operacional:</p>
+
+      <div class="tabs-perfil">
+        <div id="tabCliente" class="tab-btn active" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
+        <div id="tabEquipe" class="tab-btn" onclick="selecionarPerfilAcesso('equipe')">EQUIPE</div>
+        <div id="tabDiretoria" class="tab-btn" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
+      </div>
+
+      <form onsubmit="autenticarUsuario(event)">
+        <label style="font-size:0.78rem; font-weight:bold;">Selecione a Marca / Usuário</label>
+        <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
+          <option value="Niara Semijoias">Niara Semijoias (Cliente VIP Diamante)</option>
+          <option value="Velt Joias">Velt Joias (Cliente VIP Ouro)</option>
+          <option value="Bancada S.O.S">Bancada Operacional (Equipe)</option>
+          <option value="Kelvin Lima (CEO)">Kelvin Lima & Brenda (Diretoria General)</option>
+        </select>
+
+        <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
+        <input type="password" id="inputSenha" class="form-control" required value="123456" placeholder="••••••••">
+
+        <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">ENTRAR NO SISTEMA</button>
+      </form>
     </div>
-  </div>
 
-  <!-- SERVIÇO 3 -->
-  <div class="service-item-wrapper">
-    <label class="checkbox-label-hover">
-      <span><input type="checkbox" name="solucoes" value="CDE (Cadastro Direto no Sistema)"> CDE (Cadastro no Sistema/Site do Cliente e Precificação)</span>
-      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cde')">ℹ️ Detalhes</button>
-    </label>
-    <div class="service-hover-card">
-      <span class="charge-badge">COBRANÇA: POR MODELO CADASTRADO (R$ 2,59 / R$ 2,49)</span>
-      <p>Cadastro técnico completo direto no ERP/e-commerce da sua marca, com upload de fotos tratadas e parametrização de regras de precificação/margem.</p>
-    </div>
-  </div>
-
-  <!-- SERVIÇO 4 -->
-  <div class="service-item-wrapper">
-    <label class="checkbox-label-hover">
-      <span><input type="checkbox" name="solucoes" value="Etiquetagem e Encarte"> Etiquetagem e Encartelamento (Tags, Saquinhos e Selagem)</span>
-      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('etiqueta_encarte')">ℹ️ Detalhes</button>
-    </label>
-    <div class="service-hover-card">
-      <span class="charge-badge">COBRANÇA: POR PEÇA (Etiqueta: R$ 0,30 | Encarte: R$ 0,75)</span>
-      <p>Impressão de etiquetas térmicas com SKU/preço, encartelamento nas tags da sua marca, embalagem em saquinhos plásticos protetores e selagem final.</p>
-    </div>
-  </div>
-
-  <!-- SERVIÇO 5 -->
-  <div class="service-item-wrapper">
-    <label class="checkbox-label-hover">
-      <span><input type="checkbox" name="solucoes" value="Cravação, Colagem e Montagem"> Cravação, Colagem e Montagem (Gestão de Insumos)</span>
-      <button type="button" class="info-btn-inline" onclick="abrirDetalhesServico('cravacao_montagem')">ℹ️ Detalhes</button>
-    </label>
-    <div class="service-hover-card">
-      <span class="charge-badge">COBRANÇA: POR UNIDADE / PEÇA (R$ 0,55 / R$ 0,75)</span>
-      <p>Cravação/colagem pós-banho e montagem de correntes/fechos/pingentes. Gestão total de insumos na bancada: saquinhos, fechos, correntes, argolinhas, pedras e tags.</p>
-    </div>
-  </div>
-
-</div>
-</div>
-<div class="form-group full-width">
-<label>WhatsApp Corporativo (com DDD) para entrarmos em contato:*</label>
-<input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required>
-</div>
-</div>
-<div class="btn-group">
-<button type="button" class="back-btn" onclick="goToStep('cat')">&lt; VOLTAR</button>
-<button type="submit" class="cta-btn" id="submitBtn">ENVIAR APLICAÇÃO PARA FILA DE ESPERA &rarr;</button>
-</div>
-</form>
-</section>
-
-<!-- PASSO FINAL DE RENOVAÇÃO -->
-<section class="card hidden" id="step-renovacao-confirm">
-<h2><span class="step-num">03</span> Confirmar Renovação de Vaga Exclusiva</h2>
-<div class="form-group full-width">
-<label>Confirme o seu WhatsApp com DDD para envio do contrato de renovação:*</label>
-<input type="tel" id="whatsapp_renovacao" placeholder="(00) 00000-0000" required>
-</div>
-<div class="btn-group">
-<button type="button" class="back-btn" onclick="goToStep('cat')">&lt; VOLTAR</button>
-<button type="button" class="cta-btn" id="submitRenovacaoBtn" onclick="submitRenovacaoDirect()">GARANTIR RENOVAÇÃO DA VAGA &rarr;</button>
-</div>
-</section>
-
-<!-- MENSAGEM DE SUCESSO -->
-<section class="card hidden" id="step-success">
-<div class="success-box">
-<h3 id="successTitle">SOLICITAÇÃO RECEBIDA!</h3>
-<p id="successMessage">Os dados da sua marca foram registrados com sucesso em nosso sistema.</p>
-<br>
-<p style="color: var(--sidebar-dark); font-weight: bold;">Nossa equipe entrará em contato via WhatsApp para prosseguir com a validação!</p>
-</div>
-</section>
-</main>
-
-<footer>
-Feito e criado por <span>Kelvin Lima - CEO S.O.S</span> | Todos os direitos reservados
-</footer>
-</div>
-
-<!-- MODAL FLUTUANTE DE REGRAS E PREÇOS -->
-<div class="modal-overlay hidden" id="categoryModal">
-<div class="modal-content">
-<div class="modal-header">
-<h3 id="modalTitle">Detalhes e Tabela de Valores</h3>
-<button class="close-modal" onclick="closeModal()">&times;</button>
-</div>
-<div class="modal-body" id="modalBody">
-<!-- Conteúdo injetado via JS -->
-</div>
-</div>
-</div>
-
-<script>
-let userType = "RENOVACAO";
-let currentPlan = "CLUBE S.O.S";
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoNCwmT3u4RHxeYvAKKDE_CS-Du-JuDXDULTpidilKtbRFKIsceubELzn-7KunYLx2/exec";
-
-// DETALHAMENTO DOS SERVIÇOS NOS MODAIS
-const servicosExplicacao = {
-  inspecao: {
-    titulo: "🔍 Triagem Técnica Inicial (Separação + Filtro + CDI)",
-    descricao: `
-      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Peça (R$ 0,77 / R$ 0,70)</p>
-      <p style="margin-bottom: 12px; color: var(--text-dark); line-height: 1.5;"><strong>Esteira de entrada padrão e obrigatória da bancada.</strong> Garantia de alinhamento físico e técnico antes do início da produção (Lote mínimo: 300 peças):</p>
+    <!-- ================================================================================= -->
+    <!-- 1. MÓDULO 1: PAINEL DO CLIENTE (DADOS TOTALMENTE SEPARADOS POR MARCA) -->
+    <!-- ================================================================================= -->
+    <div id="painelCliente" style="display:none;">
       
-      <div style="background: #f8fafc; border-left: 4px solid var(--orange-primary); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
-        <strong>1. Separação Técnica de Romaneio:</strong><br>
-        Triagem inicial minuciosa peça por peça, confrontando fisicamente o lote com a nota/romaneio de envio para garantir conferência de peças, códigos e modelos antes do início da produção.
-      </div>
-      
-      <div style="background: #f8fafc; border-left: 4px solid var(--blue-accent); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5;">
-        <strong>2. Inspeção Físico-Visual de Qualidade:</strong><br>
-        Diagnóstico rigoroso pós-banho com filtro contra trincas, falhas de camada, manchas de oxidação, excessos ou imperfeições de montagem, impedindo que peças defeituosas cheguem à sua marca.
-      </div>
-
-      <div style="background: #f0fdf4; border-left: 4px solid var(--green-accent); padding: 12px; border-radius: 6px; font-size: 0.88rem; line-height: 1.5; color: #166534;">
-        <strong>3. CDI (Cadastro de Dados de Entrada):</strong><br>
-        Mapeamento analítico e técnico do produto bruto: registro de pesos precisos, fornecedores, precificação de base e cálculo detalhado do custo real do banho aplicado (ouro, prata, paládio).
-      </div>
-    `
-  },
-  foto: {
-    titulo: "📸 Fotografia Profissional & Inteligência Artificial",
-    descricao: `
-      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Foto Produzida (R$ 2,59 / R$ 2,39)</p>
-      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 12px;">Produção em estúdio técnico estilo Still ou com cenário padrão para catálogo, e-commerce e redes sociais.</p>
-      
-      <div style="background: #f0f9ff; border: 1px solid var(--blue-accent); padding: 12px; border-radius: 8px; font-size: 0.88rem; color: #0369a1; line-height: 1.5;">
-        <strong>✨ Adicional de IA (+ R$ 1,00 por foto):</strong><br>
-        Tratamento com Inteligência Artificial de extrema qualidade para imagens ultra editadas e/ou inserção de modelos virtuais hiper-realistas. O cliente avisa previamente quais peças deseja com esse acabamento especial.
-      </div>
-
-      <div class="ia-sample-grid">
-        <div class="ia-sample-card">
-          <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400" alt="Exemplo Foto Still">
-          <span>Foto Still / Cenário Profissional</span>
+      <div class="panel-card" style="border-left: 6px solid var(--gold-bright);">
+        <div class="panel-header">
+          <div>
+            <h3 id="cliBoasVindas">Bem-vinda, Niara Semijoias!</h3>
+            <span style="font-size:0.8rem; color:var(--text-muted);">Sua Cota: <strong id="cliCotaNome">VIP DIAMANTE (Até 1.500 pcs/mês)</strong></span>
+          </div>
+          <div>
+            <span class="badge-status badge-concluido">CONTRATO ATIVO 2027</span>
+          </div>
         </div>
-        <div class="ia-sample-card">
-          <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400" alt="Exemplo Foto com IA">
-          <span>Tratamento Ultra Editado & IA</span>
+
+        <div class="grid-metrics">
+          <div class="metric-card">
+            <h4>Cota do Mês</h4>
+            <span id="cliCotaUso">350 / 1.500</span> <small style="font-size:0.75rem; color:var(--text-muted);">peças na esteira</small>
+          </div>
+          <div class="metric-card">
+            <h4>Próximo CashBack</h4>
+            <span style="color:var(--green-val);" id="cliCashbackVal">R$ 250,00</span> <small style="font-size:0.75rem; color:var(--text-muted);">Liberado em Junho</small>
+          </div>
+          <div class="metric-card">
+            <h4>Lote Ativo</h4>
+            <span style="color:var(--orange-accent);" id="cliLoteStatusInfo">Lote #1042</span> <small style="font-size:0.75rem; color:var(--text-muted);">Setor de Inspeção (3 em 1)</small>
+          </div>
         </div>
       </div>
-    `
-  },
-  cde: {
-    titulo: "💻 CDE (Cadastro de Produtos Direto no Sistema do Cliente)",
-    descricao: `
-      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Modelo Cadastrado (R$ 2,59 / R$ 2,49)</p>
-      <p style="color: var(--text-dark); line-height: 1.5;">Cadastro completo realizado diretamente no sistema ERP ou e-commerce do cliente. Inclui parametrização customizada de dados, regra de precificação de margem e vinculação das fotos tratadas, com nosso setor de cadastro inteiramente à disposição.</p>
-    `
-  },
-  etiqueta_encarte: {
-    titulo: "🏷️ Etiquetagem & Encartelamento Completo",
-    descricao: `
-      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Peça (Etiqueta: R$ 0,30 | Encarte: R$ 0,75)</p>
-      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Etiquetagem:</strong> Emissão e impressão técnica das etiquetas térmicas com código de barras, SKU e preço.</p>
-      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Encartelamento:</strong> Fixação das peças nas cartelas/tags próprias da sua marca e embalagem em saquinhos plásticos protetores selados (o cliente envia seus modelos de embalagem como referência).</p>
-    `
-  },
-  cravacao_montagem: {
-    titulo: "💎 Cravação, Colagem & Montagem (Gestão de Insumos)",
-    descricao: `
-      <p style="margin-bottom: 8px; color: var(--orange-primary); font-weight: bold;">Métrica de Cobrança: Cobrado Por Unidade Montada ou Peça Cravada/Colada</p>
-      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Gestão Ampla de Insumos S.O.S:</strong> A S.O.S cuida do gerenciamento completo de estoque dos insumos da sua marca na bancada (saquinhos, fechos, correntes, argolinhas, pedras, tags e embalagens).</p>
-      <p style="color: var(--text-dark); line-height: 1.5; margin-bottom: 10px;"><strong>Cravação & Colagem:</strong> Execução técnica pós-banho. A S.O.S fornece alguns tamanhos de pedras sem custo adicional (caso não haja estoque da medida específica, o cliente envia as pedras necessárias).</p>
-      <p style="color: var(--text-dark); line-height: 1.5;"><strong>Montagem:</strong> Junção de correntes, fechos e pingentes utilizando componentes e argolinhas do estoque sob nossa gestão.</p>
-    `
-  }
-};
 
-function abrirDetalhesServico(chave) {
-  const srv = servicosExplicacao[chave];
-  if (!srv) return;
-  document.getElementById('modalTitle').innerText = srv.titulo;
-  document.getElementById('modalBody').innerHTML = srv.descricao;
-  document.getElementById('categoryModal').classList.remove('hidden');
-}
+      <div class="grid-2col">
+        <!-- AGENDAMENTO DE NOVO LOTE -->
+        <div class="panel-card">
+          <h3>📅 Agendar Envio de Novo Lote</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Gere o protocolo de agendamento para recepção na bancada S.O.S:</p>
 
-function startFlow(type) {
-  userType = type;
-  const infoBoxNovo = document.getElementById('infoBoxNovo');
-  const discountBanner = document.getElementById('discountBanner');
-  const badgeVagas = document.getElementById('badge-vagas-texto');
-  const badgeAnuidade = document.getElementById('badge-anuidade-valor');
+          <form onsubmit="agendarLoteCliente(event)">
+            <label style="font-size:0.78rem; font-weight:bold;">Quantidade Estimada de Peças</label>
+            <input type="number" id="loteQtdPcs" class="form-control" required placeholder="Ex: 350" onchange="atualizarPrazoPrevisao()">
 
-  if (type === 'NOVO') {
-    document.getElementById('cat-step-num').innerText = "02";
-    infoBoxNovo.classList.remove('hidden');
-    discountBanner.classList.add('hidden');
-    badgeVagas.innerText = "Vagas Remanescentes (Abertura 20/11)";
-    badgeAnuidade.innerText = "Anuidade R$ 2.500,00";
-    goToStep('cat');
-  } else {
-    document.getElementById('cat-step-num').innerText = "03";
-    infoBoxNovo.classList.add('hidden');
-    discountBanner.classList.remove('hidden');
-    badgeVagas.innerText = "Prioridade de Renovação (Abertura 10/10)";
-    badgeAnuidade.innerText = "Anuidade R$ 2.000,00";
-    goToStep('renovacao');
-  }
-}
+            <label style="font-size:0.78rem; font-weight:bold;">Previsão Oficial de Entrega</label>
+            <input type="text" id="lotePrazoCalculado" class="form-control" readonly value="8 dias úteis após a recepção bruto">
 
-function enableCategoryNextBtn() {
-  const val = document.getElementById('cliente_renovacao_nome').value;
-  const btn = document.getElementById('btnNextRenovacao');
-  if (val) {
-    btn.disabled = false;
-    btn.style.opacity = "1";
-  } else {
-    btn.disabled = true;
-    btn.style.opacity = "0.5";
-  }
-}
+            <label style="font-size:0.78rem; font-weight:bold;">Serviços Solicitados para este Lote</label>
+            <select id="loteServicos" class="form-control" multiple style="height:90px;">
+              <option value="Inspeção 3em1" selected>1. Inspeção (3 em 1) + CDI</option>
+              <option value="Fotografia" selected>2. Fotografia (Still / IA)</option>
+              <option value="CDE" selected>3. Catalogação CDE</option>
+              <option value="Etiqueta" selected>4. Etiquetagem Industrial</option>
+              <option value="Encarte" selected>5. Encartelamento & Embalagem</option>
+              <option value="Cravação">Cravação / Colagem / Montagem</option>
+            </select>
 
-function selectCategory(planName, element) {
-  currentPlan = planName;
-  document.querySelectorAll('.cat-card').forEach(card => card.classList.remove('active'));
-  element.classList.add('active');
-}
+            <label style="font-size:0.78rem; font-weight:bold;">Observações Técnicas para a Bancada S.O.S</label>
+            <input type="text" id="loteObs" class="form-control" placeholder="Ex: Cuidado com os brincos de zircônia verde">
 
-function openModal(catKey, event) {
-  event.stopPropagation();
-  
-  const valorAnuidade = (userType === 'NOVO') ? 'R$ 2.500,00 (Novo Cliente)' : 'R$ 2.000,00 (Renovação Exclusiva)';
+            <button type="submit" class="btn-main btn-orange">SOLICITAR AGENDAMENTO DE LOTE</button>
+          </form>
+        </div>
 
-  let headerHtml = `
-    <div class="price-card-box">
-      <h4>ESTRUTURA DE REGRAS E PRAZOS DO CLUBE S.O.S</h4>
-      <ul>
-        <li><strong>Anuidade:</strong> ${valorAnuidade}</li>
-        <li><strong>Lote Mínimo de Envio:</strong> 300 peças por lote para entrada e processamento na bancada.</li>
-        <li><strong>Prazo - De 300 a 600 peças (até 100 modelos):</strong> 8 dias úteis</li>
-        <li><strong>Prazo - De 601 a 1.000 peças:</strong> 10 dias úteis</li>
-        <li><strong>Prazo - Acima de 1.000 peças:</strong> 13 dias úteis</li>
-        <li><strong>Gestão Completa de Insumos:</strong> Controle total de estoque de saquinhos, fechos, correntes, argolinhas, pedras e tags na bancada S.O.S</li>
-      </ul>
+        <!-- HUB DE ESTOQUE EXCLUSIVO DA MARCA SELECIONADA -->
+        <div class="panel-card">
+          <h3>📦 Seu HUB de Insumos Exclusivo na S.O.S</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Estoque exclusivo armazenado para a sua marca:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item / Material</th>
+                <th>Saldo Atual</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaInsumosCliente">
+              <!-- Preenchido dinamicamente via JS de acordo com a marca -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RASTREIO DAS 7 ETAPAS OFICIAIS DA ESTEIRA S.O.S -->
+      <div class="panel-card">
+        <h3>🔍 Rastreio Oficial da Esteira Fabril (Lote Ativo)</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Acompanhamento em tempo real das 7 etapas da fábrica S.O.S Soluções:</p>
+
+        <div class="esteira-tracker" id="esteiraSetoresRastreio">
+          <div class="esteira-step concluido">1. ENTRADA<br><small>✓ Concluído</small></div>
+          <div class="esteira-step andamento">2. INSPEÇÃO (3 em 1)<br><small>⏱ Em Processo</small></div>
+          <div class="esteira-step">3. FOTOGRAFIA<br><small>Aguardando</small></div>
+          <div class="esteira-step">4. CDE<br><small>Aguardando</small></div>
+          <div class="esteira-step">5. ETIQUETA<br><small>Aguardando</small></div>
+          <div class="esteira-step">6. ENCARTE<br><small>Aguardando</small></div>
+          <div class="esteira-step">7. FINALIZAÇÃO<br><small>Aguardando</small></div>
+        </div>
+      </div>
+
     </div>
-  `;
 
-  let tableHtml = `
-    <h4 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--sidebar-dark); margin-top: 15px;">TABELA DE VALORES POR SERVIÇO E MÉTRICA</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Serviço Operacional</th>
-          <th>Métrica de Cobrança</th>
-          <th>Lote Até 600 peças</th>
-          <th>Lote Acima de 600 peças</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Triagem Técnica (Separação + Filtro + CDI)</strong></td>
-          <td>Por Peça</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,77</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
-        </tr>
-        <tr>
-          <td><strong>Fotografia Profissional (Still/Cenário)</strong></td>
-          <td>Por Foto Produzida</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 2,39</td>
-        </tr>
-        <tr>
-          <td><strong>CDE (Cadastro no Sistema/Site do Cliente)</strong></td>
-          <td>Por Modelo Cadastrado</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 2,59</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 2,49</td>
-        </tr>
-        <tr>
-          <td><strong>Etiquetagem</strong></td>
-          <td>Por Peça Etiquetada</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,30</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,27</td>
-        </tr>
-        <tr>
-          <td><strong>Encartelamento (Tags em Saquinhos)</strong></td>
-          <td>Por Peça Encartelada</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
-        </tr>
-        <tr>
-          <td><strong>Montagem de Peças</strong></td>
-          <td>Por Unidade Montada</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,55</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,50</td>
-        </tr>
-        <tr>
-          <td><strong>Cravação ou Colagem Pós-Banho</strong></td>
-          <td>Por Peça Trabalhada</td>
-          <td style="color: var(--text-dark); font-weight: bold;">R$ 0,75</td>
-          <td style="color: var(--green-accent); font-weight: bold;">R$ 0,70</td>
-        </tr>
-      </tbody>
-    </table>
-    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">* Adicional de Foto Ultra Editada com IA / Modelo Virtual: + R$ 1,00 por foto selecionada.</p>
-  `;
+    <!-- ================================================================================= -->
+    <!-- 2. MÓDULO 2: PAINEL DA EQUIPE / BANCADA S.O.S -->
+    <!-- ================================================================================= -->
+    <div id="painelEquipe" style="display:none;">
+      
+      <div class="panel-card" style="border-left: 6px solid var(--blue-val);">
+        <div class="panel-header">
+          <h3>🛠️ Painel Operacional da Bancada S.O.S</h3>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Operador: <strong>Bancada Fabril S.O.S</strong></span>
+        </div>
 
-  document.getElementById('modalTitle').innerText = "CLUBE S.O.S - Regras, Prazos e Tabela de Valores";
-  document.getElementById('modalBody').innerHTML = headerHtml + tableHtml;
-  document.getElementById('categoryModal').classList.remove('hidden');
-}
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">Atualize a evolução do lote em cada um dos 7 setores oficiais:</p>
 
-function closeModal() {
-  document.getElementById('categoryModal').classList.add('hidden');
-}
+        <table>
+          <thead>
+            <tr>
+              <th>Cód. Lote</th>
+              <th>Marca / Cliente</th>
+              <th>Volume</th>
+              <th>Setor Operacional Atual</th>
+              <th>Prazo Limite</th>
+              <th>Mudar Setor</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaEsteiraEquipe">
+            <tr>
+              <td><strong>#1042</strong></td>
+              <td>Niara Semijoias</td>
+              <td>350 pcs</td>
+              <td><span class="badge-status badge-andamento">2. INSPEÇÃO (3 em 1)</span></td>
+              <td>06/10/2026</td>
+              <td>
+                <select class="form-control" style="margin:0; padding:4px; font-size:0.75rem;" onchange="alterarSetorLote('#1042', this.value)">
+                  <option value="1. Entrada">1. Entrada</option>
+                  <option value="2. Inspeção (3 em 1)" selected>2. Inspeção (3 em 1)</option>
+                  <option value="3. Fotografia">3. Fotografia</option>
+                  <option value="4. CDE">4. CDE</option>
+                  <option value="5. Etiqueta">5. Etiqueta</option>
+                  <option value="6. Encarte">6. Encarte</option>
+                  <option value="7. Finalização">7. Finalização / Liberado</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>#1043</strong></td>
+              <td>Velt Joias</td>
+              <td>820 pcs</td>
+              <td><span class="badge-status badge-aguardando">1. ENTRADA</span></td>
+              <td>12/10/2026</td>
+              <td>
+                <select class="form-control" style="margin:0; padding:4px; font-size:0.75rem;" onchange="alterarSetorLote('#1043', this.value)">
+                  <option value="1. Entrada" selected>1. Entrada</option>
+                  <option value="2. Inspeção (3 em 1)">2. Inspeção (3 em 1)</option>
+                  <option value="3. Fotografia">3. Fotografia</option>
+                  <option value="4. CDE">4. CDE</option>
+                  <option value="5. Etiqueta">5. Etiqueta</option>
+                  <option value="6. Encarte">6. Encarte</option>
+                  <option value="7. Finalização">7. Finalização / Liberado</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-function goToStep(stepId) {
-  document.getElementById('step-0').classList.add('hidden');
-  document.getElementById('step-renovacao').classList.add('hidden');
-  document.getElementById('step-cat').classList.add('hidden');
-  document.getElementById('step-diag').classList.add('hidden');
-  document.getElementById('step-renovacao-confirm').classList.add('hidden');
-  document.getElementById('step-success').classList.add('hidden');
-  document.getElementById(`step-${stepId}`).classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+      <!-- MOVIMENTAÇÃO DE INSUMOS SEPARADA POR MARCA -->
+      <div class="panel-card">
+        <h3>📦 Dar Entrada ou Baixa em Insumos de Clientes</h3>
+        <form onsubmit="registrarInsumoBancada(event)" class="grid-2col" style="margin-top:15px;">
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Selecione a Marca / Cliente</label>
+            <select id="insumoClienteSelect" class="form-control">
+              <option value="Niara Semijoias">Niara Semijoias</option>
+              <option value="Velt Joias">Velt Joias</option>
+            </select>
 
-function goBackFromCat() {
-  if (userType === 'NOVO') {
-    goToStep(0);
-  } else {
-    goToStep('renovacao');
-  }
-}
+            <label style="font-size:0.78rem; font-weight:bold;">Tipo de Material / Insumo</label>
+            <input type="text" id="insumoNomeMat" class="form-control" required placeholder="Ex: Cartelas Niara 4x4">
+          </div>
 
-function handleCatNext() {
-  if (userType === 'NOVO') {
-    goToStep('diag');
-  } else {
-    goToStep('renovacao-confirm');
-  }
-}
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">Tipo de Operação</label>
+            <select id="insumoTipoOp" class="form-control">
+              <option value="Entrada (Reposição de Estoque)">Entrada (Reposição de Estoque)</option>
+              <option value="Saída (Consumo no Encarte/Lote)">Saída (Consumo no Encarte/Lote)</option>
+            </select>
 
-function submitDiagnosis(e) {
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
-  btn.innerText = "ENVIANDO DADOS...";
-  btn.disabled = true;
+            <label style="font-size:0.78rem; font-weight:bold;">Quantidade (Unidades)</label>
+            <input type="number" id="insumoQtdUn" class="form-control" required placeholder="Ex: 500">
+          </div>
 
-  const payload = {
-    tipo_cliente: "Novo Cliente (Fila 20/11)",
-    cliente_renovacao_nome: "-",
-    timestamp: new Date().toLocaleString('pt-BR'),
-    categoria: "CLUBE S.O.S (Anuidade R$ 2.500)",
-    nome_cargo: document.getElementById('nome_cargo').value,
-    nome_marca: document.getElementById('nome_marca').value,
-    instagram: document.getElementById('instagram').value,
-    cidade_estado: document.getElementById('cidade_estado').value,
-    tempo_mercado: document.getElementById('tempo_mercado').value,
-    modelo_negocio: document.getElementById('modelo_negocio').value,
-    volume_pecas: document.getElementById('volume_pecas').value,
-    gargalos: Array.from(document.querySelectorAll('input[name="gargalos"]:checked')).map(cb => cb.value).join(', ') || 'Nenhum',
-    solucoes: Array.from(document.querySelectorAll('input[name="solucoes"]:checked')).map(cb => cb.value).join(', ') || 'Nenhum',
-    whatsapp: document.getElementById('whatsapp').value
-  };
+          <div style="grid-column: 1 / -1;">
+            <button type="submit" class="btn-main btn-green">REGISTRAR MOVIMENTAÇÃO NO ESTOQUE DA MARCA</button>
+          </div>
+        </form>
+      </div>
 
-  sendToGoogle(payload, "Aplicação de Novo Cliente Registrada!");
-}
+    </div>
 
-function submitRenovacaoDirect() {
-  const wpp = document.getElementById('whatsapp_renovacao').value;
-  if (!wpp) {
-    alert("Por favor, preencha seu WhatsApp.");
-    return;
-  }
-  const btn = document.getElementById('submitRenovacaoBtn');
-  btn.innerText = "ENVIANDO RENOVAÇÃO...";
-  btn.disabled = true;
+    <!-- ================================================================================= -->
+    <!-- 3. MÓDULO 3: PAINEL DA DIRETORIA (KELVIN & BRENDA - CONTROLE TOTAL SOBRE TUDO) -->
+    <!-- ================================================================================= -->
+    <div id="painelDiretoria" style="display:none;">
+      
+      <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#FFFDF0;">
+        <div class="panel-header">
+          <div>
+            <h3 style="color:#B45309;">👑 PAINEL DA DIRETORIA GENERAL — KELVIN LIMA & BRENDA</h3>
+            <span style="font-size:0.8rem; color:#78350F;">Controle total de edição, aprovações, parâmetros, tabelas de tarifas e estoques.</span>
+          </div>
+          <div>
+            <span class="badge-status" style="background:#FEF3C7; color:#B45309;">ACESSO MÁXIMO</span>
+          </div>
+        </div>
 
-  const payload = {
-    tipo_cliente: "Renovação Parceiro (Abertura 10/10)",
-    cliente_renovacao_nome: document.getElementById('cliente_renovacao_nome').value,
-    timestamp: new Date().toLocaleString('pt-BR'),
-    categoria: "CLUBE S.O.S (Anuidade R$ 2.000)",
-    nome_cargo: "Cliente Ativo",
-    nome_marca: document.getElementById('cliente_renovacao_nome').value,
-    instagram: "-",
-    cidade_estado: "-",
-    tempo_mercado: "-",
-    modelo_negocio: "-",
-    volume_pecas: "-",
-    gargalos: "Renovação de Contrato Anual",
-    solucoes: "Renovação de Vaga Exclusiva",
-    whatsapp: wpp
-  };
+        <div class="grid-metrics">
+          <div class="metric-card" style="background:#FFF;">
+            <h4>Marcas Cadastradas</h4>
+            <span>14 Marcas</span> <small style="font-size:0.75rem; color:var(--text-muted);">1 Black | 3 Diamante | 6 Ouro | 4 Iniciante</small>
+          </div>
+          <div class="metric-card" style="background:#FFF;">
+            <h4>Peças em Trânsito</h4>
+            <span style="color:var(--orange-accent);">2.470 pcs</span> <small style="font-size:0.75rem; color:var(--text-muted);">Em 5 lotes operacionais</small>
+          </div>
+          <div class="metric-card" style="background:#FFF;">
+            <h4>Faturamento do Mês</h4>
+            <span style="color:var(--green-val);">R$ 18.420,00</span> <small style="font-size:0.75rem; color:var(--text-muted);">Serviços executados</small>
+          </div>
+        </div>
+      </div>
 
-  sendToGoogle(payload, "Solicitação de Renovação Registrada!");
-}
+      <!-- VISÃO GERAL DE TODOS OS ESTOQUES POR CLIENTE (DIRETORIA) -->
+      <div class="panel-card">
+        <h3>📦 Controle Central de Insumos por Marca (Diretoria Pode Editar Tudo)</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Gerenciamento direto dos insumos de todos os clientes armazenados no HUB:</p>
 
-function sendToGoogle(payload, titleText) {
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).then(() => {
-    document.getElementById('successTitle').innerText = titleText;
-    goToStep('success');
-  }).catch(err => {
-    alert("Erro ao enviar dados. Verifique a conexão.");
-  });
-}
-</script>
+        <table>
+          <thead>
+            <tr>
+              <th>Marca</th>
+              <th>Item / Insumo</th>
+              <th>Saldo Atual</th>
+              <th>Ação / Edição Direta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Niara Semijoias</strong></td>
+              <td>Cartelas Personalizadas</td>
+              <td><strong>1.820 un</strong></td>
+              <td><button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="editarInsumoDiretoria('Niara', 'Cartelas', 1820)">EDITAR SALDO</button></td>
+            </tr>
+            <tr>
+              <td><strong>Niara Semijoias</strong></td>
+              <td>Saquinhos PP 6x8</td>
+              <td><strong>2.400 un</strong></td>
+              <td><button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="editarInsumoDiretoria('Niara', 'Saquinhos', 2400)">EDITAR SALDO</button></td>
+            </tr>
+            <tr>
+              <td><strong>Velt Joias</strong></td>
+              <td>Tags de Brinco Velt</td>
+              <td><strong>3.100 un</strong></td>
+              <td><button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="editarInsumoDiretoria('Velt', 'Tags', 3100)">EDITAR SALDO</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2col">
+        <!-- APROVAÇÕES E EXCEDENTES DE LOTE -->
+        <div class="panel-card">
+          <h3>⚡ Autorização de Lotes Especial & Excedentes</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Agendamentos que ultrapassam a cota ou necessitam da aprovação da direção:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Solicitação</th>
+                <th>Decisão Kelvin/Brenda</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Velt Joias</strong></td>
+                <td>Cota 1.000 / Solicitou 1.400 pcs</td>
+                <td>
+                  <button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem;" onclick="alert('Lote aprovado pela Diretoria S.O.S!')">APROVAR LOTE</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FECHAMENTO E COBRANÇA AUTOMÁTICA DE LOTES -->
+        <div class="panel-card">
+          <h3>💰 Fechamento Operacional por Lote</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Relatório consolidado de serviços executados para liberação:</p>
+
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; font-size:0.8rem;">
+            <strong>Lote #1042 — Niara Semijoias (Cota Diamante):</strong><br>
+            • 2. Inspeção (350 pcs x R$ 0,58) = R$ 203,00<br>
+            • 3. Fotografia (70 mod x R$ 1,56) = R$ 109,20<br>
+            • 4. CDE (70 mod x R$ 1,90) = R$ 133,00<br>
+            • 5. Etiqueta (350 pcs x R$ 0,22) = R$ 77,00<br>
+            • 6. Encarte (350 pcs x R$ 0,45) = R$ 157,50<br>
+            <hr style="margin:6px 0; border:0; border-top:1px solid #CBD5E1;">
+            Total Fechamento do Lote: <strong style="color:var(--green-val); font-size:1rem;">R$ 679,70</strong><br>
+            <button class="btn-main btn-orange" style="margin-top:8px; padding:6px; font-size:0.75rem;" onclick="alert('Relatório de Fechamento liberado para a cliente Niara!')">GERAR RELATÓRIO DE LIBERAÇÃO</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let perfilAtual = 'cliente';
+
+    // DADOS SEPARADOS POR MARCA (ESTOQUE E INFOS ISOLADAS)
+    const bancoDadosMarcas = {
+      "Niara Semijoias": {
+        cota: "VIP DIAMANTE (Até 1.500 pcs/mês)",
+        uso: "350 / 1.500",
+        cashback: "R$ 250,00",
+        loteAtivo: "Lote #1042",
+        insumos: [
+          { nome: "Cartelas Personalizadas Niara", qtd: "1.820 un", status: "ESTOQUE OK", badge: "badge-concluido" },
+          { nome: "Saquinhos Plásticos PP 6x8", qtd: "2.400 un", status: "ESTOQUE OK", badge: "badge-concluido" },
+          { nome: "Etiquetas Térmicas Joia", qtd: "350 un", status: "REPOSIÇÃO RECOMENDADA", badge: "badge-andamento" },
+          { nome: "Fechos Lagarto Reserve 10mm", qtd: "120 un", status: "ESTOQUE OK", badge: "badge-concluido" }
+        ]
+      },
+      "Velt Joias": {
+        cota: "VIP OURO (Até 1.000 pcs/mês)",
+        uso: "820 / 1.000",
+        cashback: "R$ 125,00",
+        loteAtivo: "Lote #1043",
+        insumos: [
+          { nome: "Tags de Brinco Velt Joias", qtd: "3.100 un", status: "ESTOQUE OK", badge: "badge-concluido" },
+          { nome: "Saquinhos de Veludo Preto", qtd: "150 un", status: "BAIXO ESTOQUE", badge: "badge-andamento" },
+          { nome: "Etiquetas Argox Velt", qtd: "2.000 un", status: "ESTOQUE OK", badge: "badge-concluido" }
+        ]
+      }
+    };
+
+    function selecionarPerfilAcesso(perfil) {
+      perfilAtual = perfil;
+      document.getElementById('tabCliente').classList.remove('active');
+      document.getElementById('tabEquipe').classList.remove('active');
+      document.getElementById('tabDiretoria').classList.remove('active');
+
+      if(perfil === 'cliente') document.getElementById('tabCliente').classList.add('active');
+      if(perfil === 'equipe') document.getElementById('tabEquipe').classList.add('active');
+      if(perfil === 'diretoria') document.getElementById('tabDiretoria').classList.add('active');
+    }
+
+    function autenticarUsuario(e) {
+      e.preventDefault();
+      const usuarioSel = document.getElementById('selectUsuarioLogin').value;
+
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'block';
+
+      if(perfilAtual === 'cliente') {
+        let marca = (usuarioSel.includes('Velt')) ? 'Velt Joias' : 'Niara Semijoias';
+        carregarDadosExclusivosCliente(marca);
+        document.getElementById('nomeUsuarioBadge').innerText = `${marca} (Cliente)`;
+        document.getElementById('painelCliente').style.display = 'block';
+      } else if(perfilAtual === 'equipe') {
+        document.getElementById('nomeUsuarioBadge').innerText = "Bancada Operacional (Equipe S.O.S)";
+        document.getElementById('painelEquipe').style.display = 'block';
+      } else {
+        document.getElementById('nomeUsuarioBadge').innerText = "Kelvin Lima & Brenda (Diretoria)";
+        document.getElementById('painelDiretoria').style.display = 'block';
+      }
+    }
+
+    function carregarDadosExclusivosCliente(marca) {
+      const dados = bancoDadosMarcas[marca] || bancoDadosMarcas["Niara Semijoias"];
+      
+      document.getElementById('cliBoasVindas').innerText = `Bem-vinda, ${marca}!`;
+      document.getElementById('cliCotaNome').innerText = dados.cota;
+      document.getElementById('cliCotaUso').innerText = dados.uso;
+      document.getElementById('cliCashbackVal').innerText = dados.cashback;
+      document.getElementById('cliLoteStatusInfo').innerText = dados.loteAtivo;
+
+      let htmlTable = "";
+      dados.insumos.forEach(item => {
+        htmlTable += `
+          <tr>
+            <td>${item.nome}</td>
+            <td><strong>${item.qtd}</strong></td>
+            <td><span class="badge-status ${item.badge}">${item.status}</span></td>
+          </tr>
+        `;
+      });
+      document.getElementById('tabelaInsumosCliente').innerHTML = htmlTable;
+    }
+
+    function fazerLogout() {
+      document.getElementById('painelCliente').style.display = 'none';
+      document.getElementById('painelEquipe').style.display = 'none';
+      document.getElementById('painelDiretoria').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'block';
+    }
+
+    function atualizarPrazoPrevisao() {
+      const qtd = parseInt(document.getElementById('loteQtdPcs').value) || 0;
+      const campoPrazo = document.getElementById('lotePrazoCalculado');
+
+      if (qtd <= 500) {
+        campoPrazo.value = "8 dias úteis após a recepção bruto";
+      } else if (qtd <= 1000) {
+        campoPrazo.value = "10 dias úteis após a recepção bruto";
+      } else if (qtd <= 1500) {
+        campoPrazo.value = "13 dias úteis após a recepção bruto";
+      } else {
+        campoPrazo.value = "Agendamento diferenciado mediante aprovação da direção";
+      }
+    }
+
+    function agendarLoteCliente(e) {
+      e.preventDefault();
+      const qtd = document.getElementById('loteQtdPcs').value;
+      alert(`✅ Agendamento de ${qtd} peças registrado! Protocolo enviado para a bancada S.O.S.`);
+      document.getElementById('loteQtdPcs').value = '';
+    }
+
+    function alterarSetorLote(codLote, novoSetor) {
+      alert(`⚙️ Setor do Lote ${codLote} alterado com sucesso para: ${novoSetor}`);
+    }
+
+    function registrarInsumoBancada(e) {
+      e.preventDefault();
+      const cli = document.getElementById('insumoClienteSelect').value;
+      const mat = document.getElementById('insumoNomeMat').value;
+      const qtd = document.getElementById('insumoQtdUn').value;
+      const op = document.getElementById('insumoTipoOp').value;
+
+      alert(`📦 Movimentação registrada: ${op} de ${qtd} un do item '${mat}' no estoque da marca ${cli}.`);
+      document.getElementById('insumoNomeMat').value = '';
+      document.getElementById('insumoQtdUn').value = '';
+    }
+
+    function editarInsumoDiretoria(marca, item, saldoAtual) {
+      const novoSaldo = prompt(`[DIRETORIA] Digite o novo saldo de '${item}' para a marca ${marca}:`, saldoAtual);
+      if(novoSaldo !== null) {
+        alert(`👑 Saldo atualizado com sucesso pela Diretoria para: ${novoSaldo} un!`);
+      }
+    }
+  </script>
 </body>
 </html>
