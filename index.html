@@ -145,6 +145,21 @@
     }
     .prazo-item { font-size: 0.78rem; font-weight: bold; color: var(--header-bg); }
     .prazo-item span { color: var(--orange-accent); }
+
+    /* CALENDÁRIO ESTILIZADO */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .cal-day-header { text-align: center; font-weight: bold; font-size: 0.75rem; color: var(--text-muted); padding: 4px; }
+    .cal-day {
+      background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 8px; padding: 8px 4px;
+      text-align: center; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; min-height: 52px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .cal-day.disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; border-color: #E2E8F0; }
+    .cal-day.indisponivel { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; cursor: not-allowed; }
+    .cal-day.disponivel { background: #ECFDF5; border-color: #6EE7B7; color: #065F46; }
+    .cal-day.disponivel:hover { background: #10B981; color: #FFF; }
+    .cal-day.selected { background: var(--orange-accent) !important; color: #FFF !important; border-color: var(--orange-accent) !important; }
+    .cal-status-tag { font-size: 0.62rem; font-weight: bold; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -178,9 +193,7 @@
 
       <form onsubmit="autenticarUsuario(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Selecione o Acesso</label>
-        <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
-          <!-- JS -->
-        </select>
+        <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;"></select>
 
         <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
         <input type="password" id="inputSenha" class="form-control" required placeholder="Digite sua senha...">
@@ -205,7 +218,7 @@
         <button id="btnNavColab" class="btn-pag-dir" onclick="navegarPaginaDiretoria('colab')">🛠️ 3. MEUS COLABORADORES</button>
         <button id="btnNavInsumos" class="btn-pag-dir" onclick="navegarPaginaDiretoria('insumos')">📦 4. INSUMOS POR CLIENTE</button>
         <button id="btnNavEncarte" class="btn-pag-dir" onclick="navegarPaginaDiretoria('encarte')">🎴 5. MODELOS DE ENCARTE</button>
-        <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙️ 6. CONFIGS & CATEGORIAS</button>
+        <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙️️ 6. CONFIGS & CATEGORIAS</button>
       </div>
 
       <div id="pagDirLotes" class="panel-card">
@@ -218,7 +231,7 @@
           </div>
         </div>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
-          Clique em qualquer card de lote para abrir o editor da diretoria e alterar status, setor, peso ou observações:
+          Clique em qualquer card de lote para abrir o editor da diretoria, alterar setor, estornar lote ou fechar valor financeiro/desconto:
         </p>
         <div id="containerLotes4EtapasAmplo"></div>
       </div>
@@ -229,7 +242,7 @@
           <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarCliente()">+ CADASTRA CLIENTE</button>
         </div>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
-          Marcas cadastradas com acesso total e modais de edição e exclusão com segurança:
+          Marcas cadastradas com cotas mensais e modais de edição com segurança:
         </p>
         <div class="cards-grid-amplos" id="containerCardsClientesAmplo"></div>
       </div>
@@ -239,9 +252,6 @@
           <h3>🛠️ Meus Colaboradores & Equipe de Bancada</h3>
           <button class="btn-main btn-orange" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarColaborador()">+ CADASTRA COLABORADOR</button>
         </div>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
-          Equipe fabril com contatos de WhatsApp, setores de atuação e modal de edição completa:
-        </p>
         <div class="cards-grid-amplos" id="containerCardsColabAmplo"></div>
       </div>
 
@@ -300,9 +310,9 @@
             </select>
             <textarea id="textoAvisoDir" class="form-control" style="height:80px;" placeholder="Ex: Informamos feriado municipal em Limeira..."></textarea>
             <button class="btn-main btn-orange" onclick="salvarAvisoComunicadoSubmit()">PUBLICAR COMUNICADO</button>
-            <h4 style="margin-top:16px;">⚙️ Fator Divisor de Peso</h4>
+            <h4 style="margin-top:16px;">⚙️ Média de Peso por Peça (Divisor Interno)</h4>
             <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="3.2">
-            <button class="btn-main btn-green" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DIVISOR</button>
+            <button class="btn-main btn-green" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DE PESO</button>
           </div>
         </div>
       </div>
@@ -310,7 +320,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- 2. ÁREA DO COLABORADOR (NOVA E COMPLETA) -->
+    <!-- 2. ÁREA DO COLABORADOR (COM REGRAS DE SEGURANÇA E INSPEÇÃO AMPLIADA) -->
     <!-- ================================================================================= -->
     <div id="painelColaborador" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#F0F9FF; padding:18px 24px;">
@@ -318,7 +328,6 @@
         <span style="font-size:0.82rem; color:var(--text-muted);" id="subtituloColabBancada">Setores Liberados para Atuação:</span>
       </div>
 
-      <!-- NAV COLABORADOR -->
       <div class="menu-paginas-operacional">
         <button id="btnNavOpLotes" class="btn-pag-op active" onclick="navegarPaginaColab('lotes')">📦 1. LOTES DA ESTEIRA</button>
         <button id="btnNavOpEncartes" class="btn-pag-op" onclick="navegarPaginaColab('encartes')">🎴 2. CONSULTA DE ENCARTES</button>
@@ -326,52 +335,47 @@
         <button id="btnNavOpMensagens" class="btn-pag-op" onclick="navegarPaginaColab('mensagens')">💬 4. MENSAGENS COM A DIRETORIA</button>
       </div>
 
-      <!-- ABA 1 COLAB: LOTES DA ESTEIRA -->
       <div id="pagOpLotes" class="panel-card">
         <h3>📦 Lotes na Esteira Fabril</h3>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">Acompanhe os lotes do seu setor e visualize a esteira completa:</p>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
+          * Nota de Segurança: Você pode avançar os lotes do seu setor. Retornos e entradas/finalizações são exclusivos da diretoria.
+        </p>
 
-        <h4 style="color:#C2410C; margin-top:10px;">🔥 Lotes no Meu Setor (Prontos para Atuação)</h4>
+        <h4 style="color:#C2410C; margin-top:10px;">🔥 Lotes no Meu Setor (Aguardando Atuação)</h4>
         <div class="cards-grid-amplos" id="containerColabMeuSetor"></div>
+
+        <h4 style="color:var(--header-bg); margin-top:25px;">🔄 Lotes em Entrada Bruta (Somente Leitura)</h4>
+        <div class="cards-grid-amplos" id="containerColabEntradaApenas"></div>
 
         <h4 style="color:var(--header-bg); margin-top:25px;">🔄 Outros Lotes em Andamento na Fábrica</h4>
         <div class="cards-grid-amplos" id="containerColabOutrosLotes"></div>
 
-        <h4 style="color:var(--green-val); margin-top:25px;">✅ Lotes Finalizados</h4>
+        <h4 style="color:var(--green-val); margin-top:25px;">✅ Lotes Finalizados (Somente Leitura)</h4>
         <div class="cards-grid-amplos" id="containerColabFinalizados"></div>
       </div>
 
-      <!-- ABA 2 COLAB: CONSULTA DE ENCARTES -->
       <div id="pagOpEncartes" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>🎴 Consulta de Modelos de Encarte dos Clientes</h3>
-          <select id="selectFiltroClienteEncarteColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarEncartesColabConsulta()">
-            <!-- JS -->
-          </select>
+          <select id="selectFiltroClienteEncarteColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarEncartesColabConsulta()"></select>
         </div>
         <div class="cards-grid-amplos" id="containerCardsEncarteColabConsulta"></div>
       </div>
 
-      <!-- ABA 3 COLAB: CONSULTA DE INSUMOS -->
       <div id="pagOpInsumos" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>📦 Consulta de Insumos & Gondulas</h3>
-          <select id="selectFiltroClienteInsumoColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarInsumosColabConsulta()">
-            <!-- JS -->
-          </select>
+          <select id="selectFiltroClienteInsumoColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarInsumosColabConsulta()"></select>
         </div>
         <div id="containerTabelaInsumosColabConsulta"></div>
       </div>
 
-      <!-- ABA 4 COLAB: MENSAGENS -->
       <div id="pagOpMensagens" class="panel-card" style="display:none;">
         <h3>💬 Central de Mensagens com a Diretoria</h3>
         <div class="grid-2col" style="margin-top:15px;">
           <div>
             <h4>📥 Mensagens e Avisos Recebidos da Diretoria</h4>
-            <div id="boxMensagensRecebidasColab" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;">
-              <!-- JS -->
-            </div>
+            <div id="boxMensagensRecebidasColab" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;"></div>
           </div>
           <div>
             <h4>📤 Enviar Mensagem para Kelvin & Brenda</h4>
@@ -386,23 +390,23 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- 3. ÁREA DO CLIENTE (NOVA E COMPLETA) -->
+    <!-- 3. ÁREA DO CLIENTE (COM AGENDAMENTO DE LOTES E CALENDÁRIO INTELIGENTE) -->
     <!-- ================================================================================= -->
     <div id="painelCliente" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--green-val); background:#ECFDF5; padding:18px 24px;">
         <h3 style="color:#065F46; margin:0 0 4px 0;" id="tituloClientePainel">💎 PAINEL DO CLIENTE — NOME DA MARCA</h3>
-        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, solicite ajustes de encarte e consulte seu estoque:</span>
+        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, agende novas entregas e consulte seu estoque:</span>
       </div>
 
-      <!-- NAV CLIENTE -->
       <div class="menu-paginas-operacional">
         <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 1. MEUS LOTES & PRAZOS</button>
-        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 2. MODELOS DE ENCARTE</button>
-        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 3. MEUS INSUMOS</button>
-        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 4. FALAR COM A DIRETORIA</button>
+        <button id="btnNavCliAgendar" class="btn-pag-op" onclick="navegarPaginaCliente('agendar')">📅 2. AGENDAR NOVO LOTE</button>
+        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 3. MODELOS DE ENCARTE</button>
+        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 4. MEUS INSUMOS</button>
+        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 5. FALAR COM A DIRETORIA</button>
       </div>
 
-      <!-- ABA 1 CLIENTE: LOTES -->
+      <!-- ABA 1 CLIENTE: LOTES E PRAZOS -->
       <div id="pagCliLotes" class="panel-card">
         <h3>📦 Prazos de Produção em Dias Úteis</h3>
         <div class="prazos-bar">
@@ -416,7 +420,58 @@
         <div class="cards-grid-amplos" id="containerLotesClientePainel"></div>
       </div>
 
-      <!-- ABA 2 CLIENTE: MODELOS DE ENCARTE -->
+      <!-- ABA 2 CLIENTE: AGENDAMENTO DE LOTES COM CALENDÁRIO -->
+      <div id="pagCliAgendar" class="panel-card" style="display:none;">
+        <div style="background:#F0F9FF; border:1px solid #BAE6FD; padding:18px; border-radius:14px; margin-bottom:20px;">
+          <h4 style="margin:0 0 8px 0; color:var(--header-bg);">📊 Cota Mensal do Clube S.O.S</h4>
+          <p style="margin:2px 0; font-size:0.88rem;">Sua Categoria: <strong id="cliAgendCatTitle" style="color:var(--orange-accent);">💎 VIP Diamante</strong></p>
+          <p style="margin:2px 0; font-size:0.88rem;">Cota Máxima Mensal: <strong id="cliAgendCotaMax">1.500 pcs/mês</strong></p>
+          <p style="margin:2px 0; font-size:0.88rem;">Enviado neste Mês: <strong id="cliAgendEnviadoMes" style="color:var(--green-val);">350 pcs</strong> (Renova todo dia 1º)</p>
+        </div>
+
+        <h3>📅 Agendar Chegada de Nova Mercadoria</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
+          Selecione a data desejada no calendário abaixo. Dias indisponíveis já possuem agendamentos ou são feriados/finais de semana em Limeira-SP:
+        </p>
+
+        <div class="grid-2col">
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">1. Escolha a Data de Chegada (Limeira-SP)</label>
+            <div style="background:#FFF; border:1px solid #CBD5E1; padding:12px; border-radius:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-size:0.9rem; color:var(--header-bg);" id="calMesAnoHeader">OUTUBRO / 2026</strong>
+              </div>
+              <div class="cal-grid" id="containerCalendarioGrid"></div>
+            </div>
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-top:8px;">
+              * Finais de semana e feriados em Limeira estão bloqueados. Cada agendamento ocupa 2 dias úteis de exclusividade (Entrada + Inspeção).
+            </p>
+          </div>
+
+          <div>
+            <label style="font-size:0.78rem; font-weight:bold;">2. Calculadora de Quantidade / Peso</label>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px; border-radius:12px; margin-bottom:12px;">
+              <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px;">Sabe a quantidade exata de peças?</span>
+              <input type="number" id="inputAgendQtdPcs" class="form-control" placeholder="Quantidade exata de peças (Ex: 400)" oninput="calcularPesoPorPcsCli()">
+
+              <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px;">Ou informe o peso total em gramas (Calculadora de Média S.O.S):</span>
+              <input type="number" id="inputAgendPesoGramos" class="form-control" placeholder="Peso em gramas (Ex: 1280)" oninput="calcularPcsPorPesoCli()">
+
+              <small style="color:var(--orange-accent); font-weight:bold; display:block;" id="labelCalcAgendResult">Resultado estimado: 0 pcs (~0g)</small>
+            </div>
+
+            <label style="font-size:0.78rem; font-weight:bold;">3. Quantidade Estimada de Modelos / Referências</label>
+            <input type="number" id="inputAgendQtdModelos" class="form-control" placeholder="Ex: 15 modelos diferentes">
+
+            <label style="font-size:0.78rem; font-weight:bold;">4. Observações do Lote para a Diretoria</label>
+            <textarea id="inputAgendObs" class="form-control" style="height:70px;" placeholder="Ex: Caixa com banho dourado, atenção especial nos brincos..."></textarea>
+
+            <button class="btn-main btn-orange" onclick="confirmarAgendamentoLoteClienteSubmit()">CONFIRMAR AGENDAMENTO DE LOTE ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 3 CLIENTE: MODELOS DE ENCARTE -->
       <div id="pagCliEncarte" class="panel-card" style="display:none;">
         <h3>🎴 Modelos de Encarte da Sua Marca</h3>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
@@ -437,13 +492,13 @@
         </div>
       </div>
 
-      <!-- ABA 3 CLIENTE: MEUS INSUMOS -->
+      <!-- ABA 4 CLIENTE: MEUS INSUMOS -->
       <div id="pagCliInsumos" class="panel-card" style="display:none;">
         <h3>📦 Estoque de Insumos da Sua Marca</h3>
         <div id="containerTabelaInsumosClienteExibicao"></div>
       </div>
 
-      <!-- ABA 4 CLIENTE: MENSAGENS -->
+      <!-- ABA 5 CLIENTE: MENSAGENS -->
       <div id="pagCliMensagens" class="panel-card" style="display:none;">
         <h3>💬 Atendimento Direto com a Diretoria (Kelvin & Brenda)</h3>
         <div class="grid-2col" style="margin-top:15px;">
@@ -476,18 +531,19 @@
         <p style="margin:2px 0; font-size:0.85rem;" id="infoOpLoteSetor">Setor Atual: 2. Inspeção 3em1</p>
       </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Quantidade Real Contada / Ajustada de Peças</label>
+      <label style="font-size:0.78rem; font-weight:bold;">Quantidade Real Contada de Peças</label>
       <input type="number" id="inputOpQtdReal" class="form-control" placeholder="Informe a quantidade exata contada...">
+
+      <label style="font-size:0.78rem; font-weight:bold;">Quantidade de Modelos / Referências Identificados</label>
+      <input type="number" id="inputOpQtdModelosReal" class="form-control" placeholder="Ex: 12 modelos diferentes">
 
       <label style="font-size:0.78rem; font-weight:bold;">Avançar para o Próximo Setor</label>
       <select id="selectOpProximoSetor" class="form-control">
-        <option value="1. Entrada Bruta">1. Entrada Bruta</option>
         <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
         <option value="3. Fotografia">3. Fotografia</option>
         <option value="4. CDE Catalogação">4. CDE Catalogação</option>
         <option value="5. Etiquetagem">5. Etiquetagem</option>
         <option value="6. Encartelamento">6. Encartelamento</option>
-        <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
       </select>
 
       <label style="font-size:0.78rem; font-weight:bold;">Observação da Bancada</label>
@@ -498,7 +554,7 @@
     </div>
   </div>
 
-  <!-- MODAL DIRETORIA INTATCTO -->
+  <!-- MODAIS DIRETORIA INTACTOS -->
   <div id="modalCadCliente" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 id="modalClienteTitulo" style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Cliente do Clube</h3>
@@ -563,7 +619,7 @@
         <option value="3">3. Cadastrado / Em Andamento</option>
         <option value="4">4. Finalizado</option>
       </select>
-      <label style="font-size:0.78rem; font-weight:bold;">Setor Atual da Fábrica</label>
+      <label style="font-size:0.78rem; font-weight:bold;">Setor Atual da Fábrica (Diretoria pode voltar setores)</label>
       <select id="editLoteSetorAtual" class="form-control">
         <option value="1. Entrada Bruta">1. Entrada Bruta</option>
         <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
@@ -573,6 +629,15 @@
         <option value="6. Encartelamento">6. Encartelamento</option>
         <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
       </select>
+      
+      <div style="background:#FFF7ED; padding:12px; border-radius:10px; margin:10px 0; border:1px solid #FFEDD5;">
+        <h4 style="margin:0 0 6px 0; color:#9A3412;">💰 Fechamento Financeiro da Diretoria (Invisível para Cliente/Colaborador)</h4>
+        <label style="font-size:0.78rem; font-weight:bold;">Valor Total do Serviço (R$)</label>
+        <input type="text" id="editLoteValorTotal" class="form-control" placeholder="Ex: R$ 850,00">
+        <label style="font-size:0.78rem; font-weight:bold;">Desconto Concedido (%)</label>
+        <input type="text" id="editLoteDesconto" class="form-control" placeholder="Ex: 5%">
+      </div>
+
       <label style="font-size:0.78rem; font-weight:bold;">Observações Gerais da Diretoria</label>
       <textarea id="editLoteObs" class="form-control" placeholder="Observações internas para a bancada..."></textarea>
       <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES DO LOTE</button>
@@ -614,9 +679,9 @@
       <select id="mCadEncCli" class="form-control" onchange="atualizarSelectsInsumosModeloEncarte()"></select>
       <label style="font-size:0.78rem; font-weight:bold;">Categoria de Joia</label>
       <select id="mCadEncCatJoia" class="form-control"></select>
-      <label style="font-size:0.78rem; font-weight:bold;">Passo a Passo de Como Encartelar (Até 30 Instruções):</label>
+      <label style="font-size:0.78rem; font-weight:bold;">Passo a Passo de Como Encartelar:</label>
       <div style="display:flex; gap:6px; margin-bottom:8px;">
-        <input type="text" id="inputPassoEncarteTemp" class="form-control" style="margin:0;" placeholder="Ex: Passo 1 - Colocar etiqueta bem apertada no aro...">
+        <input type="text" id="inputPassoEncarteTemp" class="form-control" style="margin:0;" placeholder="Ex: Passo 1 - Colocar etiqueta bem apertada...">
         <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 14px; white-space:nowrap;" onclick="adicionarPassoEncarteLista()">+ ADICIONAR</button>
       </div>
       <div id="containerPassosEncarteLista" style="background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; min-height:60px;"></div>
@@ -638,32 +703,44 @@
   <script>
     let perfilAcessoSelecionadoTab = 'diretoria';
     let usuarioLogadoObjeto = null;
+    let dataAgendamentoSelecionadaCli = "";
+    let fatorMediaPesoGlobal = 3.2;
 
-    let clienteInsumoSelecionadoAtual = 'Niara Semijoias';
-    let clienteEncarteSelecionadoAtual = 'Niara Semijoias';
-    let listaPassosEncarteAtual = [];
+    // FERIADOS EM LIMEIRA-SP (MÊS/DIA OU DATA ESPECÍFICA 2026)
+    const feriadosLimeiraSP = [
+      "2026-01-01", // Ano Novo
+      "2026-04-03", // Sexta-feira Santa
+      "2026-04-21", // Tiradentes
+      "2026-05-01", // Dia do Trabalho
+      "2026-06-04", // Corpus Christi
+      "2026-09-07", // Independência do Brasil
+      "2026-09-15", // Aniversário de Limeira-SP
+      "2026-10-12", // Nossa Senhora Aparecida
+      "2026-11-02", // Finados
+      "2026-11-15", // Proclamação da República
+      "2026-11-20", // Consciência Negra
+      "2026-12-25"  // Natal
+    ];
 
-    // BANCO DIRETORIA
+    // DATAS JÁ OCUPADAS POR CLIENTES (AGENDADAS)
+    const datasOcupadasAgenda = ["2026-10-06", "2026-10-07", "2026-10-14", "2026-10-15"];
+
     const bancoDiretoria = [
       { id: 'dir1', nome: 'Kelvin Lima & Brenda (Diretoria General)', login: 'kelvin', senha: '123' }
     ];
 
-    // BANCO CLIENTES
     const bancoClientes = [
-      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", inicio: "05/2026" },
-      { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", inicio: "04/2026" }
+      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 350, inicio: "05/2026" },
+      { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 800, inicio: "04/2026" }
     ];
 
-    // BANCO COLABORADORES
     const bancoColaboradores = [
       { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
       { id: 2, nome: "Equipe Bancada S.O.S", fone: "(19) 98841-0022", login: "equipe@sos.com", senha: "123", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
     ];
 
-    // CATEGORIAS CENTRAIS DE JOIAS
     const bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
 
-    // BANCO INSUMOS POR CLIENTE
     const bancoInsumosCompletos = {
       "Niara Semijoias": [
         { id: 101, catJoia: "Brinco Pequeno", tipo: "Saquinho", sub: "6.5x9+3+3 c/ solapa", qtd: 900, gondula: "11" },
@@ -674,22 +751,19 @@
       ]
     };
 
-    // BANCO MODELOS DE ENCARTE
     const bancoModelosEncarte = {
       "Niara Semijoias": [
         { id: 1, catJoia: "Anel Regulável", passos: ["1. Etiqueta bem apertada no aro sem colar na pedra", "2. Encartelar na cartela de anel", "3. Guardar no saquinho indicado"], saquinho: "Não utiliza saquinho", cartela: "Cartela Anéis Tradicionais", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Verificar travamento" }
       ]
     };
 
-    // BANCO LOTES 4 ETAPAS
     const bancoLotes4Etapas = [
-      { id: 1, cliente: "Niara Semijoias", etapa: 1, label: "Aguardando Aprovação", pcs: 350, peso: "1.120g", data: "06/10/2026", obs: "Correntes de prata banhadas", numLote: "", setorAtual: "Pendente" },
-      { id: 2, cliente: "Velt Joias", etapa: 2, label: "Aguardando Chegada Física", pcs: 800, peso: "2.560g", data: "08/10/2026", obs: "Caixa via Sedex do fabricante", numLote: "", setorAtual: "Aguardando Chegada" },
-      { id: 3, cliente: "Niara Semijoias", etapa: 3, label: "Cadastrado / Em Andamento", numLote: "141", pcs: 350, peso: "1.120g", entrada: "05/10/2026", setorAtual: "2. Inspeção 3em1", obs: "Peças sob triagem" },
-      { id: 4, cliente: "Velt Joias", etapa: 4, label: "Finalizado", numLote: "139", pcs: 400, peso: "1.280g", entrada: "15/09/2026", setorAtual: "7. Finalização / Liberado", obs: "Faturado" }
+      { id: 1, cliente: "Niara Semijoias", etapa: 1, label: "Aguardando Aprovação", pcs: 350, peso: "1.120g", data: "06/10/2026", obs: "Correntes de prata banhadas", numLote: "", setorAtual: "Pendente", editadoColab: false, valorTotal: "", desconto: "" },
+      { id: 2, cliente: "Velt Joias", etapa: 2, label: "Aguardando Chegada Física", pcs: 800, peso: "2.560g", data: "08/10/2026", obs: "Caixa via Sedex do fabricante", numLote: "", setorAtual: "Aguardando Chegada", editadoColab: false, valorTotal: "", desconto: "" },
+      { id: 3, cliente: "Niara Semijoias", etapa: 3, label: "Cadastrado / Em Andamento", numLote: "141", pcs: 350, peso: "1.120g", entrada: "05/10/2026", setorAtual: "2. Inspeção 3em1", obs: "Peças sob triagem", modelos: 12, editadoColab: false, valorTotal: "", desconto: "" },
+      { id: 4, cliente: "Velt Joias", etapa: 4, label: "Finalizado", numLote: "139", pcs: 400, peso: "1.280g", entrada: "15/09/2026", setorAtual: "7. Finalização / Liberado", obs: "Faturado", editadoColab: true, valorTotal: "R$ 850,00", desconto: "5%" }
     ];
 
-    // BANCO MENSAGENS
     const bancoMensagens = [
       { id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao novo HUB S.O.S 2027!", data: "01/10/2026" }
     ];
@@ -776,7 +850,7 @@
     }
 
     // =========================================================================
-    // NAVEGAÇÃO E LOGICA COLABORADOR
+    // NAVEGAÇÃO E LOGICA COLABORADOR (COM SEGURANÇA E RETORNO RESTRITO)
     // =========================================================================
     function navegarPaginaColab(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
@@ -812,45 +886,58 @@
       document.getElementById('subtituloColabBancada').innerText = `Setores Liberados para Atuação: ${col.setores.join(', ')}`;
 
       const contMeuSetor = document.getElementById('containerColabMeuSetor');
+      const contEntrada = document.getElementById('containerColabEntradaApenas');
       const contOutros = document.getElementById('containerColabOutrosLotes');
       const contFinal = document.getElementById('containerColabFinalizados');
 
-      let htmlMeu = "", htmlOutros = "", htmlFinal = "";
+      let htmlMeu = "", htmlEntrada = "", htmlOutros = "", htmlFinal = "";
 
       bancoLotes4Etapas.forEach(l => {
         const estaNoMeuSetor = col.setores.some(s => l.setorAtual.includes(s.split('.')[1].trim()));
 
-        if(l.etapa === 4) {
+        if(l.etapa === 4 || l.setorAtual.includes("7. Finalização")) {
           htmlFinal += `
-            <div class="card-ampli-item" onclick="abrirModalOpBancadaLote(${l.id})">
-              <span class="badge-status badge-concluido">LOTE #${l.numLote || l.id} — FINALIZADO</span>
+            <div class="card-ampli-item">
+              <span class="badge-status badge-concluido">FINALIZADO — LOTE #${l.numLote || l.id}</span>
               <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
               <p style="font-size:0.8rem; margin:4px 0;">Volume: ${l.pcs} pcs (${l.peso})</p>
+              <small style="color:var(--text-muted); font-size:0.72rem;">(Somente Leitura — Edição restrita à diretoria)</small>
             </div>
           `;
-        } else if(estaNoMeuSetor) {
+        } else if(l.setorAtual.includes("1. Entrada Bruta")) {
+          htmlEntrada += `
+            <div class="card-ampli-item">
+              <span class="badge-status badge-espera">1. ENTRADA BRUTA — LOTE #${l.numLote || 'PENDENTE'}</span>
+              <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
+              <p style="font-size:0.8rem; margin:4px 0;">Volume Estimado: ${l.pcs} pcs (${l.peso})</p>
+              <small style="color:var(--text-muted); font-size:0.72rem;">(Apenas a Diretoria gerencia entradas e cadastros)</small>
+            </div>
+          `;
+        } else if(estaNoMeuSetor && !l.editadoColab) {
           htmlMeu += `
             <div class="card-ampli-item" style="border-color:var(--orange-accent); background:#FFF7ED;" onclick="abrirModalOpBancadaLote(${l.id})">
               <span class="badge-status badge-andamento">MEU SETOR — LOTE #${l.numLote || 'PENDENTE'}</span>
               <strong style="display:block; font-size:1.15rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
               <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
-              <p style="font-size:0.8rem; color:var(--text-muted);">Qtd Estimada/Real: <strong>${l.pcs} pcs</strong></p>
-              <button class="btn-main btn-orange" style="margin-top:10px; padding:8px; font-size:0.75rem;">ABRIR BANCADA & AVANÇAR ➔</button>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Modelos: ${l.modelos || 'N/I'} | Qtd: ${l.pcs} pcs</p>
+              <button class="btn-main btn-orange" style="margin-top:10px; padding:8px; font-size:0.75rem;">ABRIR BANCADA & AVANÇAR SETOR ➔</button>
             </div>
           `;
         } else {
           htmlOutros += `
-            <div class="card-ampli-item" onclick="abrirModalOpBancadaLote(${l.id})">
+            <div class="card-ampli-item">
               <span class="badge-status badge-espera">LOTE #${l.numLote || 'PENDENTE'}</span>
               <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
               <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
               <p style="font-size:0.8rem; color:var(--text-muted);">Qtd: ${l.pcs} pcs</p>
+              ${l.editadoColab ? `<small style="color:#B45309; font-weight:bold; font-size:0.7rem;">(Já editado no seu setor — Apenas diretoria pode retornar)</small>` : ''}
             </div>
           `;
         }
       });
 
-      contMeuSetor.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote no seu setor no momento.</p>";
+      contMeuSetor.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote pendente no seu setor no momento.</p>";
+      contEntrada.innerHTML = htmlEntrada || "<p style='color:var(--text-muted);'>Nenhum lote em Entrada Bruta.</p>";
       contOutros.innerHTML = htmlOutros || "<p style='color:var(--text-muted);'>Nenhum outro lote na esteira.</p>";
       contFinal.innerHTML = htmlFinal || "<p style='color:var(--text-muted);'>Nenhum lote finalizado.</p>";
     }
@@ -858,11 +945,16 @@
     function abrirModalOpBancadaLote(id) {
       const l = bancoLotes4Etapas.find(item => item.id === id);
       if(l) {
+        if(l.editadoColab) {
+          alert("🔒 Este lote já foi movimentado no seu setor. Por regra de segurança, apenas a Diretoria General pode retornar ou reeditar lotes.");
+          return;
+        }
         document.getElementById('hiddenOpLoteId').value = l.id;
         document.getElementById('tituloModalOpLote').innerText = `Atuação Operacional — Lote #${l.numLote || l.id}`;
         document.getElementById('infoOpLoteMarca').innerText = `Cliente: ${l.cliente}`;
         document.getElementById('infoOpLoteSetor').innerText = `Setor Atual: ${l.setorAtual}`;
         document.getElementById('inputOpQtdReal').value = l.pcs;
+        document.getElementById('inputOpQtdModelosReal').value = l.modelos || "";
         document.getElementById('selectOpProximoSetor').value = l.setorAtual;
         document.getElementById('inputOpObs').value = l.obs || "";
         document.getElementById('modalOpBancadaLote').style.display = 'flex';
@@ -876,16 +968,19 @@
       const l = bancoLotes4Etapas.find(item => item.id === id);
       if(l) {
         const qtdReal = parseInt(document.getElementById('inputOpQtdReal').value) || l.pcs;
+        const modReal = parseInt(document.getElementById('inputOpQtdModelosReal').value) || (l.modelos || 1);
         const proxSetor = document.getElementById('selectOpProximoSetor').value;
         const obs = document.getElementById('inputOpObs').value;
 
         l.pcs = qtdReal;
+        l.modelos = modReal;
         l.setorAtual = proxSetor;
         l.obs = obs;
+        l.editadoColab = true; // Trava após movimentação do colaborador
 
         if(proxSetor.includes("7. Finalização")) { l.etapa = 4; }
 
-        alert(`✅ Lote #${l.numLote || l.id} atualizado com sucesso para o setor '${proxSetor}'!`);
+        alert(`✅ Lote #${l.numLote || l.id} atualizado com sucesso para o setor '${proxSetor}'!\n\n• Quantidade Real de Peças: ${qtdReal} pcs\n• Quantidade de Modelos: ${modReal}`);
         fecharModalOpBancadaLote();
         renderizarLotesColabBancada();
       }
@@ -980,12 +1075,13 @@
     }
 
     // =========================================================================
-    // NAVEGAÇÃO E LOGICA CLIENTE
+    // NAVEGAÇÃO E LOGICA CLIENTE (COM AGENDAMENTO & CALENDÁRIO)
     // =========================================================================
     function navegarPaginaCliente(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
 
       document.getElementById('pagCliLotes').style.display = 'none';
+      document.getElementById('pagCliAgendar').style.display = 'none';
       document.getElementById('pagCliEncarte').style.display = 'none';
       document.getElementById('pagCliInsumos').style.display = 'none';
       document.getElementById('pagCliMensagens').style.display = 'none';
@@ -994,6 +1090,10 @@
         document.getElementById('btnNavCliLotes').classList.add('active');
         document.getElementById('pagCliLotes').style.display = 'block';
         renderizarPainelClienteLotes();
+      } else if(pag === 'agendar') {
+        document.getElementById('btnNavCliAgendar').classList.add('active');
+        document.getElementById('pagCliAgendar').style.display = 'block';
+        renderizarAgendamentoCliente();
       } else if(pag === 'encarte') {
         document.getElementById('btnNavCliEncarte').classList.add('active');
         document.getElementById('pagCliEncarte').style.display = 'block';
@@ -1021,11 +1121,147 @@
             <span class="badge-status badge-concluido">${l.label}</span>
             <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ${l.numLote ? '#' + l.numLote : 'Pendente'}</strong>
             <p style="font-size:0.85rem; margin:4px 0;">Setor Atual na Fábrica: <strong>${l.setorAtual}</strong></p>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Volume: ${l.pcs} pcs | Peso: ${l.peso}</p>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Volume: ${l.pcs} pcs | Peso: ${l.peso} | Modelos: ${l.modelos || 'N/I'}</p>
           </div>
         `;
       });
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote cadastrado para a sua marca ainda.</p>";
+    }
+
+    /* AGENDAMENTO E CALENDÁRIO INTELIGENTE */
+    function renderizarAgendamentoCliente() {
+      const cli = usuarioLogadoObjeto;
+      document.getElementById('cliAgendCatTitle').innerText = cli.categoria;
+      document.getElementById('cliAgendCotaMax').innerText = `${cli.cotaMax || 1500} pcs/mês`;
+      document.getElementById('cliAgendEnviadoMes').innerText = `${cli.enviadoMes || 0} pcs`;
+
+      montarCalendarioOutubro2026();
+    }
+
+    function montarCalendarioOutubro2026() {
+      const grid = document.getElementById('containerCalendarioGrid');
+      grid.innerHTML = "";
+
+      const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+      diasSemana.forEach(d => { grid.innerHTML += `<div class="cal-day-header">${d}</div>`; });
+
+      // Outubro 2026 começa na Quinta-feira (offset 4)
+      const offsetInício = 4; 
+      for(let i = 0; i < offsetInício; i++) {
+        grid.innerHTML += `<div class="cal-day disabled"></div>`;
+      }
+
+      const totalDias = 31;
+      for(let d = 1; d <= totalDias; d++) {
+        const diaStr = d < 10 ? `0${d}` : `${d}`;
+        const dataFull = `2026-10-${diaStr}`;
+        const dateObj = new Date(2026, 9, d);
+        const diaSemana = dateObj.getDay(); // 0 = Dom, 6 = Sab
+
+        let eSabDom = (diaSemana === 0 || diaSemana === 6);
+        let eFeriado = feriadosLimeiraSP.includes(dataFull);
+        let eOcupado = datasOcupadasAgenda.includes(dataFull);
+
+        let classeCss = "disponivel";
+        let statusText = "DISPONÍVEL";
+
+        if(eSabDom) {
+          classeCss = "disabled";
+          statusText = "FECHADO";
+        } else if(eFeriado) {
+          classeCss = "indisponivel";
+          statusText = "FERIADO";
+        } else if(eOcupado) {
+          classeCss = "indisponivel";
+          statusText = "INDISPONÍVEL";
+        }
+
+        grid.innerHTML += `
+          <div class="cal-day ${classeCss}" id="calDay_${dataFull}" onclick="selecionarDataAgenda('${dataFull}', '${statusText}')">
+            <strong>${d}</strong>
+            <span class="cal-status-tag">${statusText}</span>
+          </div>
+        `;
+      }
+    }
+
+    function selecionarDataAgenda(dataStr, status) {
+      if(status !== "DISPONÍVEL") {
+        alert(`⚠️ A data ${dataStr} está ${status} (Feriado, Final de Semana ou Ocupado em Limeira-SP). Por favor, selecione outro dia verde!`);
+        return;
+      }
+
+      document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+      const elSelected = document.getElementById(`calDay_${dataStr}`);
+      if(elSelected) elSelected.classList.add('selected');
+
+      dataAgendamentoSelecionadaCli = dataStr;
+    }
+
+    function calcularPesoPorPcsCli() {
+      const pcs = parseInt(document.getElementById('inputAgendQtdPcs').value) || 0;
+      const pesoEst = (pcs * fatorMediaPesoGlobal).toFixed(0);
+      document.getElementById('inputAgendPesoGramos').value = pesoEst;
+      document.getElementById('labelCalcAgendResult').innerText = `Resultado estimado: ${pcs} pcs (~${pesoEst}g)`;
+    }
+
+    function calcularPcsPorPesoCli() {
+      const peso = parseFloat(document.getElementById('inputAgendPesoGramos').value) || 0;
+      const pcsEst = Math.round(peso / fatorMediaPesoGlobal);
+      document.getElementById('inputAgendQtdPcs').value = pcsEst;
+      document.getElementById('labelCalcAgendResult').innerText = `Resultado estimado: ${pcsEst} pcs (~${peso}g)`;
+    }
+
+    function confirmarAgendamentoLoteClienteSubmit() {
+      const cli = usuarioLogadoObjeto;
+      const pcs = parseInt(document.getElementById('inputAgendQtdPcs').value) || 0;
+      const pesoG = document.getElementById('inputAgendPesoGramos').value || "0";
+      const mod = parseInt(document.getElementById('inputAgendQtdModelos').value) || 1;
+      const obs = document.getElementById('inputAgendObs').value;
+
+      if(!dataAgendamentoSelecionadaCli) { alert("⚠️ Selecione uma data verde disponível no calendário!"); return; }
+      if(pcs <= 0) { alert("⚠️ Informe a quantidade de peças ou o peso!"); return; }
+
+      // Adiciona a data selecionada e o dia seguinte na lista de indisponíveis (Regra dos 2 dias de reserva)
+      datasOcupadasAgenda.push(dataAgendamentoSelecionadaCli);
+      
+      let dObj = new Date(dataAgendamentoSelecionadaCli);
+      dObj.setDate(dObj.getDate() + 1);
+      if(dObj.getDay() === 6) dObj.setDate(dObj.getDate() + 2); // Pula fim de semana
+      if(dObj.getDay() === 0) dObj.setDate(dObj.getDate() + 1);
+      
+      const diaProxStr = dObj.toISOString().split('T')[0];
+      datasOcupadasAgenda.push(diaProxStr);
+
+      // Registra o Lote no Banco da Diretoria
+      bancoLotes4Etapas.push({
+        id: Date.now(),
+        cliente: cli.marca,
+        etapa: 1,
+        label: "Aguardando Aprovação",
+        pcs: pcs,
+        peso: `${pesoG}g`,
+        data: dataAgendamentoSelecionadaCli,
+        obs: obs,
+        numLote: "",
+        setorAtual: "1. Entrada Bruta",
+        modelos: mod,
+        editadoColab: false,
+        valorTotal: "",
+        desconto: ""
+      });
+
+      cli.enviadoMes = (cli.enviadoMes || 0) + pcs;
+
+      alert(`✅ LOTE AGENDADO COM SUCESSO!\n\n• Data do Agendamento: ${dataAgendamentoSelecionadaCli}\n• Quantidade Estimada: ${pcs} pcs (${pesoG}g)\n• Modelos: ${mod}\n• Status: Solicitado (Aguardando Chegada Física)\n\nA data ${dataAgendamentoSelecionadaCli} e o dia seguinte ${diaProxStr} foram reservados exclusivamente para o seu lote!`);
+
+      document.getElementById('inputAgendQtdPcs').value = "";
+      document.getElementById('inputAgendPesoGramos').value = "";
+      document.getElementById('inputAgendQtdModelos').value = "";
+      document.getElementById('inputAgendObs').value = "";
+      dataAgendamentoSelecionadaCli = "";
+
+      navegarPaginaCliente('lotes');
     }
 
     function renderizarEncartesCliente() {
@@ -1120,7 +1356,7 @@
     }
 
     //-------------------------------------------------------------------------
-    // DIRETORIA FUNCTIONS (INTACTAS)
+    // DIRETORIA FUNCTIONS (INTACTAS COM FECHAMENTO FINANCEIRO)
     //-------------------------------------------------------------------------
     function navegarPaginaDiretoria(pag) {
       document.querySelectorAll('.btn-pag-dir').forEach(b => b.classList.remove('active'));
@@ -1221,6 +1457,7 @@
             <span class="badge-status badge-concluido">LOTE #${l.numLote}</span>
             <strong style="display:block; font-size:1rem; margin-top:6px; color:var(--header-bg);">${l.cliente}</strong>
             <p style="font-size:0.8rem; margin:4px 0;">Volume: ${l.pcs} pcs</p>
+            ${l.valorTotal ? `<p style="font-size:0.75rem; color:#065F46; margin:2px 0;"><strong>Valor Total:</strong> ${l.valorTotal} (${l.desconto || '0%'} desc)</p>` : ''}
           </div>
         `;
       });
@@ -1235,6 +1472,8 @@
         document.getElementById('editLoteNum').value = l.numLote || "";
         document.getElementById('editLoteEtapa').value = l.etapa;
         document.getElementById('editLoteSetorAtual').value = l.setorAtual || "1. Entrada Bruta";
+        document.getElementById('editLoteValorTotal').value = l.valorTotal || "";
+        document.getElementById('editLoteDesconto').value = l.desconto || "";
         document.getElementById('editLoteObs').value = l.obs || "";
         document.getElementById('modalEditarLoteDir').style.display = 'flex';
       }
@@ -1249,8 +1488,12 @@
         l.numLote = document.getElementById('editLoteNum').value.trim();
         l.etapa = parseInt(document.getElementById('editLoteEtapa').value);
         l.setorAtual = document.getElementById('editLoteSetorAtual').value;
+        l.valorTotal = document.getElementById('editLoteValorTotal').value;
+        l.desconto = document.getElementById('editLoteDesconto').value;
         l.obs = document.getElementById('editLoteObs').value;
-        alert(`✅ Lote #${l.numLote} atualizado com sucesso!`);
+        l.editadoColab = false; // Diretoria reseta trava se precisar reatribuir ao colaborador
+
+        alert(`✅ Lote #${l.numLote || l.id} atualizado com sucesso pela Diretoria!`);
         fecharModalEditarLoteDir();
         renderizarLotes4Etapas();
       }
@@ -1265,6 +1508,7 @@
             <span class="badge-status badge-concluido">${c.categoria}</span>
             <strong style="display:block; font-size:1.15rem; margin-top:8px; color:var(--header-bg);">${c.marca}</strong>
             <p style="font-size:0.82rem; color:var(--text-muted); margin:6px 0;"><strong>Login:</strong> ${c.login} | <strong>Senha:</strong> ${c.senha}</p>
+            <p style="font-size:0.82rem; color:var(--header-bg); margin:2px 0;"><strong>Cota Mensal:</strong> ${c.cotaMax || 1500} pcs/mês</p>
             <p style="font-size:0.78rem; color:var(--text-muted); margin:0 0 12px 0;">Início Parceria: <strong>${c.inicio}</strong></p>
             <div style="display:flex; gap:8px;">
               <button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarCliente(${c.id})">EDITAR DADOS CLIENTE</button>
@@ -1309,13 +1553,18 @@
       const cat = document.getElementById('mCadCliCat').value;
       const ini = document.getElementById('mCadCliInicio').value.trim();
 
+      let cota = 1500;
+      if(cat.includes("Iniciante")) cota = 500;
+      if(cat.includes("Ouro")) cota = 1000;
+      if(cat.includes("Black")) cota = 2000;
+
       if(!nome || !login) { alert("⚠️ Preencha nome e login!"); return; }
 
       if(id) {
         const c = bancoClientes.find(item => item.id === parseInt(id));
-        if(c) { c.marca = nome; c.login = login; c.senha = senha; c.categoria = cat; c.inicio = ini; }
+        if(c) { c.marca = nome; c.login = login; c.senha = senha; c.categoria = cat; c.cotaMax = cota; c.inicio = ini; }
       } else {
-        bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, inicio: ini });
+        bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, cotaMax: cota, enviadoMes: 0, inicio: ini });
       }
 
       alert("✅ Dados do cliente salvos com sucesso!");
@@ -1408,7 +1657,7 @@
 
     function excluirColaboradorSubmit(id) {
       const c = bancoColaboradores.find(item => item.id === id);
-      if(c && confirm(`⚠️️ ATENÇÃO: Tem certeza que deseja EXCLUIR o colaborador '${c.nome}'?`)) {
+      if(c && confirm(`⚠ ATENÇÃO: Tem certeza que deseja EXCLUIR o colaborador '${c.nome}'?`)) {
         const idx = bancoColaboradores.findIndex(item => item.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
         renderizarCardsColabAmplo();
@@ -1685,7 +1934,12 @@
       }
     }
 
-    function salvarFatorDivisorSubmit() { alert("⚙️ Fator divisor salvo com sucesso!"); }
+    function salvarFatorDivisorSubmit() {
+      const val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
+      fatorMediaPesoGlobal = val;
+      alert(`⚙️ Média de peso ajustada para ${val}g por peça!`);
+    }
+
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado oficial publicado com sucesso!"); }
 
     // INICIALIZAÇÃO NA DIRETORIA
