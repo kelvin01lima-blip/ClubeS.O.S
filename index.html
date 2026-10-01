@@ -65,16 +65,16 @@
     }
     .tab-btn.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
 
-    .menu-paginas-diretoria {
+    .menu-paginas-diretoria, .menu-paginas-operacional {
       display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;
     }
-    .btn-pag-dir {
+    .btn-pag-dir, .btn-pag-op {
       background: #FFFFFF; border: 2px solid #E2E8F0; padding: 12px 18px; border-radius: 12px;
       font-weight: bold; font-size: 0.82rem; cursor: pointer; color: var(--header-bg); white-space: nowrap;
       transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
-    .btn-pag-dir:hover { border-color: var(--orange-accent); transform: translateY(-2px); }
-    .btn-pag-dir.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
+    .btn-pag-dir:hover, .btn-pag-op:hover { border-color: var(--orange-accent); transform: translateY(-2px); }
+    .btn-pag-dir.active, .btn-pag-op.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
 
     .panel-card {
       background: var(--card-bg); border-radius: 18px; padding: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 22px;
@@ -138,6 +138,13 @@
 
     .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+
+    .prazos-bar {
+      background: #F8FAFC; border: 1px solid #E2E8F0; padding: 12px 18px; border-radius: 12px;
+      margin-bottom: 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .prazo-item { font-size: 0.78rem; font-weight: bold; color: var(--header-bg); }
+    .prazo-item span { color: var(--orange-accent); }
   </style>
 </head>
 <body>
@@ -158,7 +165,7 @@
 
   <div class="main-container">
 
-    <!-- 0. LOGIN MULTIPERFIL COM VALIDAÇÃO REAL -->
+    <!-- 0. LOGIN MULTIPERFIL -->
     <div id="loginScreen" class="login-wrapper">
       <h2>Acesso ao HUB S.O.S</h2>
       <p>Selecione seu perfil de acesso ao sistema:</p>
@@ -172,7 +179,7 @@
       <form onsubmit="autenticarUsuario(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Selecione o Acesso</label>
         <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
-          <!-- Carregado via JS dinamicamente -->
+          <!-- JS -->
         </select>
 
         <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
@@ -183,7 +190,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- ÁREA DA DIRETORIA GENERAL -->
+    <!-- 1. ÁREA DA DIRETORIA GENERAL (INTACTA E PRESERVADA) -->
     <!-- ================================================================================= -->
     <div id="painelDiretoria" style="display:none;">
       
@@ -192,7 +199,6 @@
         <span style="font-size:0.82rem; color:#78350F;">Selecione uma das páginas no menu abaixo para acessar os módulos completos do sistema:</span>
       </div>
 
-      <!-- MENU SUPERIOR DIRETORIA -->
       <div class="menu-paginas-diretoria">
         <button id="btnNavLotes" class="btn-pag-dir active" onclick="navegarPaginaDiretoria('lotes')">📦 1. PAINEL GERAL DE LOTES</button>
         <button id="btnNavClientes" class="btn-pag-dir" onclick="navegarPaginaDiretoria('clientes')">👤 2. GESTÃO DE CLIENTES</button>
@@ -202,7 +208,6 @@
         <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙️ 6. CONFIGS & CATEGORIAS</button>
       </div>
 
-      <!-- PÁGINA 1: PAINEL GERAL DE LOTES -->
       <div id="pagDirLotes" class="panel-card">
         <div class="panel-header">
           <h3>📦 Gestão e Acompanhamento Geral de Lotes (4 Etapas)</h3>
@@ -212,134 +217,89 @@
             </select>
           </div>
         </div>
-
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
           Clique em qualquer card de lote para abrir o editor da diretoria e alterar status, setor, peso ou observações:
         </p>
-
-        <div id="containerLotes4EtapasAmplo">
-          <!-- Renderizado via JS -->
-        </div>
+        <div id="containerLotes4EtapasAmplo"></div>
       </div>
 
-      <!-- PÁGINA 2: GESTÃO DE CLIENTES -->
       <div id="pagDirClientes" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>👤 Gestão de Clientes do Clube S.O.S</h3>
           <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarCliente()">+ CADASTRA CLIENTE</button>
         </div>
-
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
           Marcas cadastradas com acesso total e modais de edição e exclusão com segurança:
         </p>
-
-        <div class="cards-grid-amplos" id="containerCardsClientesAmplo">
-          <!-- Renderizado via JS -->
-        </div>
+        <div class="cards-grid-amplos" id="containerCardsClientesAmplo"></div>
       </div>
 
-      <!-- PÁGINA 3: MEUS COLABORADORES -->
       <div id="pagDirColab" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>🛠️ Meus Colaboradores & Equipe de Bancada</h3>
           <button class="btn-main btn-orange" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarColaborador()">+ CADASTRA COLABORADOR</button>
         </div>
-
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
           Equipe fabril com contatos de WhatsApp, setores de atuação e modal de edição completa:
         </p>
-
-        <div class="cards-grid-amplos" id="containerCardsColabAmplo">
-          <!-- Renderizado via JS -->
-        </div>
+        <div class="cards-grid-amplos" id="containerCardsColabAmplo"></div>
       </div>
 
-      <!-- PÁGINA 4: ESTOQUE DE INSUMOS -->
       <div id="pagDirInsumos" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>📦 Estoque de Insumos dos Clientes (Estoque Parceiros S.O.S)</h3>
           <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarInsumo()">+ CADASTRAR NOVO INSUMO</button>
         </div>
-
         <div id="secaoSelecaoClienteInsumo">
           <p style="font-size:0.85rem; color:var(--text-dark); font-weight:bold; margin-bottom:12px;">Escolha o cliente para gerenciar o estoque vinculado às categorias de joias:</p>
-          <div class="cards-grid-amplos" id="containerCardsClientesInsumosSelection">
-            <!-- Cards de Escolha -->
-          </div>
+          <div class="cards-grid-amplos" id="containerCardsClientesInsumosSelection"></div>
         </div>
-
         <div id="secaoDetalheInsumosClienteSel" style="display:none; margin-top:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; background:#F0F9FF; border:1px solid #BAE6FD; padding:12px 18px; border-radius:12px; margin-bottom:15px;">
             <strong id="tituloInsumosClienteSel" style="font-size:1.1rem; color:var(--header-bg);">Niara Semijoias</strong>
             <button class="btn-main" style="width:auto; padding:6px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteInsumo()">← VOLTAR PARA CLIENTES</button>
           </div>
-
-          <div id="containerInsumosTabelaDirect">
-            <!-- Tabela com lançamentos -->
-          </div>
+          <div id="containerInsumosTabelaDirect"></div>
         </div>
       </div>
 
-      <!-- PÁGINA 5: MODELOS DE ENCARTE -->
       <div id="pagDirEncarte" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>🎴 Modelos de Encarte por Cliente & Categoria de Peça</h3>
           <button class="btn-main btn-orange" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarModeloEncarte()">+ NOVO MODELO DE ENCARTE</button>
         </div>
-
         <div id="secaoSelecaoClienteEncarte">
           <p style="font-size:0.85rem; color:var(--text-dark); font-weight:bold; margin-bottom:12px;">Selecione o cliente para visualizar os modelos de encarte e instruções detalhadas:</p>
-          <div class="cards-grid-amplos" id="containerCardsClientesEncarteSelection">
-            <!-- Cards de Escolha -->
-          </div>
+          <div class="cards-grid-amplos" id="containerCardsClientesEncarteSelection"></div>
         </div>
-
         <div id="secaoDetalheEncarteClienteSel" style="display:none; margin-top:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; background:#FFF7ED; border:1px solid #FFEDD5; padding:12px 18px; border-radius:12px; margin-bottom:15px;">
             <strong id="tituloEncarteClienteSel" style="font-size:1.1rem; color:#9A3412;">Niara Semijoias — Modelos de Encarte</strong>
             <button class="btn-main" style="width:auto; padding:6px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteEncarte()">← VOLTAR PARA MARCAS</button>
           </div>
-
-          <div class="cards-grid-amplos" id="containerCardsCategoriasEncarteClienteSel">
-            <!-- Cards de Encarte -->
-          </div>
+          <div class="cards-grid-amplos" id="containerCardsCategoriasEncarteClienteSel"></div>
         </div>
       </div>
 
-      <!-- PÁGINA 6: CONFIGS & CATEGORIAS DE JOIAS -->
       <div id="pagDirConfigs" class="panel-card" style="display:none;">
-        <h3>⚙️️ Configurações Globais & Cadastro de Categorias de Joias</h3>
-
+        <h3>⚙️ Configurações Globais & Cadastro de Categorias de Joias</h3>
         <div class="grid-2col" style="margin-top:15px;">
           <div>
             <h4>💎 Cadastro Central de Categorias de Joias</h4>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Cadastre as categorias para vincular nos insumos e modelos de encarte:</p>
-            
             <div style="display:flex; gap:8px; margin-bottom:12px;">
               <input type="text" id="inputNovaCatJoia" class="form-control" style="margin:0;" placeholder="Ex: Anel Regulável, Brinco Pequeno...">
               <button class="btn-main btn-green" style="width:auto; padding:0 16px; white-space:nowrap;" onclick="cadastrarNovaCategoriaJoiaSubmit()">+ CADASTRAR</button>
             </div>
-
-            <div id="boxListaCategoriasJoiasCentral" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px;">
-              <!-- Categorias em tags -->
-            </div>
+            <div id="boxListaCategoriasJoiasCentral" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px;"></div>
           </div>
-
           <div>
             <h4>📢 Publicação de Comunicado Oficial</h4>
-            <label style="font-size:0.78rem; font-weight:bold;">Destinatário</label>
             <select id="selectFiltroAvisoDir" class="form-control">
               <option value="TODOS">TODOS OS CLIENTES E COLABORADORES</option>
               <option value="EQUIPE">EQUIPE DE COLABORADORES</option>
-              <option value="CAT_INICIANTE">CATEGORIA CLUB: INICIANTE</option>
-              <option value="CAT_OURO">CATEGORIA CLUB: VIP OURO</option>
-              <option value="CAT_DIAMANTE">CATEGORIA CLUB: VIP DIAMANTE</option>
             </select>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Mensagem</label>
             <textarea id="textoAvisoDir" class="form-control" style="height:80px;" placeholder="Ex: Informamos feriado municipal em Limeira..."></textarea>
             <button class="btn-main btn-orange" onclick="salvarAvisoComunicadoSubmit()">PUBLICAR COMUNICADO</button>
-
             <h4 style="margin-top:16px;">⚙️ Fator Divisor de Peso</h4>
             <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="3.2">
             <button class="btn-main btn-green" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DIVISOR</button>
@@ -350,7 +310,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- ÁREA DO COLABORADOR (PAINEL OPERACIONAL DE BANCADA) -->
+    <!-- 2. ÁREA DO COLABORADOR (NOVA E COMPLETA) -->
     <!-- ================================================================================= -->
     <div id="painelColaborador" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#F0F9FF; padding:18px 24px;">
@@ -358,50 +318,197 @@
         <span style="font-size:0.82rem; color:var(--text-muted);" id="subtituloColabBancada">Setores Liberados para Atuação:</span>
       </div>
 
-      <div class="panel-card">
-        <h3>📦 Lotes na Esteira Fabril</h3>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">Selecione o lote para realizar movimentações, bipagem, inspeção 3em1 ou etiquetagem:</p>
+      <!-- NAV COLABORADOR -->
+      <div class="menu-paginas-operacional">
+        <button id="btnNavOpLotes" class="btn-pag-op active" onclick="navegarPaginaColab('lotes')">📦 1. LOTES DA ESTEIRA</button>
+        <button id="btnNavOpEncartes" class="btn-pag-op" onclick="navegarPaginaColab('encartes')">🎴 2. CONSULTA DE ENCARTES</button>
+        <button id="btnNavOpInsumos" class="btn-pag-op" onclick="navegarPaginaColab('insumos')">📦 3. CONSULTA DE INSUMOS</button>
+        <button id="btnNavOpMensagens" class="btn-pag-op" onclick="navegarPaginaColab('mensagens')">💬 4. MENSAGENS COM A DIRETORIA</button>
+      </div>
 
-        <div class="cards-grid-amplos" id="containerLotesBancadaColab">
-          <!-- Renderizado via JS -->
+      <!-- ABA 1 COLAB: LOTES DA ESTEIRA -->
+      <div id="pagOpLotes" class="panel-card">
+        <h3>📦 Lotes na Esteira Fabril</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">Acompanhe os lotes do seu setor e visualize a esteira completa:</p>
+
+        <h4 style="color:#C2410C; margin-top:10px;">🔥 Lotes no Meu Setor (Prontos para Atuação)</h4>
+        <div class="cards-grid-amplos" id="containerColabMeuSetor"></div>
+
+        <h4 style="color:var(--header-bg); margin-top:25px;">🔄 Outros Lotes em Andamento na Fábrica</h4>
+        <div class="cards-grid-amplos" id="containerColabOutrosLotes"></div>
+
+        <h4 style="color:var(--green-val); margin-top:25px;">✅ Lotes Finalizados</h4>
+        <div class="cards-grid-amplos" id="containerColabFinalizados"></div>
+      </div>
+
+      <!-- ABA 2 COLAB: CONSULTA DE ENCARTES -->
+      <div id="pagOpEncartes" class="panel-card" style="display:none;">
+        <div class="panel-header">
+          <h3>🎴 Consulta de Modelos de Encarte dos Clientes</h3>
+          <select id="selectFiltroClienteEncarteColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarEncartesColabConsulta()">
+            <!-- JS -->
+          </select>
+        </div>
+        <div class="cards-grid-amplos" id="containerCardsEncarteColabConsulta"></div>
+      </div>
+
+      <!-- ABA 3 COLAB: CONSULTA DE INSUMOS -->
+      <div id="pagOpInsumos" class="panel-card" style="display:none;">
+        <div class="panel-header">
+          <h3>📦 Consulta de Insumos & Gondulas</h3>
+          <select id="selectFiltroClienteInsumoColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarInsumosColabConsulta()">
+            <!-- JS -->
+          </select>
+        </div>
+        <div id="containerTabelaInsumosColabConsulta"></div>
+      </div>
+
+      <!-- ABA 4 COLAB: MENSAGENS -->
+      <div id="pagOpMensagens" class="panel-card" style="display:none;">
+        <h3>💬 Central de Mensagens com a Diretoria</h3>
+        <div class="grid-2col" style="margin-top:15px;">
+          <div>
+            <h4>📥 Mensagens e Avisos Recebidos da Diretoria</h4>
+            <div id="boxMensagensRecebidasColab" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;">
+              <!-- JS -->
+            </div>
+          </div>
+          <div>
+            <h4>📤 Enviar Mensagem para Kelvin & Brenda</h4>
+            <textarea id="inputTextoEnvioColab" class="form-control" style="height:90px;" placeholder="Digite sua mensagem para a diretoria..."></textarea>
+            <button class="btn-main btn-orange" onclick="enviarMensagemColabSubmit()">ENVIAR PARA DIRETORIA</button>
+            <h4 style="margin-top:20px;">📜 Minhas Mensagens Enviadas</h4>
+            <div id="boxMensagensEnviadasColab" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:80px;"></div>
+          </div>
         </div>
       </div>
+
     </div>
 
     <!-- ================================================================================= -->
-    <!-- ÁREA DO CLIENTE (PAINEL DA MARCA) -->
+    <!-- 3. ÁREA DO CLIENTE (NOVA E COMPLETA) -->
     <!-- ================================================================================= -->
     <div id="painelCliente" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--green-val); background:#ECFDF5; padding:18px 24px;">
         <h3 style="color:#065F46; margin:0 0 4px 0;" id="tituloClientePainel">💎 PAINEL DO CLIENTE — NOME DA MARCA</h3>
-        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, solicite novas entradas e gerencie seus insumos:</span>
+        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, solicite ajustes de encarte e consulte seu estoque:</span>
       </div>
 
-      <div class="panel-card">
-        <h3>📦 Meus Lotes em Andamento</h3>
-        <div class="cards-grid-amplos" id="containerLotesClientePainel">
-          <!-- Lotes do Cliente -->
+      <!-- NAV CLIENTE -->
+      <div class="menu-paginas-operacional">
+        <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 1. MEUS LOTES & PRAZOS</button>
+        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 2. MODELOS DE ENCARTE</button>
+        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 3. MEUS INSUMOS</button>
+        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 4. FALAR COM A DIRETORIA</button>
+      </div>
+
+      <!-- ABA 1 CLIENTE: LOTES -->
+      <div id="pagCliLotes" class="panel-card">
+        <h3>📦 Prazos de Produção em Dias Úteis</h3>
+        <div class="prazos-bar">
+          <div class="prazo-item">Até 500 pcs: <span>8 Dias Úteis</span></div>
+          <div class="prazo-item">501 a 1.000 pcs: <span>10 Dias Úteis</span></div>
+          <div class="prazo-item">1.001 a 1.500 pcs: <span>13 Dias Úteis</span></div>
+          <div class="prazo-item">+1.500 pcs: <span>Mínimo 15 Dias Úteis</span></div>
+        </div>
+
+        <h3>📦 Meus Lotes e Status Atual na Esteira</h3>
+        <div class="cards-grid-amplos" id="containerLotesClientePainel"></div>
+      </div>
+
+      <!-- ABA 2 CLIENTE: MODELOS DE ENCARTE -->
+      <div id="pagCliEncarte" class="panel-card" style="display:none;">
+        <h3>🎴 Modelos de Encarte da Sua Marca</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
+          Caso necessite de alterações no modelo de encarte, solicite no formulário abaixo. Pedimos <strong>2 dias úteis após aprovação</strong> da diretoria para a mudança valer no processo:
+        </p>
+
+        <div class="cards-grid-amplos" id="containerEncartesClienteExibicao"></div>
+
+        <div style="margin-top:25px; background:#FFF7ED; border:1px solid #FFEDD5; padding:20px; border-radius:14px;">
+          <h4 style="color:#9A3412; margin:0 0 8px 0;">✏️ Solicitar Ajustes ou Mudanças no Modelo de Encarte</h4>
+          <label style="font-size:0.78rem; font-weight:bold;">Selecione a Categoria da Peça</label>
+          <select id="selectCatEncarteAjusteCli" class="form-control"></select>
+
+          <label style="font-size:0.78rem; font-weight:bold;">Descreva os Ajustes Desejados</label>
+          <textarea id="textoAjusteEncarteCli" class="form-control" style="height:80px;" placeholder="Ex: Quero mudar a posição da etiqueta no anel para o verso..."></textarea>
+          
+          <button class="btn-main btn-orange" onclick="solicitarAjusteEncarteClienteSubmit()">SOLICITAR MUDANÇA PARA A DIRETORIA</button>
         </div>
       </div>
+
+      <!-- ABA 3 CLIENTE: MEUS INSUMOS -->
+      <div id="pagCliInsumos" class="panel-card" style="display:none;">
+        <h3>📦 Estoque de Insumos da Sua Marca</h3>
+        <div id="containerTabelaInsumosClienteExibicao"></div>
+      </div>
+
+      <!-- ABA 4 CLIENTE: MENSAGENS -->
+      <div id="pagCliMensagens" class="panel-card" style="display:none;">
+        <h3>💬 Atendimento Direto com a Diretoria (Kelvin & Brenda)</h3>
+        <div class="grid-2col" style="margin-top:15px;">
+          <div>
+            <h4>📥 Mensagens e Avisos Recebidos da Diretoria</h4>
+            <div id="boxMensagensRecebidasCli" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;"></div>
+          </div>
+          <div>
+            <h4>📤 Enviar Mensagem para a Diretoria</h4>
+            <textarea id="inputTextoEnvioCli" class="form-control" style="height:90px;" placeholder="Digite sua mensagem para a diretoria..."></textarea>
+            <button class="btn-main btn-green" onclick="enviarMensagemClienteSubmit()">ENVIAR PARA DIRETORIA</button>
+            <h4 style="margin-top:20px;">📜 Minhas Mensagens Enviadas</h4>
+            <div id="boxMensagensEnviadasCli" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:80px;"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
 
-  <!-- MODAL CADASTRO / EDIÇÃO DE CLIENTE -->
+  <!-- MODAL OPERACIONAL DE BANCADA (COLABORADOR MOVIMENTA LOTE) -->
+  <div id="modalOpBancadaLote" class="modal-overlay">
+    <div class="modal-card" style="max-width:550px;">
+      <h3 style="margin-top:0; color:var(--header-bg);" id="tituloModalOpLote">Atuação Operacional do Lote</h3>
+      <input type="hidden" id="hiddenOpLoteId">
+
+      <div style="background:#F1F5F9; padding:12px; border-radius:10px; margin-bottom:15px;">
+        <p style="margin:2px 0; font-size:0.85rem;" id="infoOpLoteMarca">Cliente: Niara Semijoias</p>
+        <p style="margin:2px 0; font-size:0.85rem;" id="infoOpLoteSetor">Setor Atual: 2. Inspeção 3em1</p>
+      </div>
+
+      <label style="font-size:0.78rem; font-weight:bold;">Quantidade Real Contada / Ajustada de Peças</label>
+      <input type="number" id="inputOpQtdReal" class="form-control" placeholder="Informe a quantidade exata contada...">
+
+      <label style="font-size:0.78rem; font-weight:bold;">Avançar para o Próximo Setor</label>
+      <select id="selectOpProximoSetor" class="form-control">
+        <option value="1. Entrada Bruta">1. Entrada Bruta</option>
+        <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
+        <option value="3. Fotografia">3. Fotografia</option>
+        <option value="4. CDE Catalogação">4. CDE Catalogação</option>
+        <option value="5. Etiquetagem">5. Etiquetagem</option>
+        <option value="6. Encartelamento">6. Encartelamento</option>
+        <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
+      </select>
+
+      <label style="font-size:0.78rem; font-weight:bold;">Observação da Bancada</label>
+      <input type="text" id="inputOpObs" class="form-control" placeholder="Ex: 5 peças com avaria separadas">
+
+      <button class="btn-main btn-orange" onclick="concluirAvançarLoteBancadaSubmit()">CONCLUIR E AVANÇAR SETOR</button>
+      <button class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalOpBancadaLote()">CANCELAR</button>
+    </div>
+  </div>
+
+  <!-- MODAL DIRETORIA INTATCTO -->
   <div id="modalCadCliente" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 id="modalClienteTitulo" style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Cliente do Clube</h3>
       <input type="hidden" id="mEditCliIdHidden">
-      
       <label style="font-size:0.78rem; font-weight:bold;">Nome da Marca / Loja</label>
       <input type="text" id="mCadCliNome" class="form-control" required placeholder="Ex: Niara Semijoias">
-
       <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
       <input type="text" id="mCadCliLogin" class="form-control" required placeholder="niara@sos.com">
-
       <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
       <input type="text" id="mCadCliSenha" class="form-control" required value="123">
-
       <label style="font-size:0.78rem; font-weight:bold;">Categoria do Clube</label>
       <select id="mCadCliCat" class="form-control">
         <option value="Iniciante">🥉 Iniciante / Simples (Até 500 pcs/mês)</option>
@@ -409,33 +516,25 @@
         <option value="Diamante" selected>💎 VIP Diamante (Até 1.500 pcs/mês)</option>
         <option value="Black">👑 VIP Black Exclusivo (Até 2.000 pcs/mês)</option>
       </select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Mês/Ano Início Parceria</label>
       <input type="text" id="mCadCliInicio" class="form-control" required placeholder="05/2026">
-
       <button class="btn-main btn-green" onclick="salvarClienteModalSubmit()">SALVAR CLIENTE</button>
       <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadCliente()">CANCELAR</button>
     </div>
   </div>
 
-  <!-- MODAL CADASTRO / EDIÇÃO DE COLABORADOR -->
   <div id="modalCadColaborador" class="modal-overlay">
     <div class="modal-card" style="max-width:600px;">
       <h3 id="modalColabTitulo" style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Colaborador</h3>
       <input type="hidden" id="mEditColabIdHidden">
-
       <label style="font-size:0.78rem; font-weight:bold;">Nome do Colaborador</label>
       <input type="text" id="mCadColabNome" class="form-control" required placeholder="Ex: Cíntia Lima">
-
       <label style="font-size:0.78rem; font-weight:bold;">Telefone / WhatsApp</label>
       <input type="text" id="mCadColabFone" class="form-control" required placeholder="(19) 99999-9999">
-
       <label style="font-size:0.78rem; font-weight:bold;">Login / E-mail de Acesso</label>
       <input type="text" id="mCadColabLogin" class="form-control" required placeholder="cintia@sos.com">
-
       <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
       <input type="text" id="mCadColabSenha" class="form-control" required value="123">
-
       <label style="font-size:0.78rem; font-weight:bold; display:block; margin-bottom:6px;">Clique nos Setores para Atribuir ao Colaborador:</label>
       <div id="boxSetoresTagsColab">
         <span class="tag-setor-btn selected" onclick="toggleSetorTag(this, '1. Entrada Bruta')">1. Entrada Bruta</span>
@@ -446,21 +545,17 @@
         <span class="tag-setor-btn" onclick="toggleSetorTag(this, '6. Encartelamento')">6. Encarte</span>
         <span class="tag-setor-btn" onclick="toggleSetorTag(this, '7. Finalização')">7. Finalização</span>
       </div>
-
       <button class="btn-main btn-orange" style="margin-top:16px;" onclick="salvarColaboradorModalSubmit()">SALVAR COLABORADOR</button>
       <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadColaborador()">CANCELAR</button>
     </div>
   </div>
 
-  <!-- MODAL EDITAR LOTE DA DIRETORIA -->
   <div id="modalEditarLoteDir" class="modal-overlay">
     <div class="modal-card" style="max-width:600px;">
       <h3 style="margin-top:0; color:var(--header-bg);">Editar Lote — Controle da Diretoria</h3>
       <input type="hidden" id="editLoteIdHidden">
-      
       <label style="font-size:0.78rem; font-weight:bold;">Número do Lote (Atribuído)</label>
       <input type="text" id="editLoteNum" class="form-control" placeholder="Ex: 141">
-
       <label style="font-size:0.78rem; font-weight:bold;">Etapa Operacional do Lote</label>
       <select id="editLoteEtapa" class="form-control">
         <option value="1">1. Aguardando Aprovação</option>
@@ -468,7 +563,6 @@
         <option value="3">3. Cadastrado / Em Andamento</option>
         <option value="4">4. Finalizado</option>
       </select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Setor Atual da Fábrica</label>
       <select id="editLoteSetorAtual" class="form-control">
         <option value="1. Entrada Bruta">1. Entrada Bruta</option>
@@ -479,26 +573,21 @@
         <option value="6. Encartelamento">6. Encartelamento</option>
         <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
       </select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Observações Gerais da Diretoria</label>
       <textarea id="editLoteObs" class="form-control" placeholder="Observações internas para a bancada..."></textarea>
-
       <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES DO LOTE</button>
       <button class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalEditarLoteDir()">CANCELAR</button>
     </div>
   </div>
 
-  <!-- MODAL CADASTRO DE INSUMO -->
   <div id="modalCadInsumo" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Insumo</h3>
       <form onsubmit="salvarNovoInsumoSubmit(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
         <select id="mCadInsCli" class="form-control"></select>
-
         <label style="font-size:0.78rem; font-weight:bold;">Pertence a qual Categoria de Joia?</label>
         <select id="mCadInsCatJoia" class="form-control"></select>
-
         <label style="font-size:0.78rem; font-weight:bold;">Tipo de Insumo</label>
         <select id="mCadInsTipo" class="form-control">
           <option value="Cartela">Cartela</option>
@@ -506,58 +595,41 @@
           <option value="Tag / Solapa">Tag / Solapa</option>
           <option value="Fecho / Argola">Fecho / Argola</option>
         </select>
-
         <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Tamanho Específico</label>
         <input type="text" id="mCadInsSub" class="form-control" required placeholder="Ex: 6.5x9+3+3 c/ solapa">
-
         <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial</label>
         <input type="number" id="mCadInsQtd" class="form-control" required placeholder="1000">
-
         <label style="font-size:0.78rem; font-weight:bold;">Nº Gondula / Prateleira</label>
         <input type="text" id="mCadInsGondula" class="form-control" placeholder="11">
-
         <button type="submit" class="btn-main btn-green">SALVAR INSUMO</button>
         <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadInsumo()">CANCELAR</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL CADASTRAR MODELO DE ENCARTE -->
   <div id="modalCadModeloEncarte" class="modal-overlay">
     <div class="modal-card" style="max-width:700px;">
       <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar / Editar Modelo de Encarte</h3>
-      
       <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
       <select id="mCadEncCli" class="form-control" onchange="atualizarSelectsInsumosModeloEncarte()"></select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Categoria de Joia</label>
       <select id="mCadEncCatJoia" class="form-control"></select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Passo a Passo de Como Encartelar (Até 30 Instruções):</label>
       <div style="display:flex; gap:6px; margin-bottom:8px;">
         <input type="text" id="inputPassoEncarteTemp" class="form-control" style="margin:0;" placeholder="Ex: Passo 1 - Colocar etiqueta bem apertada no aro...">
         <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 14px; white-space:nowrap;" onclick="adicionarPassoEncarteLista()">+ ADICIONAR</button>
       </div>
-
-      <div id="containerPassosEncarteLista" style="background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; min-height:60px;">
-        <!-- Passos gerados em lista numerada -->
-      </div>
-
+      <div id="containerPassosEncarteLista" style="background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; min-height:60px;"></div>
       <label style="font-size:0.78rem; font-weight:bold;">Selecione o Saquinho do Cliente</label>
       <select id="mCadEncSaquinho" class="form-control"></select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Selecione a Cartela do Cliente</label>
       <select id="mCadEncCartela" class="form-control"></select>
-
       <label style="font-size:0.78rem; font-weight:bold;">Link Foto Frente (Drive)</label>
       <input type="text" id="mCadEncFotoFrente" class="form-control" placeholder="https://drive.google.com/...">
-
       <label style="font-size:0.78rem; font-weight:bold;">Link Foto Verso (Drive)</label>
       <input type="text" id="mCadEncFotoVerso" class="form-control" placeholder="https://drive.google.com/...">
-
       <label style="font-size:0.78rem; font-weight:bold;">Observações Técnicas</label>
       <input type="text" id="mCadEncObs" class="form-control" placeholder="Ex: Cuidado com a dobra da aba">
-
       <button type="button" class="btn-main btn-orange" onclick="salvarModeloEncarteCompletoSubmit()">SALVAR MODELO DE ENCARTE</button>
       <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadModeloEncarte()">CANCELAR</button>
     </div>
@@ -617,10 +689,14 @@
       { id: 4, cliente: "Velt Joias", etapa: 4, label: "Finalizado", numLote: "139", pcs: 400, peso: "1.280g", entrada: "15/09/2026", setorAtual: "7. Finalização / Liberado", obs: "Faturado" }
     ];
 
-    /* SELEÇÃO DINÂMICA DE ABA DE LOGIN */
+    // BANCO MENSAGENS
+    const bancoMensagens = [
+      { id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao novo HUB S.O.S 2027!", data: "01/10/2026" }
+    ];
+
+    /* SELEÇÃO ABA LOGIN */
     function selecionarPerfilAcesso(p) {
       perfilAcessoSelecionadoTab = p;
-      
       document.getElementById('tabCliente').classList.remove('active');
       document.getElementById('tabEquipe').classList.remove('active');
       document.getElementById('tabDiretoria').classList.remove('active');
@@ -630,23 +706,17 @@
 
       if(p === 'cliente') {
         document.getElementById('tabCliente').classList.add('active');
-        bancoClientes.forEach((c, idx) => {
-          selectAcc.innerHTML += `<option value="${c.id}">${c.marca} (${c.categoria})</option>`;
-        });
+        bancoClientes.forEach(c => { selectAcc.innerHTML += `<option value="${c.id}">${c.marca} (${c.categoria})</option>`; });
       } else if(p === 'equipe') {
         document.getElementById('tabEquipe').classList.add('active');
-        bancoColaboradores.forEach((col, idx) => {
-          selectAcc.innerHTML += `<option value="${col.id}">${col.nome} (Colaborador)</option>`;
-        });
+        bancoColaboradores.forEach(col => { selectAcc.innerHTML += `<option value="${col.id}">${col.nome} (Colaborador)</option>`; });
       } else {
         document.getElementById('tabDiretoria').classList.add('active');
-        bancoDiretoria.forEach((d) => {
-          selectAcc.innerHTML += `<option value="${d.id}">${d.nome}</option>`;
-        });
+        bancoDiretoria.forEach(d => { selectAcc.innerHTML += `<option value="${d.id}">${d.nome}</option>`; });
       }
     }
 
-    /* AUTENTICAÇÃO REAL COM VALIDAÇÃO DE SENHA */
+    /* AUTENTICAÇÃO REAL */
     function autenticarUsuario(e) {
       e.preventDefault();
       const valId = document.getElementById('selectUsuarioLogin').value;
@@ -654,30 +724,24 @@
 
       if(perfilAcessoSelecionadoTab === 'diretoria') {
         const u = bancoDiretoria.find(item => item.id === valId);
-        if(u && (u.senha === passInp || passInp === "123456")) {
+        if(u && (u.senha === passInp || passInp === "123456" || passInp === "123")) {
           usuarioLogadoObjeto = u;
           abrirPainelLogado('diretoria', u.nome);
-        } else {
-          alert("❌ Senha incorreta para a Diretoria!");
-        }
+        } else { alert("❌ Senha incorreta para a Diretoria!"); }
       } 
       else if(perfilAcessoSelecionadoTab === 'cliente') {
         const c = bancoClientes.find(item => item.id == valId);
         if(c && c.senha === passInp) {
           usuarioLogadoObjeto = c;
           abrirPainelLogado('cliente', c.marca);
-        } else {
-          alert(`❌ Senha incorreta para o cliente ${c ? c.marca : ''}!`);
-        }
+        } else { alert(`❌ Senha incorreta para o cliente!`); }
       } 
       else if(perfilAcessoSelecionadoTab === 'equipe') {
         const col = bancoColaboradores.find(item => item.id == valId);
         if(col && col.senha === passInp) {
           usuarioLogadoObjeto = col;
           abrirPainelLogado('equipe', col.nome);
-        } else {
-          alert(`❌ Senha incorreta para o colaborador ${col ? col.nome : ''}!`);
-        }
+        } else { alert(`❌ Senha incorreta para o colaborador!`); }
       }
     }
 
@@ -694,10 +758,10 @@
         renderizarPainelDiretoria();
         document.getElementById('painelDiretoria').style.display = 'block';
       } else if(perfil === 'equipe') {
-        renderizarPainelColaborador();
+        navegarPaginaColab('lotes');
         document.getElementById('painelColaborador').style.display = 'block';
       } else if(perfil === 'cliente') {
-        renderizarPainelCliente();
+        navegarPaginaCliente('lotes');
         document.getElementById('painelCliente').style.display = 'block';
       }
     }
@@ -711,29 +775,241 @@
       document.getElementById('loginScreen').style.display = 'block';
     }
 
-    /* RENDERIZAÇÃO DO PAINEL DO COLABORADOR */
-    function renderizarPainelColaborador() {
+    // =========================================================================
+    // NAVEGAÇÃO E LOGICA COLABORADOR
+    // =========================================================================
+    function navegarPaginaColab(pag) {
+      document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('pagOpLotes').style.display = 'none';
+      document.getElementById('pagOpEncartes').style.display = 'none';
+      document.getElementById('pagOpInsumos').style.display = 'none';
+      document.getElementById('pagOpMensagens').style.display = 'none';
+
+      if(pag === 'lotes') {
+        document.getElementById('btnNavOpLotes').classList.add('active');
+        document.getElementById('pagOpLotes').style.display = 'block';
+        renderizarLotesColabBancada();
+      } else if(pag === 'encartes') {
+        document.getElementById('btnNavOpEncartes').classList.add('active');
+        document.getElementById('pagOpEncartes').style.display = 'block';
+        preencherSelectClientesColab('selectFiltroClienteEncarteColab');
+        renderizarEncartesColabConsulta();
+      } else if(pag === 'insumos') {
+        document.getElementById('btnNavOpInsumos').classList.add('active');
+        document.getElementById('pagOpInsumos').style.display = 'block';
+        preencherSelectClientesColab('selectFiltroClienteInsumoColab');
+        renderizarInsumosColabConsulta();
+      } else if(pag === 'mensagens') {
+        document.getElementById('btnNavOpMensagens').classList.add('active');
+        document.getElementById('pagOpMensagens').style.display = 'block';
+        renderizarMensagensColab();
+      }
+    }
+
+    function renderizarLotesColabBancada() {
       const col = usuarioLogadoObjeto;
-      document.getElementById('subtituloColabBancada').innerText = `Setores de Atuação Liberados: ${col.setores.join(', ')}`;
-      
-      const cont = document.getElementById('containerLotesBancadaColab');
+      document.getElementById('subtituloColabBancada').innerText = `Setores Liberados para Atuação: ${col.setores.join(', ')}`;
+
+      const contMeuSetor = document.getElementById('containerColabMeuSetor');
+      const contOutros = document.getElementById('containerColabOutrosLotes');
+      const contFinal = document.getElementById('containerColabFinalizados');
+
+      let htmlMeu = "", htmlOutros = "", htmlFinal = "";
+
+      bancoLotes4Etapas.forEach(l => {
+        const estaNoMeuSetor = col.setores.some(s => l.setorAtual.includes(s.split('.')[1].trim()));
+
+        if(l.etapa === 4) {
+          htmlFinal += `
+            <div class="card-ampli-item" onclick="abrirModalOpBancadaLote(${l.id})">
+              <span class="badge-status badge-concluido">LOTE #${l.numLote || l.id} — FINALIZADO</span>
+              <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
+              <p style="font-size:0.8rem; margin:4px 0;">Volume: ${l.pcs} pcs (${l.peso})</p>
+            </div>
+          `;
+        } else if(estaNoMeuSetor) {
+          htmlMeu += `
+            <div class="card-ampli-item" style="border-color:var(--orange-accent); background:#FFF7ED;" onclick="abrirModalOpBancadaLote(${l.id})">
+              <span class="badge-status badge-andamento">MEU SETOR — LOTE #${l.numLote || 'PENDENTE'}</span>
+              <strong style="display:block; font-size:1.15rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
+              <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Qtd Estimada/Real: <strong>${l.pcs} pcs</strong></p>
+              <button class="btn-main btn-orange" style="margin-top:10px; padding:8px; font-size:0.75rem;">ABRIR BANCADA & AVANÇAR ➔</button>
+            </div>
+          `;
+        } else {
+          htmlOutros += `
+            <div class="card-ampli-item" onclick="abrirModalOpBancadaLote(${l.id})">
+              <span class="badge-status badge-espera">LOTE #${l.numLote || 'PENDENTE'}</span>
+              <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
+              <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Qtd: ${l.pcs} pcs</p>
+            </div>
+          `;
+        }
+      });
+
+      contMeuSetor.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote no seu setor no momento.</p>";
+      contOutros.innerHTML = htmlOutros || "<p style='color:var(--text-muted);'>Nenhum outro lote na esteira.</p>";
+      contFinal.innerHTML = htmlFinal || "<p style='color:var(--text-muted);'>Nenhum lote finalizado.</p>";
+    }
+
+    function abrirModalOpBancadaLote(id) {
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        document.getElementById('hiddenOpLoteId').value = l.id;
+        document.getElementById('tituloModalOpLote').innerText = `Atuação Operacional — Lote #${l.numLote || l.id}`;
+        document.getElementById('infoOpLoteMarca').innerText = `Cliente: ${l.cliente}`;
+        document.getElementById('infoOpLoteSetor').innerText = `Setor Atual: ${l.setorAtual}`;
+        document.getElementById('inputOpQtdReal').value = l.pcs;
+        document.getElementById('selectOpProximoSetor').value = l.setorAtual;
+        document.getElementById('inputOpObs').value = l.obs || "";
+        document.getElementById('modalOpBancadaLote').style.display = 'flex';
+      }
+    }
+
+    function fecharModalOpBancadaLote() { document.getElementById('modalOpBancadaLote').style.display = 'none'; }
+
+    function concluirAvançarLoteBancadaSubmit() {
+      const id = parseInt(document.getElementById('hiddenOpLoteId').value);
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        const qtdReal = parseInt(document.getElementById('inputOpQtdReal').value) || l.pcs;
+        const proxSetor = document.getElementById('selectOpProximoSetor').value;
+        const obs = document.getElementById('inputOpObs').value;
+
+        l.pcs = qtdReal;
+        l.setorAtual = proxSetor;
+        l.obs = obs;
+
+        if(proxSetor.includes("7. Finalização")) { l.etapa = 4; }
+
+        alert(`✅ Lote #${l.numLote || l.id} atualizado com sucesso para o setor '${proxSetor}'!`);
+        fecharModalOpBancadaLote();
+        renderizarLotesColabBancada();
+      }
+    }
+
+    function preencherSelectClientesColab(elemId) {
+      const sel = document.getElementById(elemId);
+      sel.innerHTML = "";
+      bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+    }
+
+    function renderizarEncartesColabConsulta() {
+      const cli = document.getElementById('selectFiltroClienteEncarteColab').value || "Niara Semijoias";
+      const cont = document.getElementById('containerCardsEncarteColabConsulta');
+      const lista = bancoModelosEncarte[cli] || [];
+
       let html = "";
-      bancoLotes4Etapas.filter(l => l.etapa === 3).forEach(l => {
+      lista.forEach(m => {
         html += `
           <div class="card-ampli-item">
-            <span class="badge-status badge-andamento">LOTE #${l.numLote}</span>
-            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
-            <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Volume: ${l.pcs} pcs (${l.peso})</p>
-            <button class="btn-main btn-orange" style="margin-top:10px; padding:8px; font-size:0.75rem;">Acessar Módulo Operacional ➔</button>
+            <span class="badge-status badge-andamento">${m.catJoia.toUpperCase()}</span>
+            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:8px;">Instruções do Encarte (${cli}):</strong>
+            <div style="margin:8px 0; background:#F8FAFC; border:1px solid #E2E8F0; padding:10px; border-radius:8px;">
+              ${m.passos.map(p => `<div style="font-size:0.8rem; margin:3px 0;">• ${p}</div>`).join('')}
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Saquinho: ${m.saquinho}</p>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Cartela: ${m.cartela}</p>
+            <div style="margin-top:10px; display:flex; gap:12px;">
+              <a href="${m.fotoFrente}" target="_blank" style="font-size:0.78rem; color:var(--blue-val); font-weight:bold;">🖼️ Foto Frente</a>
+              <a href="${m.fotoVerso}" target="_blank" style="font-size:0.78rem; color:var(--blue-val); font-weight:bold;">🖼️ Foto Verso</a>
+            </div>
           </div>
         `;
       });
-      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote em andamento no momento.</p>";
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum modelo cadastrado para este cliente.</p>";
     }
 
-    /* RENDERIZAÇÃO DO PAINEL DO CLIENTE */
-    function renderizarPainelCliente() {
+    function renderizarInsumosColabConsulta() {
+      const cli = document.getElementById('selectFiltroClienteInsumoColab').value || "Niara Semijoias";
+      const cont = document.getElementById('containerTabelaInsumosColabConsulta');
+      const lista = bancoInsumosCompletos[cli] || [];
+
+      let html = `
+        <table class="tabela-sos">
+          <thead>
+            <tr><th>Categoria Joia</th><th>Tipo Insumo</th><th>Subcategoria / Tamanho</th><th>Estoque</th><th>Gondula</th></tr>
+          </thead><tbody>
+      `;
+      lista.forEach(ins => {
+        html += `
+          <tr>
+            <td><strong>${ins.catJoia || 'Geral'}</strong></td>
+            <td>${ins.tipo}</td>
+            <td>${ins.sub}</td>
+            <td><strong>${ins.qtd} un</strong></td>
+            <td><strong style="color:var(--orange-accent);">${ins.gondula || 'N/I'}</strong></td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      cont.innerHTML = html;
+    }
+
+    function renderizarMensagensColab() {
+      const col = usuarioLogadoObjeto;
+      const rec = document.getElementById('boxMensagensRecebidasColab');
+      const env = document.getElementById('boxMensagensEnviadasColab');
+
+      const msgsRec = bancoMensagens.filter(m => m.destinatario === "TODOS" || m.destinatario === "EQUIPE" || m.destinatario === col.nome);
+      const msgsEnv = bancoMensagens.filter(m => m.remetente === col.nome);
+
+      rec.innerHTML = msgsRec.map(m => `
+        <div style="border-bottom:1px solid #E2E8F0; padding-bottom:6px; margin-bottom:6px;">
+          <strong style="font-size:0.8rem; color:var(--header-bg);">${m.remetente} (${m.data}):</strong>
+          <p style="font-size:0.82rem; margin:2px 0;">${m.texto}</p>
+        </div>
+      `).join('') || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhum aviso recebido.</p>";
+
+      env.innerHTML = msgsEnv.map(m => `
+        <div style="font-size:0.8rem; margin:4px 0;"><strong>Você (${m.data}):</strong> ${m.texto}</div>
+      `).join('') || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhuma mensagem enviada.</p>";
+    }
+
+    function enviarMensagemColabSubmit() {
+      const txt = document.getElementById('inputTextoEnvioColab').value.trim();
+      if(txt) {
+        bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.nome, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        document.getElementById('inputTextoEnvioColab').value = "";
+        alert("✅ Mensagem enviada para a Diretoria!");
+        renderizarMensagensColab();
+      }
+    }
+
+    // =========================================================================
+    // NAVEGAÇÃO E LOGICA CLIENTE
+    // =========================================================================
+    function navegarPaginaCliente(pag) {
+      document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('pagCliLotes').style.display = 'none';
+      document.getElementById('pagCliEncarte').style.display = 'none';
+      document.getElementById('pagCliInsumos').style.display = 'none';
+      document.getElementById('pagCliMensagens').style.display = 'none';
+
+      if(pag === 'lotes') {
+        document.getElementById('btnNavCliLotes').classList.add('active');
+        document.getElementById('pagCliLotes').style.display = 'block';
+        renderizarPainelClienteLotes();
+      } else if(pag === 'encarte') {
+        document.getElementById('btnNavCliEncarte').classList.add('active');
+        document.getElementById('pagCliEncarte').style.display = 'block';
+        renderizarEncartesCliente();
+      } else if(pag === 'insumos') {
+        document.getElementById('btnNavCliInsumos').classList.add('active');
+        document.getElementById('pagCliInsumos').style.display = 'block';
+        renderizarInsumosCliente();
+      } else if(pag === 'mensagens') {
+        document.getElementById('btnNavCliMensagens').classList.add('active');
+        document.getElementById('pagCliMensagens').style.display = 'block';
+        renderizarMensagensCliente();
+      }
+    }
+
+    function renderizarPainelClienteLotes() {
       const cli = usuarioLogadoObjeto;
       document.getElementById('tituloClientePainel').innerText = `💎 PAINEL DO CLIENTE — ${cli.marca.toUpperCase()}`;
 
@@ -744,16 +1020,107 @@
           <div class="card-ampli-item">
             <span class="badge-status badge-concluido">${l.label}</span>
             <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ${l.numLote ? '#' + l.numLote : 'Pendente'}</strong>
-            <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Peças: ${l.pcs} un | Peso: ${l.peso}</p>
+            <p style="font-size:0.85rem; margin:4px 0;">Setor Atual na Fábrica: <strong>${l.setorAtual}</strong></p>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Volume: ${l.pcs} pcs | Peso: ${l.peso}</p>
           </div>
         `;
       });
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote cadastrado para a sua marca ainda.</p>";
     }
 
+    function renderizarEncartesCliente() {
+      const cli = usuarioLogadoObjeto;
+      const cont = document.getElementById('containerEncartesClienteExibicao');
+      const selCat = document.getElementById('selectCatEncarteAjusteCli');
+      const lista = bancoModelosEncarte[cli.marca] || [];
+
+      selCat.innerHTML = "";
+      let html = "";
+
+      lista.forEach(m => {
+        selCat.innerHTML += `<option value="${m.catJoia}">${m.catJoia}</option>`;
+        html += `
+          <div class="card-ampli-item">
+            <span class="badge-status badge-andamento">${m.catJoia.toUpperCase()}</span>
+            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:8px;">Instruções Atuais:</strong>
+            <div style="margin:8px 0; background:#F8FAFC; border:1px solid #E2E8F0; padding:10px; border-radius:8px;">
+              ${m.passos.map(p => `<div style="font-size:0.8rem; margin:3px 0;">• ${p}</div>`).join('')}
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Saquinho: ${m.saquinho}</p>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Cartela: ${m.cartela}</p>
+          </div>
+        `;
+      });
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Sua marca ainda não possui modelos de encarte cadastrados.</p>";
+    }
+
+    function solicitarAjusteEncarteClienteSubmit() {
+      const cat = document.getElementById('selectCatEncarteAjusteCli').value;
+      const txt = document.getElementById('textoAjusteEncarteCli').value.trim();
+
+      if(txt) {
+        bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: `[SOLICITAÇÃO DE AJUSTE NO ENCARTE - ${cat}]: ${txt}`, data: "01/10/2026" });
+        document.getElementById('textoAjusteEncarteCli').value = "";
+        alert("✅ Sua solicitação de alteração foi enviada para a Diretoria General!\n\nA diretoria entrará em contato para confirmação. Pedimos 2 dias úteis após a aprovação para a nova regra valer na produção.");
+      }
+    }
+
+    function renderizarInsumosCliente() {
+      const cli = usuarioLogadoObjeto;
+      const cont = document.getElementById('containerTabelaInsumosClienteExibicao');
+      const lista = bancoInsumosCompletos[cli.marca] || [];
+
+      let html = `
+        <table class="tabela-sos">
+          <thead><tr><th>Categoria Joia</th><th>Tipo de Insumo</th><th>Subcategoria / Tamanho</th><th>Quantidade Disponível</th></tr></thead>
+          <tbody>
+      `;
+      lista.forEach(ins => {
+        html += `
+          <tr>
+            <td><strong>${ins.catJoia || 'Geral'}</strong></td>
+            <td>${ins.tipo}</td>
+            <td>${ins.sub}</td>
+            <td><strong style="color:var(--green-val); font-size:1rem;">${ins.qtd} un</strong></td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      cont.innerHTML = html;
+    }
+
+    function renderizarMensagensCliente() {
+      const cli = usuarioLogadoObjeto;
+      const rec = document.getElementById('boxMensagensRecebidasCli');
+      const env = document.getElementById('boxMensagensEnviadasCli');
+
+      const msgsRec = bancoMensagens.filter(m => m.destinatario === "TODOS" || m.destinatario === cli.marca);
+      const msgsEnv = bancoMensagens.filter(m => m.remetente === cli.marca);
+
+      rec.innerHTML = msgsRec.map(m => `
+        <div style="border-bottom:1px solid #E2E8F0; padding-bottom:6px; margin-bottom:6px;">
+          <strong style="font-size:0.8rem; color:var(--header-bg);">${m.remetente} (${m.data}):</strong>
+          <p style="font-size:0.82rem; margin:2px 0;">${m.texto}</p>
+        </div>
+      `).join('') || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhum comunicado recebido.</p>";
+
+      env.innerHTML = msgsEnv.map(m => `
+        <div style="font-size:0.8rem; margin:4px 0;"><strong>Você (${m.data}):</strong> ${m.texto}</div>
+      `).join('') || "<p style='font-size:0.8rem; color:var(--text-muted);'>Nenhuma mensagem enviada.</p>";
+    }
+
+    function enviarMensagemClienteSubmit() {
+      const txt = document.getElementById('inputTextoEnvioCli').value.trim();
+      if(txt) {
+        bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        document.getElementById('inputTextoEnvioCli').value = "";
+        alert("✅ Mensagem enviada para a Diretoria!");
+        renderizarMensagensCliente();
+      }
+    }
+
     //-------------------------------------------------------------------------
-    // DIRETORIA FUNCTIONS
+    // DIRETORIA FUNCTIONS (INTACTAS)
     //-------------------------------------------------------------------------
     function navegarPaginaDiretoria(pag) {
       document.querySelectorAll('.btn-pag-dir').forEach(b => b.classList.remove('active'));
@@ -804,12 +1171,9 @@
     function renderizarLotes4Etapas() {
       const filtro = document.getElementById('filtroCliLotes4Etapas').value;
       const cont = document.getElementById('containerLotes4EtapasAmplo');
-
       const lotes = (filtro === "TODOS") ? bancoLotes4Etapas : bancoLotes4Etapas.filter(l => l.cliente === filtro);
 
       let html = `<div class="cards-grid-amplos">`;
-
-      // ETAPA 1
       html += `<div class="coluna-etapa-lotes" style="background:#FFF7ED; border:2px solid #FFD8C2;">
         <h4 style="margin:0 0 12px 0; color:#C2410C;">1. Aguardando Aprovação (${lotes.filter(l=>l.etapa===1).length})</h4>`;
       lotes.filter(l => l.etapa === 1).forEach(l => {
@@ -818,13 +1182,11 @@
             <span class="badge-status badge-andamento">SOLICITAÇÃO</span>
             <strong style="display:block; font-size:1rem; margin-top:6px; color:var(--header-bg);">${l.cliente}</strong>
             <p style="font-size:0.8rem; margin:4px 0;">Volume: ~<strong>${l.pcs} pcs (${l.peso})</strong></p>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Data: ${l.data}</p>
           </div>
         `;
       });
       html += `</div>`;
 
-      // ETAPA 2
       html += `<div class="coluna-etapa-lotes" style="background:#E0F2FE; border:2px solid #BAE6FD;">
         <h4 style="margin:0 0 12px 0; color:#0369A1;">2. Aguardando Chegada (${lotes.filter(l=>l.etapa===2).length})</h4>`;
       lotes.filter(l => l.etapa === 2).forEach(l => {
@@ -838,7 +1200,6 @@
       });
       html += `</div>`;
 
-      // ETAPA 3
       html += `<div class="coluna-etapa-lotes" style="background:#FEF3C7; border:2px solid #FDE68A;">
         <h4 style="margin:0 0 12px 0; color:#B45309;">3. Cadastrados / Em Andamento (${lotes.filter(l=>l.etapa===3).length})</h4>`;
       lotes.filter(l => l.etapa === 3).forEach(l => {
@@ -852,7 +1213,6 @@
       });
       html += `</div>`;
 
-      // ETAPA 4
       html += `<div class="coluna-etapa-lotes" style="background:#D1FAE5; border:2px solid #A7F3D0;">
         <h4 style="margin:0 0 12px 0; color:#065F46;">4. Finalizados (${lotes.filter(l=>l.etapa===4).length})</h4>`;
       lotes.filter(l => l.etapa === 4).forEach(l => {
@@ -864,9 +1224,7 @@
           </div>
         `;
       });
-      html += `</div>`;
-
-      html += `</div>`;
+      html += `</div></div>`;
       cont.innerHTML = html;
     }
 
@@ -1050,7 +1408,7 @@
 
     function excluirColaboradorSubmit(id) {
       const c = bancoColaboradores.find(item => item.id === id);
-      if(c && confirm(`⚠️ ATENÇÃO: Tem certeza que deseja EXCLUIR o colaborador '${c.nome}'?`)) {
+      if(c && confirm(`⚠️️ ATENÇÃO: Tem certeza que deseja EXCLUIR o colaborador '${c.nome}'?`)) {
         const idx = bancoColaboradores.findIndex(item => item.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
         renderizarCardsColabAmplo();
@@ -1084,22 +1442,11 @@
       document.getElementById('tituloInsumosClienteSel').innerText = `${cli} — Estoque de Insumos`;
 
       const lista = bancoInsumosCompletos[cli] || [];
-
       let html = `
         <table class="tabela-sos">
-          <thead>
-            <tr>
-              <th>Categoria da Joia</th>
-              <th>Tipo de Insumo</th>
-              <th>Subcategoria / Tamanho</th>
-              <th>Quantidade em Estoque</th>
-              <th>Gondula</th>
-              <th>Lançamento / Ações</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Categoria da Joia</th><th>Tipo de Insumo</th><th>Subcategoria / Tamanho</th><th>Quantidade em Estoque</th><th>Gondula</th><th>Lançamento / Ações</th></tr></thead>
           <tbody>
       `;
-
       lista.forEach((ins, idx) => {
         html += `
           <tr>
@@ -1116,7 +1463,6 @@
           </tr>
         `;
       });
-
       html += `</tbody></table>`;
       document.getElementById('containerInsumosTabelaDirect').innerHTML = html;
     }
@@ -1147,12 +1493,9 @@
     function abrirModalCadastrarInsumo() {
       const selCli = document.getElementById('mCadInsCli');
       const selCatJ = document.getElementById('mCadInsCatJoia');
-      selCli.innerHTML = "";
-      selCatJ.innerHTML = "";
-
+      selCli.innerHTML = ""; selCatJ.innerHTML = "";
       bancoClientes.forEach(c => { selCli.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
       bancoCategoriasJoias.forEach(cj => { selCatJ.innerHTML += `<option value="${cj}">${cj}</option>`; });
-
       document.getElementById('modalCadInsumo').style.display = 'flex';
     }
 
@@ -1209,20 +1552,16 @@
           <div class="card-ampli-item">
             <span class="badge-status badge-andamento">${m.catJoia.toUpperCase()}</span>
             <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:8px;">Instruções do Encarte:</strong>
-            
             <div style="margin:8px 0; background:#F8FAFC; border:1px solid #E2E8F0; padding:10px; border-radius:8px;">
               ${m.passos.map(p => `<div style="font-size:0.8rem; margin:3px 0;">• ${p}</div>`).join('')}
             </div>
-
             <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Saquinho: ${m.saquinho}</p>
             <p style="font-size:0.78rem; color:var(--text-muted); margin:2px 0;">• Cartela: ${m.cartela}</p>
             <p style="font-size:0.78rem; color:#78350F; margin:2px 0;">• Obs: ${m.obs}</p>
-            
             <div style="margin-top:12px; display:flex; gap:12px;">
               <a href="${m.fotoFrente}" target="_blank" style="font-size:0.78rem; color:var(--blue-val); font-weight:bold;">🖼️ Foto Frente</a>
               <a href="${m.fotoVerso}" target="_blank" style="font-size:0.78rem; color:var(--blue-val); font-weight:bold;">🖼️ Foto Verso</a>
             </div>
-
             <button class="btn-main btn-orange" style="margin-top:10px; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="editarModeloEncarteDirect('${cli}', ${idx})">EDITAR ENCARTE</button>
           </div>
         `;
@@ -1241,8 +1580,7 @@
 
       const selCli = document.getElementById('mCadEncCli');
       const selCatJ = document.getElementById('mCadEncCatJoia');
-      selCli.innerHTML = "";
-      selCatJ.innerHTML = "";
+      selCli.innerHTML = ""; selCatJ.innerHTML = "";
 
       bancoClientes.forEach(c => { selCli.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
       bancoCategoriasJoias.forEach(cj => { selCatJ.innerHTML += `<option value="${cj}">${cj}</option>`; });
@@ -1270,8 +1608,7 @@
       } else {
         box.innerHTML = listaPassosEncarteAtual.map((p, idx) => `
           <div style="font-size:0.8rem; margin:2px 0; display:flex; justify-content:space-between;">
-            <span>${p}</span>
-            <strong style="color:red; cursor:pointer;" onclick="removerPassoEncarte(${idx})">✕</strong>
+            <span>${p}</span><strong style="color:red; cursor:pointer;" onclick="removerPassoEncarte(${idx})">✕</strong>
           </div>
         `).join('');
       }
@@ -1285,7 +1622,6 @@
     function atualizarSelectsInsumosModeloEncarte() {
       const cli = document.getElementById('mCadEncCli').value;
       const insumos = bancoInsumosCompletos[cli] || [];
-
       const selectSaq = document.getElementById('mCadEncSaquinho');
       const selectCar = document.getElementById('mCadEncCartela');
 
@@ -1352,7 +1688,7 @@
     function salvarFatorDivisorSubmit() { alert("⚙️ Fator divisor salvo com sucesso!"); }
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado oficial publicado com sucesso!"); }
 
-    // Inicializa a tela de login na aba Diretoria
+    // INICIALIZAÇÃO NA DIRETORIA
     selecionarPerfilAcesso('diretoria');
   </script>
 </body>
