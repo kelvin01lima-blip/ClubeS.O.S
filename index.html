@@ -121,7 +121,6 @@
     }
     table.tabela-sos th { background-color: #F1F5F9; color: #0B132B; font-weight: bold; }
 
-    /* ROLAGEM VERTICAL INTERNA PARA MÚLTIPLOS LOTES */
     .coluna-etapa-lotes {
       border-radius: 14px; padding: 16px; max-height: 620px; overflow-y: auto;
     }
@@ -183,7 +182,7 @@
     </div>
 
     <!-- ================================================================================= -->
-    <!-- ÁREA DA DIRETORIA GENERAL — NAVEGAÇÃO COMPLETA -->
+    <!-- ÁREA DA DIRETORIA GENERAL -->
     <!-- ================================================================================= -->
     <div id="painelDiretoria" style="display:none;">
       
@@ -202,14 +201,13 @@
         <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙️ 6. CONFIGS & CATEGORIAS</button>
       </div>
 
-      <!-- PÁGINA 1: PAINEL GERAL DE LOTES (4 ETAPAS EM ROLAGEM) -->
+      <!-- PÁGINA 1: PAINEL GERAL DE LOTES -->
       <div id="pagDirLotes" class="panel-card">
         <div class="panel-header">
           <h3>📦 Gestão e Acompanhamento Geral de Lotes (4 Etapas)</h3>
           <div>
             <select id="filtroCliLotes4Etapas" class="form-control" style="margin:0; width:250px;" onchange="renderizarLotes4Etapas()">
               <option value="TODOS">TODAS AS MARCAS (VISÃO GERAL)</option>
-              <!-- Dinâmico -->
             </select>
           </div>
         </div>
@@ -281,7 +279,7 @@
         </div>
       </div>
 
-      <!-- PÁGINA 5: MODELOS DE ENCARTE COM ATÉ 30 CAMPOS -->
+      <!-- PÁGINA 5: MODELOS DE ENCARTE COM BOTÃO VOLTAR CORRIGIDO -->
       <div id="pagDirEncarte" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>🎴 Modelos de Encarte por Cliente & Categoria de Peça</h3>
@@ -487,7 +485,7 @@
     </div>
   </div>
 
-  <!-- MODAL CADASTRAR MODELO DE ENCARTE COM ATÉ 30 CAMPOS PASSO A PASSO -->
+  <!-- MODAL CADASTRAR MODELO DE ENCARTE -->
   <div id="modalCadModeloEncarte" class="modal-overlay">
     <div class="modal-card" style="max-width:700px;">
       <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar / Editar Modelo de Encarte</h3>
@@ -627,14 +625,13 @@
 
     function renderizarPainelDiretoria() { navegarPaginaDiretoria('lotes'); }
 
-    // FILTRO CLIENTES LOTES
     function atualizarSelectClientesFiltroLotes() {
       const sel = document.getElementById('filtroCliLotes4Etapas');
       sel.innerHTML = `<option value="TODOS">TODAS AS MARCAS (VISÃO GERAL)</option>`;
       bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
     }
 
-    // 1. LOTES 4 ETAPAS COM SCROLLBAR
+    // 1. LOTES 4 ETAPAS
     function renderizarLotes4Etapas() {
       const filtro = document.getElementById('filtroCliLotes4Etapas').value;
       const cont = document.getElementById('containerLotes4EtapasAmplo');
@@ -732,7 +729,7 @@
       }
     }
 
-    // 2. CLIENTES COM MODAL DE EDIÇÃO E CONFIRMAÇÃO
+    // 2. CLIENTES
     function renderizarCardsClientesAmplo() {
       const cont = document.getElementById('containerCardsClientesAmplo');
       let html = "";
@@ -809,7 +806,7 @@
       }
     }
 
-    // 3. COLABORADORES COM EDIÇÃO E CONFIRMAÇÃO
+    // 3. COLABORADORES
     function renderizarCardsColabAmplo() {
       const cont = document.getElementById('containerCardsColabAmplo');
       let html = "";
@@ -890,7 +887,7 @@
       }
     }
 
-    // 4. INSUMOS VINCULADOS A CATEGORIAS
+    // 4. INSUMOS SEPARADOS POR CLIENTE
     function renderizarSelecaoClientesInsumos() {
       document.getElementById('secaoSelecaoClienteInsumo').style.display = 'block';
       document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'none';
@@ -1008,7 +1005,7 @@
       renderizarSelecaoClientesInsumos();
     }
 
-    // 5. MODELOS DE ENCARTE COM PASSO A PASSO DINÂMICO
+    // 5. MODELOS DE ENCARTE COM BOTÃO VOLTAR NATIVO E CORRIGIDO
     function renderizarSelecaoClientesEncarte() {
       document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
       document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
@@ -1064,7 +1061,11 @@
       cont.innerHTML = html;
     }
 
-    function volverSelecaoClienteEncarte() { renderizarSelecaoClientesEncarte(); }
+    /* FUNÇÃO OFICIAL DO BOTÃO VOLTAR PARA MARCAS */
+    function voltarSelecaoClienteEncarte() {
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+    }
 
     function abrirModalCadastrarModeloEncarte() {
       listaPassosEncarteAtual = [];
