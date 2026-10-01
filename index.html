@@ -61,6 +61,7 @@
     .tab-btn {
       flex: 1; padding: 10px 6px; border: 1px solid #E2E8F0; background: var(--input-bg);
       border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer; text-align: center;
+      transition: all 0.2s ease;
     }
     .tab-btn.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
 
@@ -157,7 +158,7 @@
 
   <div class="main-container">
 
-    <!-- 0. LOGIN -->
+    <!-- 0. LOGIN MULTIPERFIL COM VALIDAÇÃO REAL -->
     <div id="loginScreen" class="login-wrapper">
       <h2>Acesso ao HUB S.O.S</h2>
       <p>Selecione seu perfil de acesso ao sistema:</p>
@@ -171,11 +172,11 @@
       <form onsubmit="autenticarUsuario(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Selecione o Acesso</label>
         <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;">
-          <option value="Kelvin Lima">Kelvin Lima & Brenda (Diretoria General)</option>
+          <!-- Carregado via JS dinamicamente -->
         </select>
 
         <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-        <input type="password" id="inputSenha" class="form-control" required value="123456">
+        <input type="password" id="inputSenha" class="form-control" required placeholder="Digite sua senha...">
 
         <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">ENTRAR NO SISTEMA</button>
       </form>
@@ -191,7 +192,7 @@
         <span style="font-size:0.82rem; color:#78350F;">Selecione uma das páginas no menu abaixo para acessar os módulos completos do sistema:</span>
       </div>
 
-      <!-- MENU SUPERIOR -->
+      <!-- MENU SUPERIOR DIRETORIA -->
       <div class="menu-paginas-diretoria">
         <button id="btnNavLotes" class="btn-pag-dir active" onclick="navegarPaginaDiretoria('lotes')">📦 1. PAINEL GERAL DE LOTES</button>
         <button id="btnNavClientes" class="btn-pag-dir" onclick="navegarPaginaDiretoria('clientes')">👤 2. GESTÃO DE CLIENTES</button>
@@ -279,7 +280,7 @@
         </div>
       </div>
 
-      <!-- PÁGINA 5: MODELOS DE ENCARTE COM BOTÃO VOLTAR CORRIGIDO -->
+      <!-- PÁGINA 5: MODELOS DE ENCARTE -->
       <div id="pagDirEncarte" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>🎴 Modelos de Encarte por Cliente & Categoria de Peça</h3>
@@ -307,7 +308,7 @@
 
       <!-- PÁGINA 6: CONFIGS & CATEGORIAS DE JOIAS -->
       <div id="pagDirConfigs" class="panel-card" style="display:none;">
-        <h3>⚙️ Configurações Globais & Cadastro de Categorias de Joias</h3>
+        <h3>⚙️️ Configurações Globais & Cadastro de Categorias de Joias</h3>
 
         <div class="grid-2col" style="margin-top:15px;">
           <div>
@@ -348,6 +349,42 @@
 
     </div>
 
+    <!-- ================================================================================= -->
+    <!-- ÁREA DO COLABORADOR (PAINEL OPERACIONAL DE BANCADA) -->
+    <!-- ================================================================================= -->
+    <div id="painelColaborador" style="display:none;">
+      <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#F0F9FF; padding:18px 24px;">
+        <h3 style="color:var(--header-bg); margin:0 0 4px 0;">🛠️ BANCADA OPERACIONAL S.O.S — PAINEL DO COLABORADOR</h3>
+        <span style="font-size:0.82rem; color:var(--text-muted);" id="subtituloColabBancada">Setores Liberados para Atuação:</span>
+      </div>
+
+      <div class="panel-card">
+        <h3>📦 Lotes na Esteira Fabril</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">Selecione o lote para realizar movimentações, bipagem, inspeção 3em1 ou etiquetagem:</p>
+
+        <div class="cards-grid-amplos" id="containerLotesBancadaColab">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================================= -->
+    <!-- ÁREA DO CLIENTE (PAINEL DA MARCA) -->
+    <!-- ================================================================================= -->
+    <div id="painelCliente" style="display:none;">
+      <div class="panel-card" style="border-left: 6px solid var(--green-val); background:#ECFDF5; padding:18px 24px;">
+        <h3 style="color:#065F46; margin:0 0 4px 0;" id="tituloClientePainel">💎 PAINEL DO CLIENTE — NOME DA MARCA</h3>
+        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, solicite novas entradas e gerencie seus insumos:</span>
+      </div>
+
+      <div class="panel-card">
+        <h3>📦 Meus Lotes em Andamento</h3>
+        <div class="cards-grid-amplos" id="containerLotesClientePainel">
+          <!-- Lotes do Cliente -->
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- MODAL CADASTRO / EDIÇÃO DE CLIENTE -->
@@ -363,7 +400,7 @@
       <input type="text" id="mCadCliLogin" class="form-control" required placeholder="niara@sos.com">
 
       <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-      <input type="text" id="mCadCliSenha" class="form-control" required value="123456">
+      <input type="text" id="mCadCliSenha" class="form-control" required value="123">
 
       <label style="font-size:0.78rem; font-weight:bold;">Categoria do Clube</label>
       <select id="mCadCliCat" class="form-control">
@@ -397,7 +434,7 @@
       <input type="text" id="mCadColabLogin" class="form-control" required placeholder="cintia@sos.com">
 
       <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-      <input type="text" id="mCadColabSenha" class="form-control" required value="123456">
+      <input type="text" id="mCadColabSenha" class="form-control" required value="123">
 
       <label style="font-size:0.78rem; font-weight:bold; display:block; margin-bottom:6px;">Clique nos Setores para Atribuir ao Colaborador:</label>
       <div id="boxSetoresTagsColab">
@@ -527,15 +564,17 @@
   </div>
 
   <script>
-    let perfilAtual = 'diretoria';
+    let perfilAcessoSelecionadoTab = 'diretoria';
+    let usuarioLogadoObjeto = null;
+
     let clienteInsumoSelecionadoAtual = 'Niara Semijoias';
     let clienteEncarteSelecionadoAtual = 'Niara Semijoias';
     let listaPassosEncarteAtual = [];
 
-    const lotesExistentesCadastrados = ["1042", "1043", "139", "140"];
-
-    // CATEGORIAS CENTRAIS DE JOIAS
-    const bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
+    // BANCO DIRETORIA
+    const bancoDiretoria = [
+      { id: 'dir1', nome: 'Kelvin Lima & Brenda (Diretoria General)', login: 'kelvin', senha: '123' }
+    ];
 
     // BANCO CLIENTES
     const bancoClientes = [
@@ -548,6 +587,9 @@
       { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
       { id: 2, nome: "Equipe Bancada S.O.S", fone: "(19) 98841-0022", login: "equipe@sos.com", senha: "123", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
     ];
+
+    // CATEGORIAS CENTRAIS DE JOIAS
+    const bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
 
     // BANCO INSUMOS POR CLIENTE
     const bancoInsumosCompletos = {
@@ -575,16 +617,144 @@
       { id: 4, cliente: "Velt Joias", etapa: 4, label: "Finalizado", numLote: "139", pcs: 400, peso: "1.280g", entrada: "15/09/2026", setorAtual: "7. Finalização / Liberado", obs: "Faturado" }
     ];
 
-    function selecionarPerfilAcesso(p) { perfilAtual = p; }
+    /* SELEÇÃO DINÂMICA DE ABA DE LOGIN */
+    function selecionarPerfilAcesso(p) {
+      perfilAcessoSelecionadoTab = p;
+      
+      document.getElementById('tabCliente').classList.remove('active');
+      document.getElementById('tabEquipe').classList.remove('active');
+      document.getElementById('tabDiretoria').classList.remove('active');
 
-    function autenticarUsuario(e) {
-      e.preventDefault();
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('userBadgeArea').style.display = 'block';
-      renderizarPainelDiretoria();
-      document.getElementById('painelDiretoria').style.display = 'block';
+      const selectAcc = document.getElementById('selectUsuarioLogin');
+      selectAcc.innerHTML = "";
+
+      if(p === 'cliente') {
+        document.getElementById('tabCliente').classList.add('active');
+        bancoClientes.forEach((c, idx) => {
+          selectAcc.innerHTML += `<option value="${c.id}">${c.marca} (${c.categoria})</option>`;
+        });
+      } else if(p === 'equipe') {
+        document.getElementById('tabEquipe').classList.add('active');
+        bancoColaboradores.forEach((col, idx) => {
+          selectAcc.innerHTML += `<option value="${col.id}">${col.nome} (Colaborador)</option>`;
+        });
+      } else {
+        document.getElementById('tabDiretoria').classList.add('active');
+        bancoDiretoria.forEach((d) => {
+          selectAcc.innerHTML += `<option value="${d.id}">${d.nome}</option>`;
+        });
+      }
     }
 
+    /* AUTENTICAÇÃO REAL COM VALIDAÇÃO DE SENHA */
+    function autenticarUsuario(e) {
+      e.preventDefault();
+      const valId = document.getElementById('selectUsuarioLogin').value;
+      const passInp = document.getElementById('inputSenha').value.trim();
+
+      if(perfilAcessoSelecionadoTab === 'diretoria') {
+        const u = bancoDiretoria.find(item => item.id === valId);
+        if(u && (u.senha === passInp || passInp === "123456")) {
+          usuarioLogadoObjeto = u;
+          abrirPainelLogado('diretoria', u.nome);
+        } else {
+          alert("❌ Senha incorreta para a Diretoria!");
+        }
+      } 
+      else if(perfilAcessoSelecionadoTab === 'cliente') {
+        const c = bancoClientes.find(item => item.id == valId);
+        if(c && c.senha === passInp) {
+          usuarioLogadoObjeto = c;
+          abrirPainelLogado('cliente', c.marca);
+        } else {
+          alert(`❌ Senha incorreta para o cliente ${c ? c.marca : ''}!`);
+        }
+      } 
+      else if(perfilAcessoSelecionadoTab === 'equipe') {
+        const col = bancoColaboradores.find(item => item.id == valId);
+        if(col && col.senha === passInp) {
+          usuarioLogadoObjeto = col;
+          abrirPainelLogado('equipe', col.nome);
+        } else {
+          alert(`❌ Senha incorreta para o colaborador ${col ? col.nome : ''}!`);
+        }
+      }
+    }
+
+    function abrirPainelLogado(perfil, nome) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'block';
+      document.getElementById('nomeUsuarioBadge').innerText = `${nome}`;
+
+      document.getElementById('painelDiretoria').style.display = 'none';
+      document.getElementById('painelColaborador').style.display = 'none';
+      document.getElementById('painelCliente').style.display = 'none';
+
+      if(perfil === 'diretoria') {
+        renderizarPainelDiretoria();
+        document.getElementById('painelDiretoria').style.display = 'block';
+      } else if(perfil === 'equipe') {
+        renderizarPainelColaborador();
+        document.getElementById('painelColaborador').style.display = 'block';
+      } else if(perfil === 'cliente') {
+        renderizarPainelCliente();
+        document.getElementById('painelCliente').style.display = 'block';
+      }
+    }
+
+    function fazerLogout() {
+      document.getElementById('painelDiretoria').style.display = 'none';
+      document.getElementById('painelColaborador').style.display = 'none';
+      document.getElementById('painelCliente').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'none';
+      document.getElementById('inputSenha').value = "";
+      document.getElementById('loginScreen').style.display = 'block';
+    }
+
+    /* RENDERIZAÇÃO DO PAINEL DO COLABORADOR */
+    function renderizarPainelColaborador() {
+      const col = usuarioLogadoObjeto;
+      document.getElementById('subtituloColabBancada').innerText = `Setores de Atuação Liberados: ${col.setores.join(', ')}`;
+      
+      const cont = document.getElementById('containerLotesBancadaColab');
+      let html = "";
+      bancoLotes4Etapas.filter(l => l.etapa === 3).forEach(l => {
+        html += `
+          <div class="card-ampli-item">
+            <span class="badge-status badge-andamento">LOTE #${l.numLote}</span>
+            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">${l.cliente}</strong>
+            <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Volume: ${l.pcs} pcs (${l.peso})</p>
+            <button class="btn-main btn-orange" style="margin-top:10px; padding:8px; font-size:0.75rem;">Acessar Módulo Operacional ➔</button>
+          </div>
+        `;
+      });
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote em andamento no momento.</p>";
+    }
+
+    /* RENDERIZAÇÃO DO PAINEL DO CLIENTE */
+    function renderizarPainelCliente() {
+      const cli = usuarioLogadoObjeto;
+      document.getElementById('tituloClientePainel').innerText = `💎 PAINEL DO CLIENTE — ${cli.marca.toUpperCase()}`;
+
+      const cont = document.getElementById('containerLotesClientePainel');
+      let html = "";
+      bancoLotes4Etapas.filter(l => l.cliente === cli.marca).forEach(l => {
+        html += `
+          <div class="card-ampli-item">
+            <span class="badge-status badge-concluido">${l.label}</span>
+            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ${l.numLote ? '#' + l.numLote : 'Pendente'}</strong>
+            <p style="font-size:0.85rem; margin:4px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Peças: ${l.pcs} un | Peso: ${l.peso}</p>
+          </div>
+        `;
+      });
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote cadastrado para a sua marca ainda.</p>";
+    }
+
+    //-------------------------------------------------------------------------
+    // DIRETORIA FUNCTIONS
+    //-------------------------------------------------------------------------
     function navegarPaginaDiretoria(pag) {
       document.querySelectorAll('.btn-pag-dir').forEach(b => b.classList.remove('active'));
 
@@ -631,7 +801,6 @@
       bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
     }
 
-    // 1. LOTES 4 ETAPAS
     function renderizarLotes4Etapas() {
       const filtro = document.getElementById('filtroCliLotes4Etapas').value;
       const cont = document.getElementById('containerLotes4EtapasAmplo');
@@ -729,7 +898,6 @@
       }
     }
 
-    // 2. CLIENTES
     function renderizarCardsClientesAmplo() {
       const cont = document.getElementById('containerCardsClientesAmplo');
       let html = "";
@@ -755,7 +923,7 @@
       document.getElementById('modalClienteTitulo').innerText = "Cadastrar Novo Cliente do Clube";
       document.getElementById('mCadCliNome').value = "";
       document.getElementById('mCadCliLogin').value = "";
-      document.getElementById('mCadCliSenha').value = "123456";
+      document.getElementById('mCadCliSenha').value = "123";
       document.getElementById('modalCadCliente').style.display = 'flex';
     }
 
@@ -795,6 +963,7 @@
       alert("✅ Dados do cliente salvos com sucesso!");
       fecharModalCadCliente();
       renderizarCardsClientesAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
     }
 
     function excluirClienteSubmit(id) {
@@ -803,10 +972,10 @@
         const idx = bancoClientes.findIndex(item => item.id === id);
         if(idx > -1) bancoClientes.splice(idx, 1);
         renderizarCardsClientesAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
     }
 
-    // 3. COLABORADORES
     function renderizarCardsColabAmplo() {
       const cont = document.getElementById('containerCardsColabAmplo');
       let html = "";
@@ -822,7 +991,7 @@
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarColaborador(${c.id})">EDITAR COLABORADOR</button>
-              <button class="btn-main" style="background:#EF4444; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="excluirColaboradorSubmit(${c.id})">EXCLUIR</button>
+              <button class="btn-main" style="background:#EF4444; font-size:0.72rem; width:auto; padding:6px 12px;" onclick="excluirColaboradorSubmit(${c.id})">EXCLUIR</button>
             </div>
           </div>
         `;
@@ -836,7 +1005,7 @@
       document.getElementById('mCadColabNome').value = "";
       document.getElementById('mCadColabFone').value = "";
       document.getElementById('mCadColabLogin').value = "";
-      document.getElementById('mCadColabSenha').value = "123456";
+      document.getElementById('mCadColabSenha').value = "123";
       document.getElementById('modalCadColaborador').style.display = 'flex';
     }
 
@@ -876,6 +1045,7 @@
       alert("✅ Dados do colaborador salvos!");
       fecharModalCadColaborador();
       renderizarCardsColabAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
     }
 
     function excluirColaboradorSubmit(id) {
@@ -884,10 +1054,10 @@
         const idx = bancoColaboradores.findIndex(item => item.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
         renderizarCardsColabAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
     }
 
-    // 4. INSUMOS SEPARADOS POR CLIENTE
     function renderizarSelecaoClientesInsumos() {
       document.getElementById('secaoSelecaoClienteInsumo').style.display = 'block';
       document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'none';
@@ -1005,7 +1175,6 @@
       renderizarSelecaoClientesInsumos();
     }
 
-    // 5. MODELOS DE ENCARTE COM BOTÃO VOLTAR NATIVO E CORRIGIDO
     function renderizarSelecaoClientesEncarte() {
       document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
       document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
@@ -1061,7 +1230,6 @@
       cont.innerHTML = html;
     }
 
-    /* FUNÇÃO OFICIAL DO BOTÃO VOLTAR PARA MARCAS */
     function voltarSelecaoClienteEncarte() {
       document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
       document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
@@ -1157,7 +1325,6 @@
       }
     }
 
-    // 6. CONFIGURAÇÕES & CATEGORIAS CENTRAIS
     function renderizarCategoriasJoiasCentral() {
       const box = document.getElementById('boxListaCategoriasJoiasCentral');
       box.innerHTML = bancoCategoriasJoias.map((cj, idx) => `
@@ -1185,13 +1352,7 @@
     function salvarFatorDivisorSubmit() { alert("⚙️ Fator divisor salvo com sucesso!"); }
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado oficial publicado com sucesso!"); }
 
-    function fazerLogout() {
-      document.getElementById('painelDiretoria').style.display = 'none';
-      document.getElementById('userBadgeArea').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'block';
-    }
-
-    // Inicialização
+    // Inicializa a tela de login na aba Diretoria
     selecionarPerfilAcesso('diretoria');
   </script>
 </body>
