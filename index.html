@@ -29,7 +29,7 @@
     .btn-pag-dir, .btn-pag-op { background: #FFF; border: 2px solid #E2E8F0; padding: 12px 18px; border-radius: 12px; font-weight: bold; font-size: 0.82rem; cursor: pointer; color: var(--header-bg); white-space: nowrap; }
     .btn-pag-dir.active, .btn-pag-op.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
     .panel-card { background: var(--card-bg); border-radius: 18px; padding: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 22px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
     .panel-header h3 { margin: 0; color: var(--header-bg); font-size: 1.25rem; font-weight: 800; }
     .form-control { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid #E2E8F0; background-color: var(--input-bg); color: var(--text-dark); font-size: 0.88rem; margin-bottom: 12px; outline: none; }
     .btn-main { width: 100%; padding: 12px; border-radius: 10px; border: none; background-color: var(--header-bg); color: #FFF; font-size: 0.88rem; font-weight: 900; text-transform: uppercase; cursor: pointer; }
@@ -68,7 +68,7 @@
     .cal-day.selected { background: var(--orange-accent) !important; color: #FFF !important; }
     .cal-status-tag { font-size: 0.62rem; font-weight: bold; text-transform: uppercase; }
     .cal-nav-btn { background: var(--header-bg); color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.78rem; }
-    .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; }
+    .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
     .loading-indicator { font-size: 0.75rem; color: #FFB703; font-weight: bold; display: inline-block; margin-left: 10px; }
   </style>
 </head>
@@ -181,7 +181,13 @@
       </div>
 
       <div id="pagDirRegras" class="panel-card" style="display:none;">
-        <div class="panel-header"><h3>📋 Central de Regras Operacionais por Setor & Cliente</h3></div>
+        <div class="panel-header">
+          <h3>📋 Central de Regras Operacionais por Setor & Cliente</h3>
+          <div style="display:flex; gap:10px;">
+            <select id="selectFiltroSetorRegrasDir" class="form-control" style="width:200px; margin:0;" onchange="renderizarCardsSetoresRegrasDir()"></select>
+            <select id="selectFiltroClienteRegrasDir" class="form-control" style="width:200px; margin:0;" onchange="renderizarCardsSetoresRegrasDir()"></select>
+          </div>
+        </div>
         <div class="cards-grid-amplos" id="containerCardsSetoresRegrasDir"></div>
       </div>
 
@@ -234,7 +240,10 @@
       <div id="pagOpRegras" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>📋 Consulta de Regras dos Setores</h3>
-          <select id="selectFiltroSetorRegrasColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarRegrasSetoresColab()"></select>
+          <div style="display:flex; gap:10px;">
+            <select id="selectFiltroSetorRegrasColab" class="form-control" style="width:200px; margin:0;" onchange="renderizarRegrasSetoresColab()"></select>
+            <select id="selectFiltroClienteRegrasColab" class="form-control" style="width:200px; margin:0;" onchange="renderizarRegrasSetoresColab()"></select>
+          </div>
         </div>
         <div id="containerCardsRegrasColabConsulta"></div>
       </div>
@@ -869,7 +878,7 @@
       document.getElementById('pagOpMensagens').style.display = 'none';
 
       if(pag === 'lotes') { document.getElementById('btnNavOpLotes').classList.add('active'); document.getElementById('pagOpLotes').style.display = 'block'; renderizarLotesColabBancada(); }
-      else if(pag === 'regras') { document.getElementById('btnNavOpRegras').classList.add('active'); document.getElementById('pagOpRegras').style.display = 'block'; preencherSelectSetoresColab(); renderizarRegrasSetoresColab(); }
+      else if(pag === 'regras') { document.getElementById('btnNavOpRegras').classList.add('active'); document.getElementById('pagOpRegras').style.display = 'block'; preencherSelectsRegrasFiltro('selectFiltroSetorRegrasColab', 'selectFiltroClienteRegrasColab'); renderizarRegrasSetoresColab(); }
       else if(pag === 'encartes') { document.getElementById('btnNavOpEncartes').classList.add('active'); document.getElementById('pagOpEncartes').style.display = 'block'; preencherSelectClientesColab('selectFiltroClienteEncarteColab'); renderizarEncartesColabConsulta(); }
       else if(pag === 'insumos') { document.getElementById('btnNavOpInsumos').classList.add('active'); document.getElementById('pagOpInsumos').style.display = 'block'; preencherSelectClientesColab('selectFiltroClienteInsumoColab'); renderizarInsumosColabConsulta(); }
       else if(pag === 'mensagens') { document.getElementById('btnNavOpMensagens').classList.add('active'); document.getElementById('pagOpMensagens').style.display = 'block'; renderizarMensagensColab(); }
@@ -894,17 +903,38 @@
       cont.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote pendente no seu setor.</p>";
     }
 
-    function preencherSelectSetoresColab() {
-      var sel = document.getElementById('selectFiltroSetorRegrasColab');
-      sel.innerHTML = "";
-      listaSetoresFabricaGeral.forEach(function(s) { sel.innerHTML += '<option value="' + s + '">' + s + '</option>'; });
+    function preencherSelectsRegrasFiltro(elemSetorId, elemClienteId) {
+      var selSetor = document.getElementById(elemSetorId);
+      selSetor.innerHTML = '<option value="TODOS">Todos os Setores</option>';
+      listaSetoresFabricaGeral.forEach(function(s) { selSetor.innerHTML += '<option value="' + s + '">' + s + '</option>'; });
+
+      var selCli = document.getElementById(elemClienteId);
+      selCli.innerHTML = '<option value="TODOS">Todos os Clientes</option>';
+      bancoClientes.forEach(function(c) { selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
     }
 
     function renderizarRegrasSetoresColab() {
-      var setorSel = document.getElementById('selectFiltroSetorRegrasColab').value || "2. Inspeção 3em1";
+      var setorSel = document.getElementById('selectFiltroSetorRegrasColab').value || "TODOS";
+      var cliSel = document.getElementById('selectFiltroClienteRegrasColab').value || "TODOS";
       var cont = document.getElementById('containerCardsRegrasColabConsulta');
-      var regrasSetor = bancoRegrasSetores[setorSel] || [];
-      cont.innerHTML = regrasSetor.map(function(r) { return '<div class="regra-item-box"><strong>[' + r.cliente + ']:</strong> ' + r.regra + '</div>'; }).join('') || "<p style='color:var(--text-muted);'>Nenhuma regra cadastrada.</p>";
+      var html = "";
+
+      listaSetoresFabricaGeral.forEach(function(setor) {
+        if(setorSel === "TODOS" || setorSel === setor) {
+          var regrasSetor = bancoRegrasSetores[setor] || [];
+          var regrasFiltradas = regrasSetor.filter(function(r) { return cliSel === "TODOS" || r.cliente === cliSel; });
+          
+          if(regrasFiltradas.length > 0) {
+            html += '<div style="margin-bottom:15px;"><strong style="color:var(--header-bg); font-size:1rem;">📍 ' + setor + '</strong>';
+            regrasFiltradas.forEach(function(r) {
+              html += '<div class="regra-item-box"><span><strong>[' + r.cliente + ']:</strong> ' + r.regra + '</span></div>';
+            });
+            html += '</div>';
+          }
+        }
+      });
+
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhuma regra encontrada com os filtros selecionados.</p>";
     }
 
     function abrirModalOpBancadaLote(id) {
@@ -993,7 +1023,7 @@
       else if(pag === 'colab') { document.getElementById('btnNavColab').classList.add('active'); document.getElementById('pagDirColab').style.display = 'block'; renderizarCardsColabAmplo(); }
       else if(pag === 'insumos') { document.getElementById('btnNavInsumos').classList.add('active'); document.getElementById('pagDirInsumos').style.display = 'block'; renderizarSelecaoClientesInsumos(); }
       else if(pag === 'encarte') { document.getElementById('btnNavEncarte').classList.add('active'); document.getElementById('pagDirEncarte').style.display = 'block'; renderizarSelecaoClientesEncarte(); }
-      else if(pag === 'regras') { document.getElementById('btnNavRegras').classList.add('active'); document.getElementById('pagDirRegras').style.display = 'block'; renderizarCardsSetoresRegrasDir(); }
+      else if(pag === 'regras') { document.getElementById('btnNavRegras').classList.add('active'); document.getElementById('pagDirRegras').style.display = 'block'; preencherSelectsRegrasFiltro('selectFiltroSetorRegrasDir', 'selectFiltroClienteRegrasDir'); renderizarCardsSetoresRegrasDir(); }
       else if(pag === 'configs') { document.getElementById('btnNavConfigs').classList.add('active'); document.getElementById('pagDirConfigs').style.display = 'block'; renderizarCategoriasJoiasCentral(); }
     }
 
@@ -1030,19 +1060,29 @@
     }
 
     function renderizarCardsSetoresRegrasDir() {
+      var setorSel = document.getElementById('selectFiltroSetorRegrasDir').value || "TODOS";
+      var cliSel = document.getElementById('selectFiltroClienteRegrasDir').value || "TODOS";
       var cont = document.getElementById('containerCardsSetoresRegrasDir');
       var html = "";
+
       listaSetoresFabricaGeral.forEach(function(setor) {
-        var regrasSetor = bancoRegrasSetores[setor] || [];
-        html += '<div class="card-ampli-item">' +
-            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-              '<strong>' + setor + '</strong>' +
-              '<button class="btn-main btn-green" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="abrirModalAddRegraSetor(\'' + setor + '\')">+ ADD</button>' +
-            '</div>' +
-            '<div style="margin-top:10px;">' +
-              regrasSetor.map(function(r, idx) { return '<div class="regra-item-box"><strong>[' + r.cliente + ']:</strong> ' + r.regra + ' <b style="color:red; cursor:pointer;" onclick="excluirRegraSetorDirect(\'' + setor + '\',' + idx + ')">✕</b></div>'; }).join('') +
-            '</div>' +
-          '</div>';
+        if(setorSel === "TODOS" || setorSel === setor) {
+          var regrasSetor = bancoRegrasSetores[setor] || [];
+          var regrasFiltradas = regrasSetor.filter(function(r) { return cliSel === "TODOS" || r.cliente === cliSel; });
+
+          html += '<div class="card-ampli-item">' +
+              '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<strong>' + setor + '</strong>' +
+                '<button class="btn-main btn-green" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="abrirModalAddRegraSetor(\'' + setor + '\')">+ ADD</button>' +
+              '</div>' +
+              '<div style="margin-top:10px;">' +
+                (regrasFiltradas.length > 0 ? regrasFiltradas.map(function(r) { 
+                  var realIdx = regrasSetor.indexOf(r);
+                  return '<div class="regra-item-box"><span><strong>[' + r.cliente + ']:</strong> ' + r.regra + '</span><b style="color:red; cursor:pointer;" onclick="excluirRegraSetorDirect(\'' + setor + '\',' + realIdx + ')">✕</b></div>'; 
+                }).join('') : '<p style="font-size:0.78rem; color:var(--text-muted);">Nenhuma regra cadastrada.</p>') +
+              '</div>' +
+            '</div>';
+        }
       });
       cont.innerHTML = html;
     }
@@ -1449,14 +1489,25 @@
       document.getElementById('tituloEncarteClienteSel').innerText = cli + " — Modelos de Encarte";
       var cont = document.getElementById('containerCardsCategoriasEncarteClienteSel');
       var lista = bancoModelosEncarte[cli] || [];
-      cont.innerHTML = lista.map(function(m) {
+      cont.innerHTML = lista.map(function(m, idx) {
         return '<div class="card-ampli-item">' +
-            '<span class="badge-status badge-andamento">' + m.catJoia.toUpperCase() + '</span>' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+              '<span class="badge-status badge-andamento">' + m.catJoia.toUpperCase() + '</span>' +
+              '<button class="btn-main" style="width:auto; padding:4px 10px; background:#EF4444; font-size:0.7rem;" onclick="excluirModeloEncarteDirect(\'' + cli + '\', ' + idx + ')">EXCLUIR MODELO</button>' +
+            '</div>' +
             '<div style="margin:8px 0; background:#F8FAFC; padding:10px; border-radius:8px;">' +
               m.passos.map(function(p) { return '<div>• ' + p + '</div>'; }).join('') +
             '</div>' +
           '</div>';
-      }).join('');
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum modelo cadastrado.</p>";
+    }
+
+    function excluirModeloEncarteDirect(cli, idx) {
+      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir este modelo de encarte?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir modelo? (A marca continuará no sistema)")) {
+        bancoModelosEncarte[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheEncarteClienteDirect(cli);
+      }
     }
 
     function voltarSelecaoClienteEncarte() {
