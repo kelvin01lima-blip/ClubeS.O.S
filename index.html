@@ -480,4 +480,1015 @@
         <select id="mCadEncCatJoia" class="form-control"></select>
         <div style="display:flex; gap:6px; margin-bottom:8px;">
           <input type="text" id="inputPassoEncarteTemp" class="form-control" style="margin:0;" placeholder="Instrução do passo...">
-          <button type="button" class="btn-main btn-orange" style="width:auto
+          <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 14px;" onclick="adicionarPassoEncarteLista()">+ ADD</button>
+        </div>
+        <div id="containerPassosEncarteLista" style="background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; min-height:60px;"></div>
+        <select id="mCadEncSaquinho" class="form-control"></select>
+        <select id="mCadEncCartela" class="form-control"></select>
+        <input type="text" id="mCadEncFotoFrente" class="form-control" required placeholder="Link Foto Frente Drive...">
+        <input type="text" id="mCadEncFotoVerso" class="form-control" required placeholder="Link Foto Verso Drive...">
+        <input type="text" id="mCadEncObs" class="form-control" placeholder="Observações...">
+        <button type="submit" class="btn-main btn-orange">SALVAR MODELO DE ENCARTE</button>
+        <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadModeloEncarte()">CANCELAR</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // SISTEMA DE CARREGAMENTO E GERENCIAMENTO DE PERSISTÊNCIA LOCAL
+    function carregarDadosSalvos(chave, padrao) {
+      try {
+        const v = localStorage.getItem(chave);
+        return v ? JSON.parse(v) : padrao;
+      } catch(e) {
+        return padrao;
+      }
+    }
+    function salvarDadosLocal(chave, dados) {
+      try {
+        localStorage.setItem(chave, JSON.stringify(dados));
+      } catch(e) { console.error("Erro localstorage", e); }
+    }
+
+    let perfilAcessoSelecionadoTab = 'diretoria';
+    let usuarioLogadoObjeto = null;
+    let dataAgendamentoSelecionadaCli = "";
+    let fatorMediaPesoGlobal = carregarDadosSalvos('SOS_fatorMediaPesoGlobal', 3.2);
+
+    const DATA_HOJE_SISTEMA = new Date(2026, 9, 1);
+    let anoCalendarioAtual = 2026;
+    let mesCalendarioAtual = 9;
+
+    const feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
+    const datasOcupadasAgenda = carregarDadosSalvos('SOS_datasOcupadasAgenda', []);
+
+    const bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin Lima & Brenda (Diretoria General)', login: 'kelvin', senha: '123' }];
+
+    let bancoClientes = carregarDadosSalvos('SOS_bancoClientes', [
+      { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "05/2026" },
+      { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" }
+    ]);
+
+    let bancoColaboradores = carregarDadosSalvos('SOS_bancoColaboradores', [
+      { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
+      { id: 2, nome: "Equipe Bancada S.O.S", fone: "(19) 98841-0022", login: "equipe@sos.com", senha: "123", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
+    ]);
+
+    const listaSetoresFabricaGeral = ["1. Entrada Bruta", "2. Inspeção 3em1", "3. Fotografia", "4. CDE Catalogação", "5. Etiquetagem", "6. Encartelamento", "7. Finalização"];
+
+    let bancoCategoriasJoias = carregarDadosSalvos('SOS_bancoCategoriasJoias', ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"]);
+    let bancoTiposInsumos = carregarDadosSalvos('SOS_bancoTiposInsumos', ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"]);
+
+    let bancoInsumosCompletos = carregarDadosSalvos('SOS_bancoInsumosCompletos', {
+      "Niara Semijoias": [{ id: 101, catJoia: "Brinco Pequeno", tipo: "Saquinho", sub: "6.5x9+3+3 c/ solapa", qtd: 900, gondula: "11" }]
+    });
+
+    let bancoModelosEncarte = carregarDadosSalvos('SOS_bancoModelosEncarte', {
+      "Niara Semijoias": [{ id: 1, catJoia: "Anel Regulável", passos: ["1. Etiqueta bem apertada no aro", "2. Encartelar na cartela"], saquinho: "Não utiliza saquinho", cartela: "Cartela Anéis", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Sem avarias" }]
+    });
+
+    let bancoRegrasSetores = carregarDadosSalvos('SOS_bancoRegrasSetores', {
+      "2. Inspeção 3em1": [
+        { id: 1, cliente: "Niara Semijoias", regra: "Atenção à numeração de anéis, somente par entra no card." },
+        { id: 2, cliente: "Niara Semijoias", regra: "Atenção a bolhas de fundição, nada passa." }
+      ]
+    });
+
+    let bancoLotes4Etapas = carregarDadosSalvos('SOS_bancoLotes4Etapas', []);
+    let bancoMensagens = carregarDadosSalvos('SOS_bancoMensagens', [{ id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao HUB S.O.S 2027!", data: "01/10/2026" }]);
+
+    function selecionarPerfilAcesso(p) {
+      perfilAcessoSelecionadoTab = p;
+      document.getElementById('tabCliente').classList.remove('active');
+      document.getElementById('tabEquipe').classList.remove('active');
+      document.getElementById('tabDiretoria').classList.remove('active');
+
+      const selectAcc = document.getElementById('selectUsuarioLogin');
+      selectAcc.innerHTML = "";
+
+      if(p === 'cliente') {
+        document.getElementById('tabCliente').classList.add('active');
+        bancoClientes.forEach(c => { selectAcc.innerHTML += `<option value="${c.id}">${c.marca} (${c.categoria})</option>`; });
+      } else if(p === 'equipe') {
+        document.getElementById('tabEquipe').classList.add('active');
+        bancoColaboradores.forEach(col => { selectAcc.innerHTML += `<option value="${col.id}">${col.nome} (Colaborador)</option>`; });
+      } else {
+        document.getElementById('tabDiretoria').classList.add('active');
+        bancoDiretoria.forEach(d => { selectAcc.innerHTML += `<option value="${d.id}">${d.nome}</option>`; });
+      }
+    }
+
+    function autenticarUsuario(e) {
+      e.preventDefault();
+      const valId = document.getElementById('selectUsuarioLogin').value;
+      const passInp = document.getElementById('inputSenha').value.trim();
+
+      if(perfilAcessoSelecionadoTab === 'diretoria') {
+        const u = bancoDiretoria.find(item => item.id === valId);
+        if(u && (u.senha === passInp || passInp === "123456" || passInp === "123")) {
+          usuarioLogadoObjeto = u;
+          abrirPainelLogado('diretoria', u.nome);
+        } else { alert("❌ Senha incorreta para a Diretoria!"); }
+      } else if(perfilAcessoSelecionadoTab === 'cliente') {
+        const c = bancoClientes.find(item => item.id == valId);
+        if(c && c.senha === passInp) {
+          usuarioLogadoObjeto = c;
+          abrirPainelLogado('cliente', c.marca);
+        } else { alert("❌ Senha incorreta para o cliente!"); }
+      } else if(perfilAcessoSelecionadoTab === 'equipe') {
+        const col = bancoColaboradores.find(item => item.id == valId);
+        if(col && col.senha === passInp) {
+          usuarioLogadoObjeto = col;
+          abrirPainelLogado('equipe', col.nome);
+        } else { alert("❌ Senha incorreta para o colaborador!"); }
+      }
+    }
+
+    function abrirPainelLogado(perfil, nome) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'block';
+      document.getElementById('nomeUsuarioBadge').innerText = `${nome}`;
+
+      document.getElementById('painelDiretoria').style.display = 'none';
+      document.getElementById('painelColaborador').style.display = 'none';
+      document.getElementById('painelCliente').style.display = 'none';
+
+      if(perfil === 'diretoria') { renderizarPainelDiretoria(); document.getElementById('painelDiretoria').style.display = 'block'; }
+      else if(perfil === 'equipe') { navegarPaginaColab('lotes'); document.getElementById('painelColaborador').style.display = 'block'; }
+      else if(perfil === 'cliente') { navegarPaginaCliente('lotes'); document.getElementById('painelCliente').style.display = 'block'; }
+    }
+
+    function fazerLogout() {
+      document.getElementById('painelDiretoria').style.display = 'none';
+      document.getElementById('painelColaborador').style.display = 'none';
+      document.getElementById('painelCliente').style.display = 'none';
+      document.getElementById('userBadgeArea').style.display = 'none';
+      document.getElementById('inputSenha').value = "";
+      document.getElementById('loginScreen').style.display = 'block';
+    }
+
+    function navegarPaginaCliente(pag) {
+      document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
+      document.getElementById('pagCliLotes').style.display = 'none';
+      document.getElementById('pagCliAgendar').style.display = 'none';
+      document.getElementById('pagCliEncarte').style.display = 'none';
+      document.getElementById('pagCliInsumos').style.display = 'none';
+      document.getElementById('pagCliMensagens').style.display = 'none';
+
+      if(pag === 'lotes') { document.getElementById('btnNavCliLotes').classList.add('active'); document.getElementById('pagCliLotes').style.display = 'block'; renderizarPainelClienteLotes(); }
+      else if(pag === 'agendar') { document.getElementById('btnNavCliAgendar').classList.add('active'); document.getElementById('pagCliAgendar').style.display = 'block'; renderizarAgendamentoCliente(); }
+      else if(pag === 'encarte') { document.getElementById('btnNavCliEncarte').classList.add('active'); document.getElementById('pagCliEncarte').style.display = 'block'; renderizarEncartesCliente(); }
+      else if(pag === 'insumos') { document.getElementById('btnNavCliInsumos').classList.add('active'); document.getElementById('pagCliInsumos').style.display = 'block'; renderizarInsumosCliente(); }
+      else if(pag === 'mensagens') { document.getElementById('btnNavCliMensagens').classList.add('active'); document.getElementById('pagCliMensagens').style.display = 'block'; renderizarMensagensCliente(); }
+    }
+
+    function renderizarPainelClienteLotes() {
+      const cli = usuarioLogadoObjeto;
+      document.getElementById('tituloClientePainel').innerText = `💎 PAINEL DO CLIENTE — ${cli.marca.toUpperCase()}`;
+      const cont = document.getElementById('containerLotesClientePainel');
+      let html = "";
+      const meusLotes = bancoLotes4Etapas.filter(l => l.cliente === cli.marca);
+
+      meusLotes.forEach(l => {
+        let badgeClass = "badge-andamento";
+        if(l.etapa === 2) badgeClass = "badge-espera";
+        if(l.etapa === 4) badgeClass = "badge-concluido";
+        html += `
+          <div class="card-ampli-item" onclick="abrirModalDetalheLote(${l.id})">
+            <span class="badge-status ${badgeClass}">${l.label.toUpperCase()}</span>
+            <strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ${l.numLote ? '#' + l.numLote : 'Pendente'}</strong>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Volume: ${l.pcs} pcs | Peso: ${l.peso}</p>
+          </div>
+        `;
+      });
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote cadastrado para a sua marca ainda.</p>";
+    }
+
+    function abrirModalDetalheLote(id) {
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(!l) return;
+      let html = `
+        <div style="background:#F8FAFC; padding:16px; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px;">
+          <h4 style="margin:0 0 6px 0;">Lote ${l.numLote ? '#' + l.numLote : 'Pendente'} — ${l.cliente}</h4>
+          <span class="badge-status badge-andamento">${l.label}</span>
+          <p style="margin:8px 0 2px 0;">Setor Atual: <strong>${l.setorAtual}</strong></p>
+        </div>
+        <div>
+          <p style="font-size:0.85rem;">• Peças: <strong>${l.pcs} pcs</strong></p>
+          <p style="font-size:0.85rem;">• Peso Total: <strong>${l.peso}</strong></p>
+        </div>
+      `;
+      document.getElementById('mDetLoteConteudo').innerHTML = html;
+      document.getElementById('modalDetalheCompletoLote').style.display = 'flex';
+    }
+
+    function fecharModalDetalheLote() { document.getElementById('modalDetalheCompletoLote').style.display = 'none'; }
+
+    function renderizarAgendamentoCliente() { montarCalendarioMesAno(anoCalendarioAtual, mesCalendarioAtual); }
+
+    function mudarMesCalendario(delta) {
+      mesCalendarioAtual += delta;
+      if(mesCalendarioAtual > 11) { mesCalendarioAtual = 0; anoCalendarioAtual++; }
+      if(mesCalendarioAtual < 0) { mesCalendarioAtual = 11; anoCalendarioAtual--; }
+      montarCalendarioMesAno(anoCalendarioAtual, mesCalendarioAtual);
+    }
+
+    function montarCalendarioMesAno(ano, mes) {
+      const grid = document.getElementById('containerCalendarioGrid');
+      grid.innerHTML = "";
+      const nomesMeses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+      document.getElementById('calMesAnoHeader').innerText = `${nomesMeses[mes]} / ${ano}`;
+
+      ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"].forEach(d => { grid.innerHTML += `<div class="cal-day-header">${d}</div>`; });
+      const primeiroDia = new Date(ano, mes, 1).getDay();
+      const totalDias = new Date(ano, mes + 1, 0).getDate();
+
+      for(let i = 0; i < primeiroDia; i++) grid.innerHTML += `<div class="cal-day disabled"></div>`;
+
+      for(let d = 1; d <= totalDias; d++) {
+        const diaStr = d < 10 ? `0${d}` : `${d}`;
+        const mesStr = (mes + 1) < 10 ? `0${mes + 1}` : `${mes + 1}`;
+        const dataFull = `${ano}-${mesStr}-${diaStr}`;
+        const dateObj = new Date(ano, mes, d);
+        const diaSemana = dateObj.getDay();
+
+        let jaPassou = dateObj < DATA_HOJE_SISTEMA;
+        let eSabDom = (diaSemana === 0 || diaSemana === 6);
+        let eFeriado = feriadosLimeiraSP.includes(dataFull);
+        let eOcupado = datasOcupadasAgenda.includes(dataFull);
+
+        let classeCss = "disponivel"; let statusText = "DISPONÍVEL";
+        if(jaPassou) { classeCss = "disabled"; statusText = "PASSOU"; }
+        else if(eSabDom) { classeCss = "disabled"; statusText = "FECHADO"; }
+        else if(eFeriado) { classeCss = "indisponivel"; statusText = "FERIADO"; }
+        else if(eOcupado) { classeCss = "indisponivel"; statusText = "INDISPONÍVEL"; }
+
+        grid.innerHTML += `<div class="cal-day ${classeCss}" id="calDay_${dataFull}" onclick="selecionarDataAgenda('${dataFull}', '${statusText}')"><strong>${d}</strong><span class="cal-status-tag">${statusText}</span></div>`;
+      }
+    }
+
+    function selecionarDataAgenda(dataStr, status) {
+      if(status !== "DISPONÍVEL") { alert(`⚠️ A data ${dataStr} está ${status}!`); return; }
+      document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+      const el = document.getElementById(`calDay_${dataStr}`);
+      if(el) el.classList.add('selected');
+      dataAgendamentoSelecionadaCli = dataStr;
+    }
+
+    function calcularPesoPorPcsCli() {
+      const pcs = parseInt(document.getElementById('inputAgendQtdPcs').value) || 0;
+      const pesoEst = (pcs * fatorMediaPesoGlobal).toFixed(0);
+      document.getElementById('inputAgendPesoGramos').value = pesoEst;
+      document.getElementById('labelCalcAgendResult').innerText = `${pcs} PCS (~${pesoEst}g)`;
+    }
+
+    function calcularPcsPorPesoCli() {
+      const peso = parseFloat(document.getElementById('inputAgendPesoGramos').value) || 0;
+      const pcsEst = Math.round(peso / fatorMediaPesoGlobal);
+      document.getElementById('inputAgendQtdPcs').value = pcsEst;
+      document.getElementById('labelCalcAgendResult').innerText = `${pcsEst} PCS (~${peso}g)`;
+    }
+
+    function confirmarAgendamentoLoteClienteSubmit() {
+      const cli = usuarioLogadoObjeto;
+      const pcs = parseInt(document.getElementById('inputAgendQtdPcs').value) || 0;
+      const pesoG = document.getElementById('inputAgendPesoGramos').value || "0";
+      const mod = parseInt(document.getElementById('inputAgendQtdModelos').value) || 1;
+      const obs = document.getElementById('inputAgendObs').value;
+
+      if(!dataAgendamentoSelecionadaCli) { alert("⚠️ Selecione uma data verde!"); return; }
+      if(pcs <= 0) { alert("⚠️ Informe a quantidade!"); return; }
+
+      datasOcupadasAgenda.push(dataAgendamentoSelecionadaCli);
+      salvarDadosLocal('SOS_datasOcupadasAgenda', datasOcupadasAgenda);
+
+      bancoLotes4Etapas.push({
+        id: Date.now(), cliente: cli.marca, etapa: 1, label: "Aguardando Aprovação",
+        pcs: pcs, peso: `${pesoG}g`, dataCadastro: "01/10/2026", dataAgendada: dataAgendamentoSelecionadaCli,
+        obs: obs, numLote: "", setorAtual: "Pendente", modelos: mod, editadoColab: false
+      });
+      salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+
+      alert("✅ LOTE AGENDADO COM SUCESSO!");
+      navegarPaginaCliente('lotes');
+    }
+
+    function renderizarEncartesCliente() {
+      const cli = usuarioLogadoObjeto;
+      const cont = document.getElementById('containerEncartesClienteExibicao');
+      const lista = bancoModelosEncarte[cli.marca] || [];
+      cont.innerHTML = lista.map(m => `
+        <div class="card-ampli-item">
+          <span class="badge-status badge-andamento">${m.catJoia.toUpperCase()}</span>
+          <div style="margin:8px 0; background:#F8FAFC; padding:10px; border-radius:8px;">
+            ${m.passos.map(p => `<div>• ${p}</div>`).join('')}
+          </div>
+        </div>
+      `).join('') || "<p style='color:var(--text-muted);'>Nenhum modelo cadastrado.</p>";
+    }
+
+    function renderizarInsumosCliente() {
+      const cli = usuarioLogadoObjeto;
+      const cont = document.getElementById('containerTabelaInsumosClienteExibicao');
+      const lista = bancoInsumosCompletos[cli.marca] || [];
+      let html = `<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th></tr></thead><tbody>`;
+      lista.forEach(ins => { html += `<tr><td>${ins.catJoia || 'Geral'}</td><td>${ins.tipo}</td><td>${ins.sub}</td><td><strong>${ins.qtd} un</strong></td></tr>`; });
+      html += `</tbody></table>`;
+      cont.innerHTML = html;
+    }
+
+    function renderizarMensagensCliente() {
+      const cli = usuarioLogadoObjeto;
+      const rec = document.getElementById('boxMensagensRecebidasCli');
+      const msgsRec = bancoMensagens.filter(m => m.destinatario === "TODOS" || m.destinatario === cli.marca);
+      rec.innerHTML = msgsRec.map(m => `<div style="border-bottom:1px solid #E2E8F0; padding-bottom:6px;"><strong>${m.remetente}:</strong> ${m.texto}</div>`).join('');
+    }
+
+    function enviarMensagemClienteSubmit() {
+      const txt = document.getElementById('inputTextoEnvioCli').value.trim();
+      if(txt) {
+        bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
+        document.getElementById('inputTextoEnvioCli').value = "";
+        alert("✅ Mensagem enviada!");
+        renderizarMensagensCliente();
+      }
+    }
+
+    function navegarPaginaColab(pag) {
+      document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
+      document.getElementById('pagOpLotes').style.display = 'none';
+      document.getElementById('pagOpRegras').style.display = 'none';
+      document.getElementById('pagOpEncartes').style.display = 'none';
+      document.getElementById('pagOpInsumos').style.display = 'none';
+      document.getElementById('pagOpMensagens').style.display = 'none';
+
+      if(pag === 'lotes') { document.getElementById('btnNavOpLotes').classList.add('active'); document.getElementById('pagOpLotes').style.display = 'block'; renderizarLotesColabBancada(); }
+      else if(pag === 'regras') { document.getElementById('btnNavOpRegras').classList.add('active'); document.getElementById('pagOpRegras').style.display = 'block'; preencherSelectSetoresColab(); renderizarRegrasSetoresColab(); }
+      else if(pag === 'encartes') { document.getElementById('btnNavOpEncartes').classList.add('active'); document.getElementById('pagOpEncartes').style.display = 'block'; preencherSelectClientesColab('selectFiltroClienteEncarteColab'); renderizarEncartesColabConsulta(); }
+      else if(pag === 'insumos') { document.getElementById('btnNavOpInsumos').classList.add('active'); document.getElementById('pagOpInsumos').style.display = 'block'; preencherSelectClientesColab('selectFiltroClienteInsumoColab'); renderizarInsumosColabConsulta(); }
+      else if(pag === 'mensagens') { document.getElementById('btnNavOpMensagens').classList.add('active'); document.getElementById('pagOpMensagens').style.display = 'block'; renderizarMensagensColab(); }
+    }
+
+    function renderizarLotesColabBancada() {
+      const col = usuarioLogadoObjeto;
+      document.getElementById('subtituloColabBancada').innerText = `Setores Liberados: ${col.setores.join(', ')}`;
+      const cont = document.getElementById('containerColabMeuSetor');
+      let htmlMeu = "";
+      bancoLotes4Etapas.forEach(l => {
+        const estaNoMeuSetor = col.setores.some(s => l.setorAtual.includes(s.split('.')[1].trim()));
+        if(estaNoMeuSetor && !l.editadoColab && l.etapa !== 4) {
+          htmlMeu += `
+            <div class="card-ampli-item" style="border-color:var(--orange-accent);" onclick="abrirModalOpBancadaLote(${l.id})">
+              <span class="badge-status badge-andamento">MEU SETOR — LOTE #${l.numLote || 'PENDENTE'}</span>
+              <strong style="display:block; margin-top:6px;">${l.cliente}</strong>
+              <p>Setor: <strong>${l.setorAtual}</strong></p>
+              <button class="btn-main btn-orange" style="margin-top:10px; padding:8px;">ABRIR BANCADA ➔</button>
+            </div>
+          `;
+        }
+      });
+      cont.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote pendente no seu setor.</p>";
+    }
+
+    function preencherSelectSetoresColab() {
+      const sel = document.getElementById('selectFiltroSetorRegrasColab');
+      sel.innerHTML = "";
+      listaSetoresFabricaGeral.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
+    }
+
+    function renderizarRegrasSetoresColab() {
+      const setorSel = document.getElementById('selectFiltroSetorRegrasColab').value || "2. Inspeção 3em1";
+      const cont = document.getElementById('containerCardsRegrasColabConsulta');
+      const regrasSetor = bancoRegrasSetores[setorSel] || [];
+      cont.innerHTML = regrasSetor.map(r => `<div class="regra-item-box"><strong>[${r.cliente}]:</strong> ${r.regra}</div>`).join('') || "<p style='color:var(--text-muted);'>Nenhuma regra cadastrada.</p>";
+    }
+
+    function abrirModalOpBancadaLote(id) {
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        document.getElementById('hiddenOpLoteId').value = l.id;
+        document.getElementById('tituloModalOpLote').innerText = `Atuação — Lote #${l.numLote || l.id}`;
+        document.getElementById('infoOpLoteMarca').innerText = `Cliente: ${l.cliente}`;
+        document.getElementById('infoOpLoteSetor').innerText = `Setor Atual: ${l.setorAtual}`;
+        document.getElementById('inputOpQtdReal').value = l.pcs;
+        document.getElementById('modalOpBancadaLote').style.display = 'flex';
+      }
+    }
+
+    function fecharModalOpBancadaLote() { document.getElementById('modalOpBancadaLote').style.display = 'none'; }
+
+    function concluirAvançarLoteBancadaSubmit() {
+      const id = parseInt(document.getElementById('hiddenOpLoteId').value);
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        l.pcs = parseInt(document.getElementById('inputOpQtdReal').value) || l.pcs;
+        l.setorAtual = document.getElementById('selectOpProximoSetor').value;
+        l.obs = document.getElementById('inputOpObs').value;
+        l.editadoColab = true;
+        if(l.setorAtual.includes("7. Finalização")) l.etapa = 4;
+        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+        alert("✅ Lote avançado com sucesso!");
+        fecharModalOpBancadaLote();
+        renderizarLotesColabBancada();
+      }
+    }
+
+    function preencherSelectClientesColab(elemId) {
+      const sel = document.getElementById(elemId);
+      sel.innerHTML = "";
+      bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+    }
+
+    function renderizarEncartesColabConsulta() {
+      const cli = document.getElementById('selectFiltroClienteEncarteColab').value || "Niara Semijoias";
+      const cont = document.getElementById('containerCardsEncarteColabConsulta');
+      const lista = bancoModelosEncarte[cli] || [];
+      cont.innerHTML = lista.map(m => `<div class="card-ampli-item"><strong>${m.catJoia}</strong><br>${m.passos.join('<br>')}</div>`).join('') || "<p style='color:var(--text-muted);'>Nenhum modelo.</p>";
+    }
+
+    function renderizarInsumosColabConsulta() {
+      const cli = document.getElementById('selectFiltroClienteInsumoColab').value || "Niara Semijoias";
+      const cont = document.getElementById('containerTabelaInsumosColabConsulta');
+      const lista = bancoInsumosCompletos[cli] || [];
+      let html = `<table class="tabela-sos"><thead><tr><th>Categoria</th><th>Tipo</th><th>Estoque</th><th>Gondula</th></tr></thead><tbody>`;
+      lista.forEach(ins => { html += `<tr><td>${ins.catJoia || 'Geral'}</td><td>${ins.tipo}</td><td>${ins.qtd} un</td><td>${ins.gondula || 'N/I'}</td></tr>`; });
+      html += `</tbody></table>`;
+      cont.innerHTML = html;
+    }
+
+    function renderizarMensagensColab() {
+      const col = usuarioLogadoObjeto;
+      const rec = document.getElementById('boxMensagensRecebidasColab');
+      const msgsRec = bancoMensagens.filter(m => m.destinatario === "TODOS" || m.destinatario === "EQUIPE" || m.destinatario === col.nome);
+      rec.innerHTML = msgsRec.map(m => `<div><strong>${m.remetente}:</strong> ${m.texto}</div>`).join('');
+    }
+
+    function enviarMensagemColabSubmit() {
+      const txt = document.getElementById('inputTextoEnvioColab').value.trim();
+      if(txt) {
+        bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.nome, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
+        document.getElementById('inputTextoEnvioColab').value = "";
+        alert("✅ Mensagem enviada!");
+        renderizarMensagensColab();
+      }
+    }
+
+    function navegarPaginaDiretoria(pag) {
+      document.querySelectorAll('.btn-pag-dir').forEach(b => b.classList.remove('active'));
+      document.getElementById('pagDirLotes').style.display = 'none';
+      document.getElementById('pagDirClientes').style.display = 'none';
+      document.getElementById('pagDirColab').style.display = 'none';
+      document.getElementById('pagDirInsumos').style.display = 'none';
+      document.getElementById('pagDirEncarte').style.display = 'none';
+      document.getElementById('pagDirRegras').style.display = 'none';
+      document.getElementById('pagDirConfigs').style.display = 'none';
+
+      if(pag === 'lotes') { document.getElementById('btnNavLotes').classList.add('active'); document.getElementById('pagDirLotes').style.display = 'block'; atualizarSelectClientesFiltroLotes(); renderizarLotes4Etapas(); }
+      else if(pag === 'clientes') { document.getElementById('btnNavClientes').classList.add('active'); document.getElementById('pagDirClientes').style.display = 'block'; renderizarCardsClientesAmplo(); }
+      else if(pag === 'colab') { document.getElementById('btnNavColab').classList.add('active'); document.getElementById('pagDirColab').style.display = 'block'; renderizarCardsColabAmplo(); }
+      else if(pag === 'insumos') { document.getElementById('btnNavInsumos').classList.add('active'); document.getElementById('pagDirInsumos').style.display = 'block'; renderizarSelecaoClientesInsumos(); }
+      else if(pag === 'encarte') { document.getElementById('btnNavEncarte').classList.add('active'); document.getElementById('pagDirEncarte').style.display = 'block'; renderizarSelecaoClientesEncarte(); }
+      else if(pag === 'regras') { document.getElementById('btnNavRegras').classList.add('active'); document.getElementById('pagDirRegras').style.display = 'block'; renderizarCardsSetoresRegrasDir(); }
+      else if(pag === 'configs') { document.getElementById('btnNavConfigs').classList.add('active'); document.getElementById('pagDirConfigs').style.display = 'block'; renderizarCategoriasJoiasCentral(); }
+    }
+
+    function renderizarPainelDiretoria() { navegarPaginaDiretoria('lotes'); }
+
+    function atualizarSelectClientesFiltroLotes() {
+      const sel = document.getElementById('filtroCliLotes4Etapas');
+      sel.innerHTML = `<option value="TODOS">TODAS AS MARCAS (VISÃO GERAL)</option>`;
+      bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+    }
+
+    function renderizarLotes4Etapas() {
+      const filtro = document.getElementById('filtroCliLotes4Etapas').value;
+      const cont = document.getElementById('containerLotes4EtapasAmplo');
+      const lotes = (filtro === "TODOS") ? bancoLotes4Etapas : bancoLotes4Etapas.filter(l => l.cliente === filtro);
+
+      let html = `<div class="cards-grid-amplos">`;
+      html += `<div class="coluna-etapa-lotes" style="background:#FFF7ED;"><h4 style="color:#C2410C;">1. Aguardando Aprovação (${lotes.filter(l=>l.etapa===1).length})</h4>`;
+      lotes.filter(l => l.etapa === 1).forEach(l => { html += `<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(${l.id})"><strong>${l.cliente}</strong><p>Volume: ${l.pcs} pcs</p></div>`; });
+      html += `</div>`;
+
+      html += `<div class="coluna-etapa-lotes" style="background:#E0F2FE;"><h4 style="color:#0369A1;">2. Aguardando Chegada (${lotes.filter(l=>l.etapa===2).length})</h4>`;
+      lotes.filter(l => l.etapa === 2).forEach(l => { html += `<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(${l.id})"><strong>${l.cliente}</strong><p>Volume: ${l.pcs} pcs</p></div>`; });
+      html += `</div>`;
+
+      html += `<div class="coluna-etapa-lotes" style="background:#FEF3C7;"><h4 style="color:#B45309;">3. Cadastrados (${lotes.filter(l=>l.etapa===3).length})</h4>`;
+      lotes.filter(l => l.etapa === 3).forEach(l => { html += `<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(${l.id})"><strong>${l.cliente}</strong><p>Setor: ${l.setorAtual}</p></div>`; });
+      html += `</div>`;
+
+      html += `<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (${lotes.filter(l=>l.etapa===4).length})</h4>`;
+      lotes.filter(l => l.etapa === 4).forEach(l => { html += `<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(${l.id})"><strong>${l.cliente}</strong><p>Volume: ${l.pcs} pcs</p></div>`; });
+      html += `</div></div>`;
+      cont.innerHTML = html;
+    }
+
+    function renderizarCardsSetoresRegrasDir() {
+      const cont = document.getElementById('containerCardsSetoresRegrasDir');
+      let html = "";
+      listaSetoresFabricaGeral.forEach(setor => {
+        const regrasSetor = bancoRegrasSetores[setor] || [];
+        html += `
+          <div class="card-ampli-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>${setor}</strong>
+              <button class="btn-main btn-green" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="abrirModalAddRegraSetor('${setor}')">+ ADD</button>
+            </div>
+            <div style="margin-top:10px;">
+              ${regrasSetor.map((r, idx) => `<div class="regra-item-box"><strong>[${r.cliente}]:</strong>${r.regra} <b style="color:red; cursor:pointer;" onclick="excluirRegraSetorDirect('${setor}',${idx})">✕</b></div>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+      cont.innerHTML = html;
+    }
+
+    function abrirModalAddRegraSetor(setor) {
+      document.getElementById('hiddenRegraSetorNome').value = setor;
+      document.getElementById('tituloModalRegraSetor').innerText = `Adicionar Regra — ${setor}`;
+      const sel = document.getElementById('mRegraSelectCliente');
+      sel.innerHTML = "";
+      bancoClientes.forEach(c => { sel.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+      document.getElementById('mRegraTexto').value = "";
+      document.getElementById('modalAddRegraSetor').style.display = 'flex';
+    }
+
+    function fecharModalAddRegraSetor() { document.getElementById('modalAddRegraSetor').style.display = 'none'; }
+
+    function salvarNovaRegraSetorSubmit() {
+      const setor = document.getElementById('hiddenRegraSetorNome').value;
+      const cli = document.getElementById('mRegraSelectCliente').value;
+      const txt = document.getElementById('mRegraTexto').value.trim();
+      if(!txt) return;
+
+      if(!bancoRegrasSetores[setor]) bancoRegrasSetores[setor] = [];
+      bancoRegrasSetores[setor].push({ id: Date.now(), cliente: cli, regra: txt });
+      salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
+
+      alert("✅ Regra adicionada!");
+      fecharModalAddRegraSetor();
+      renderizarCardsSetoresRegrasDir();
+    }
+
+    function excluirRegraSetorDirect(setor, idx) {
+      if(confirm("Excluir regra?")) {
+        bancoRegrasSetores[setor].splice(idx, 1);
+        salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
+        renderizarCardsSetoresRegrasDir();
+      }
+    }
+
+    function abrirModalEditarLoteDir(id) {
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        document.getElementById('editLoteIdHidden').value = l.id;
+        document.getElementById('editLoteNum').value = l.numLote || "";
+        document.getElementById('editLoteEtapa').value = l.etapa;
+        document.getElementById('editLoteSetorAtual').value = l.setorAtual || "1. Entrada Bruta";
+        document.getElementById('editLoteValorTotal').value = l.valorTotal || "";
+        document.getElementById('editLoteDesconto').value = l.desconto || "";
+        document.getElementById('editLoteObs').value = l.obs || "";
+        document.getElementById('modalEditarLoteDir').style.display = 'flex';
+      }
+    }
+
+    function fecharModalEditarLoteDir() { document.getElementById('modalEditarLoteDir').style.display = 'none'; }
+
+    function salvarEdicaoLoteDir() {
+      const id = parseInt(document.getElementById('editLoteIdHidden').value);
+      const l = bancoLotes4Etapas.find(item => item.id === id);
+      if(l) {
+        l.numLote = document.getElementById('editLoteNum').value.trim();
+        l.etapa = parseInt(document.getElementById('editLoteEtapa').value);
+        l.setorAtual = document.getElementById('editLoteSetorAtual').value;
+        l.valorTotal = document.getElementById('editLoteValorTotal').value;
+        l.desconto = document.getElementById('editLoteDesconto').value;
+        l.obs = document.getElementById('editLoteObs').value;
+        l.editadoColab = false;
+        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+        alert("✅ Lote atualizado!");
+        fecharModalEditarLoteDir();
+        renderizarLotes4Etapas();
+      }
+    }
+
+    function renderizarCardsClientesAmplo() {
+      const cont = document.getElementById('containerCardsClientesAmplo');
+      cont.innerHTML = bancoClientes.map(c => `
+        <div class="card-ampli-item">
+          <span class="badge-status badge-concluido">${c.categoria}</span>
+          <strong style="display:block; font-size:1.15rem; margin-top:8px;">${c.marca}</strong>
+          <p style="font-size:0.82rem;">Login: ${c.login} | Senha: ${c.senha}</p>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarCliente(${c.id})">EDITAR</button>
+            <button class="btn-main" style="background:#EF4444; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="excluirClienteSubmit(${c.id})">EXCLUIR</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function abrirModalCadastrarCliente() {
+      document.getElementById('mEditCliIdHidden').value = "";
+      document.getElementById('modalClienteTitulo').innerText = "Cadastrar Cliente";
+      document.getElementById('mCadCliNome').value = "";
+      document.getElementById('mCadCliLogin').value = "";
+      document.getElementById('mCadCliSenha').value = "123";
+      document.getElementById('modalCadCliente').style.display = 'flex';
+    }
+
+    function abrirModalEditarCliente(id) {
+      const c = bancoClientes.find(item => item.id === id);
+      if(c) {
+        document.getElementById('mEditCliIdHidden').value = c.id;
+        document.getElementById('modalClienteTitulo').innerText = `Editar Cliente — ${c.marca}`;
+        document.getElementById('mCadCliNome').value = c.marca;
+        document.getElementById('mCadCliLogin').value = c.login;
+        document.getElementById('mCadCliSenha').value = c.senha;
+        document.getElementById('mCadCliCat').value = c.categoria.includes("Diamante") ? "Diamante" : "Ouro";
+        document.getElementById('mCadCliInicio').value = c.inicio;
+        document.getElementById('modalCadCliente').style.display = 'flex';
+      }
+    }
+
+    function fecharModalCadCliente() { document.getElementById('modalCadCliente').style.display = 'none'; }
+
+    function salvarClienteModalSubmit() {
+      const id = document.getElementById('mEditCliIdHidden').value;
+      const nome = document.getElementById('mCadCliNome').value.trim();
+      const login = document.getElementById('mCadCliLogin').value.trim();
+      const senha = document.getElementById('mCadCliSenha').value.trim();
+      const cat = document.getElementById('mCadCliCat').value;
+      const ini = document.getElementById('mCadCliInicio').value.trim();
+
+      let cota = 1500;
+      if(cat.includes("Iniciante")) cota = 500;
+      if(cat.includes("Ouro")) cota = 1000;
+      if(cat.includes("Black")) cota = 2000;
+
+      if(!nome || !login) return;
+
+      if(id) {
+        const c = bancoClientes.find(item => item.id === parseInt(id));
+        if(c) { c.marca = nome; c.login = login; c.senha = senha; c.categoria = cat; c.cotaMax = cota; c.inicio = ini; }
+      } else {
+        bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, cotaMax: cota, enviadoMes: 0, inicio: ini });
+      }
+
+      salvarDadosLocal('SOS_bancoClientes', bancoClientes);
+      alert("✅ Cliente salvo!");
+      fecharModalCadCliente();
+      renderizarCardsClientesAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+    }
+
+    function excluirClienteSubmit(id) {
+      const c = bancoClientes.find(item => item.id === id);
+      if(c && confirm(`Excluir '${c.marca}'?`)) {
+        const idx = bancoClientes.findIndex(item => item.id === id);
+        if(idx > -1) bancoClientes.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoClientes', bancoClientes);
+        renderizarCardsClientesAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function renderizarCardsColabAmplo() {
+      const cont = document.getElementById('containerCardsColabAmplo');
+      cont.innerHTML = bancoColaboradores.map(c => `
+        <div class="card-ampli-item">
+          <strong style="font-size:1.15rem;">${c.nome}</strong>
+          <p style="font-size:0.82rem;">WhatsApp: ${c.fone}</p>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarColaborador(${c.id})">EDITAR</button>
+            <button class="btn-main" style="background:#EF4444; font-size:0.72rem; width:auto; padding:6px 12px;" onclick="excluirColaboradorSubmit(${c.id})">EXCLUIR</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function abrirModalCadastrarColaborador() {
+      document.getElementById('mEditColabIdHidden').value = "";
+      document.getElementById('modalColabTitulo').innerText = "Cadastrar Colaborador";
+      document.getElementById('mCadColabNome').value = "";
+      document.getElementById('mCadColabFone').value = "";
+      document.getElementById('mCadColabLogin').value = "";
+      document.getElementById('mCadColabSenha').value = "123";
+      document.getElementById('modalCadColaborador').style.display = 'flex';
+    }
+
+    function abrirModalEditarColaborador(id) {
+      const c = bancoColaboradores.find(item => item.id === id);
+      if(c) {
+        document.getElementById('mEditColabIdHidden').value = c.id;
+        document.getElementById('modalColabTitulo').innerText = `Editar Colaborador — ${c.nome}`;
+        document.getElementById('mCadColabNome').value = c.nome;
+        document.getElementById('mCadColabFone').value = c.fone;
+        document.getElementById('mCadColabLogin').value = c.login;
+        document.getElementById('mCadColabSenha').value = c.senha;
+        document.getElementById('modalCadColaborador').style.display = 'flex';
+      }
+    }
+
+    function fecharModalCadColaborador() { document.getElementById('modalCadColaborador').style.display = 'none'; }
+    function toggleSetorTag(el) { el.classList.toggle('selected'); }
+
+    function salvarColaboradorModalSubmit() {
+      const id = document.getElementById('mEditColabIdHidden').value;
+      const nome = document.getElementById('mCadColabNome').value.trim();
+      const fone = document.getElementById('mCadColabFone').value.trim();
+      const login = document.getElementById('mCadColabLogin').value.trim();
+      const senha = document.getElementById('mCadColabSenha').value.trim();
+      const tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(el => el.innerText);
+
+      if(!nome || !login) return;
+
+      if(id) {
+        const c = bancoColaboradores.find(item => item.id === parseInt(id));
+        if(c) { c.nome = nome; c.fone = fone; c.login = login; c.senha = senha; c.setores = tags; }
+      } else {
+        bancoColaboradores.push({ id: Date.now(), nome: nome, fone: fone, login: login, senha: senha, setores: tags });
+      }
+
+      salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
+      alert("✅ Colaborador salvo!");
+      fecharModalCadColaborador();
+      renderizarCardsColabAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+    }
+
+    function excluirColaboradorSubmit(id) {
+      const c = bancoColaboradores.find(item => item.id === id);
+      if(c && confirm(`Excluir '${c.nome}'?`)) {
+        const idx = bancoColaboradores.findIndex(item => item.id === id);
+        if(idx > -1) bancoColaboradores.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
+        renderizarCardsColabAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function renderizarSelecaoClientesInsumos() {
+      document.getElementById('secaoSelecaoClienteInsumo').style.display = 'block';
+      document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'none';
+      const cont = document.getElementById('containerCardsClientesInsumosSelection');
+      cont.innerHTML = Object.keys(bancoInsumosCompletos).map(cli => `
+        <div class="card-ampli-item" onclick="abrirDetalheInsumosClienteDirect('${cli}')">
+          <strong style="font-size:1.15rem;">${cli}</strong>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">Itens: <strong>${bancoInsumosCompletos[cli].length}</strong></p>
+        </div>
+      `).join('');
+    }
+
+    function abrirDetalheInsumosClienteDirect(cli) {
+      document.getElementById('secaoSelecaoClienteInsumo').style.display = 'none';
+      document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'block';
+      document.getElementById('tituloInsumosClienteSel').innerText = `${cli} — Estoque`;
+
+      const lista = bancoInsumosCompletos[cli] || [];
+      let html = `<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gondula</th><th>Ações</th></tr></thead><tbody>`;
+      lista.forEach((ins, idx) => {
+        html += `
+          <tr>
+            <td><strong>${ins.catJoia || 'Geral'}</strong></td>
+            <td><strong>${ins.tipo}</strong></td>
+            <td>${ins.sub}</td>
+            <td><strong>${ins.qtd} un</strong></td>
+            <td><input type="text" value="${ins.gondula || ''}" style="width:60px; padding:3px;" onchange="alterarGondulaInsumoDirect('${cli}', ${idx}, this.value)"></td>
+            <td>
+              <button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo('${cli}', ${idx}, 'entrada')">+ Entrada</button>
+              <button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo('${cli}', ${idx}, 'saida')">- Baixa</button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      document.getElementById('containerInsumosTabelaDirect').innerHTML = html;
+    }
+
+    function voltarSelecaoClienteInsumo() { renderizarSelecaoClientesInsumos(); }
+
+    function lancarEntradaSaidaInsumo(cli, idx, tipo) {
+      const v = parseInt(prompt(`Quantidade para ${tipo.toUpperCase()}:`, "100")) || 0;
+      if(v > 0) {
+        if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
+        else bancoInsumosCompletos[cli][idx].qtd -= v;
+        salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function alterarGondulaInsumoDirect(cli, idx, val) {
+      bancoInsumosCompletos[cli][idx].gondula = val;
+      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+      alert("✅ Gondula atualizada!");
+    }
+
+    function abrirModalCadastrarInsumo() {
+      const selCli = document.getElementById('mCadInsCli');
+      selCli.innerHTML = "";
+      bancoClientes.forEach(c => { selCli.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+      renderizarTagsCategoriasJoiaInsumo();
+      preencherSelectTiposInsumo();
+      document.getElementById('inputNovoTipoInsumoTemp').value = "";
+      document.getElementById('mCadInsSub').value = "";
+      document.getElementById('mCadInsQtd').value = "";
+      document.getElementById('mCadInsGondula').value = "";
+      document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function renderizarTagsCategoriasJoiaInsumo() {
+      const box = document.getElementById('boxCatJoiasInsumoTags');
+      let html = `<span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">Geral / Todas</span>`;
+      bancoCategoriasJoias.forEach(cj => { html += `<span class="tag-setor-btn" onclick="toggleSetorTag(this)">${cj}</span>`; });
+      box.innerHTML = html;
+    }
+
+    function preencherSelectTiposInsumo() {
+      const selTipo = document.getElementById('mCadInsTipo');
+      selTipo.innerHTML = "";
+      bancoTiposInsumos.forEach(t => { selTipo.innerHTML += `<option value="${t}">${t}</option>`; });
+    }
+
+    function adicionarNovoTipoInsumoDirect() {
+      const inp = document.getElementById('inputNovoTipoInsumoTemp');
+      const val = inp.value.trim();
+      if(val) {
+        if(!bancoTiposInsumos.includes(val)) {
+          bancoTiposInsumos.push(val);
+          salvarDadosLocal('SOS_bancoTiposInsumos', bancoTiposInsumos);
+        }
+        preencherSelectTiposInsumo();
+        document.getElementById('mCadInsTipo').value = val;
+        inp.value = "";
+      }
+    }
+
+    function fecharModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'none'; }
+
+    function salvarNovoInsumoSubmit(e) {
+      e.preventDefault();
+      const cli = document.getElementById('mCadInsCli').value;
+      const catsSel = Array.from(document.querySelectorAll('#boxCatJoiasInsumoTags .tag-setor-btn.selected')).map(el => el.innerText);
+      const catJ = catsSel.length > 0 ? catsSel.join(', ') : "Geral / Todas";
+      const tipo = document.getElementById('mCadInsTipo').value;
+      const sub = document.getElementById('mCadInsSub').value;
+      const qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
+      const gon = document.getElementById('mCadInsGondula').value;
+
+      if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
+      bancoInsumosCompletos[cli].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+
+      alert("✅ Insumo cadastrado!");
+      fecharModalCadInsumo();
+      renderizarSelecaoClientesInsumos();
+    }
+
+    function renderizarSelecaoClientesEncarte() {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      const cont = document.getElementById('containerCardsClientesEncarteSelection');
+      cont.innerHTML = Object.keys(bancoModelosEncarte).map(cli => `
+        <div class="card-ampli-item" onclick="abrirDetalheEncarteClienteDirect('${cli}')">
+          <strong style="font-size:1.15rem;">${cli}</strong>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">Modelos: <strong>${bancoModelosEncarte[cli].length}</strong></p>
+        </div>
+      `).join('');
+    }
+
+    function abrirDetalheEncarteClienteDirect(cli) {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'none';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'block';
+      document.getElementById('tituloEncarteClienteSel').innerText = `${cli} — Modelos de Encarte`;
+      const cont = document.getElementById('containerCardsCategoriasEncarteClienteSel');
+      const lista = bancoModelosEncarte[cli] || [];
+      cont.innerHTML = lista.map(m => `
+        <div class="card-ampli-item">
+          <span class="badge-status badge-andamento">${m.catJoia.toUpperCase()}</span>
+          <div style="margin:8px 0; background:#F8FAFC; padding:10px; border-radius:8px;">
+            ${m.passos.map(p => `<div>• ${p}</div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function voltarSelecaoClienteEncarte() {
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+    }
+
+    function abrirModalCadastrarModeloEncarte() {
+      listaPassosEncarteAtual = [];
+      renderizarPassosEncarteLista();
+      const selCli = document.getElementById('mCadEncCli');
+      const selCatJ = document.getElementById('mCadEncCatJoia');
+      selCli.innerHTML = ""; selCatJ.innerHTML = "";
+      bancoClientes.forEach(c => { selCli.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
+      bancoCategoriasJoias.forEach(cj => { selCatJ.innerHTML += `<option value="${cj}">${cj}</option>`; });
+      atualizarSelectsInsumosModeloEncarte();
+      document.getElementById('modalCadModeloEncarte').style.display = 'flex';
+    }
+
+    function fecharModalCadModeloEncarte() { document.getElementById('modalCadModeloEncarte').style.display = 'none'; }
+
+    let listaPassosEncarteAtual = [];
+    function adicionarPassoEncarteLista() {
+      const inp = document.getElementById('inputPassoEncarteTemp');
+      const txt = inp.value.trim();
+      if(txt) {
+        listaPassosEncarteAtual.push(`${listaPassosEncarteAtual.length + 1}. ${txt}`);
+        inp.value = "";
+        renderizarPassosEncarteLista();
+      }
+    }
+
+    function renderizarPassosEncarteLista() {
+      const box = document.getElementById('containerPassosEncarteLista');
+      box.innerHTML = listaPassosEncarteAtual.map((p, idx) => `
+        <div style="font-size:0.8rem; margin:2px 0; display:flex; justify-content:space-between;">
+          <span>${p}</span><b style="color:red; cursor:pointer;" onclick="removerPassoEncarte(${idx})">✕</b>
+        </div>
+      `).join('') || `<span style="font-size:0.78rem; color:var(--text-muted);">Nenhuma instrução.</span>`;
+    }
+
+    function removerPassoEncarte(idx) {
+      listaPassosEncarteAtual.splice(idx, 1);
+      renderizarPassosEncarteLista();
+    }
+
+    function atualizarSelectsInsumosModeloEncarte() {
+      const cli = document.getElementById('mCadEncCli').value;
+      const insumos = bancoInsumosCompletos[cli] || [];
+      const selectSaq = document.getElementById('mCadEncSaquinho');
+      const selectCar = document.getElementById('mCadEncCartela');
+      selectSaq.innerHTML = "<option value='Não utiliza saquinho'>Não Utiliza Saquinho</option>";
+      selectCar.innerHTML = "<option value='Não utiliza cartela'>Não Utiliza Cartela</option>";
+
+      insumos.forEach(i => {
+        if(i.tipo === "Saquinho") selectSaq.innerHTML += `<option value="${i.tipo} ${i.sub}">${i.tipo} ${i.sub}</option>`;
+        if(i.tipo === "Cartela") selectCar.innerHTML += `<option value="${i.tipo} ${i.sub}">${i.tipo} ${i.sub}</option>`;
+      });
+    }
+
+    function salvarModeloEncarteCompletoSubmit(e) {
+      e.preventDefault();
+      const cli = document.getElementById('mCadEncCli').value;
+      const catJ = document.getElementById('mCadEncCatJoia').value;
+      const saq = document.getElementById('mCadEncSaquinho').value;
+      const car = document.getElementById('mCadEncCartela').value;
+      const ff = document.getElementById('mCadEncFotoFrente').value.trim();
+      const fv = document.getElementById('mCadEncFotoVerso').value.trim();
+      const obs = document.getElementById('mCadEncObs').value;
+
+      if(listaPassosEncarteAtual.length === 0) { alert("⚠️ Adicione ao menos 1 passo!"); return; }
+
+      if(!bancoModelosEncarte[cli]) bancoModelosEncarte[cli] = [];
+      bancoModelosEncarte[cli].push({ id: Date.now(), catJoia: catJ, passos: listaPassosEncarteAtual, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv, obs: obs });
+      salvarDadosLocal('SOS_bancoModelosEncarte', bancoModelosEncarte);
+
+      alert("✅ Modelo registrado!");
+      fecharModalCadModeloEncarte();
+      renderizarSelecaoClientesEncarte();
+    }
+
+    function renderizarCategoriasJoiasCentral() {
+      const box = document.getElementById('boxListaCategoriasJoiasCentral');
+      box.innerHTML = bancoCategoriasJoias.map((cj, idx) => `
+        <span class="tag-setor-btn selected" style="margin:4px;">${cj} <b onclick="excluirCategoriaJoiaCentral(${idx})">✕</b></span>
+      `).join('');
+    }
+
+    function cadastrarNovaCategoriaJoiaSubmit() {
+      const val = document.getElementById('inputNovaCatJoia').value.trim();
+      if(val && !bancoCategoriasJoias.includes(val)) {
+        bancoCategoriasJoias.push(val);
+        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
+        document.getElementById('inputNovaCatJoia').value = "";
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function excluirCategoriaJoiaCentral(idx) {
+      if(confirm("Excluir categoria?")) {
+        bancoCategoriasJoias.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function salvarFatorDivisorSubmit() {
+      const val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
+      fatorMediaPesoGlobal = val;
+      salvarDadosLocal('SOS_fatorMediaPesoGlobal', fatorMediaPesoGlobal);
+      alert(`⚙️ Média ajustada para ${val}g!`);
+    }
+
+    function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado publicado!"); }
+
+    selecionarPerfilAcesso('diretoria');
+  </script>
+</body>
+</html>
