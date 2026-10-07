@@ -69,7 +69,7 @@
     .cal-status-tag { font-size: 0.62rem; font-weight: bold; text-transform: uppercase; }
     .cal-nav-btn { background: var(--header-bg); color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.78rem; }
     .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; }
-    .loading-indicator { font-size: 0.75rem; color: var(--orange-accent); font-weight: bold; display: inline-block; margin-left: 10px; }
+    .loading-indicator { font-size: 0.75rem; color: #FFB703; font-weight: bold; display: inline-block; margin-left: 10px; }
   </style>
 </head>
 <body>
@@ -77,7 +77,7 @@
   <div class="top-bar">
     <div>
       <h1>S.O.S SOLUÇÕES</h1>
-      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Nuvem OK</span></p>
+      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Conectando...</span></p>
     </div>
     <div id="userBadgeArea" style="display:none;">
       <div class="user-profile-badge">
@@ -136,7 +136,10 @@
           <h3>👤 Gestão de Clientes do Clube S.O.S</h3>
           <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarCliente()">+ CADASTRA CLIENTE</button>
         </div>
+        <h4>Ativos</h4>
         <div class="cards-grid-amplos" id="containerCardsClientesAmplo"></div>
+        <h4 style="margin-top:24px; color:#64748B;">📁 Clientes Inativos / Antigos (Histórico Preservado)</h4>
+        <div class="cards-grid-amplos" id="containerCardsClientesInativos"></div>
       </div>
 
       <div id="pagDirColab" class="panel-card" style="display:none;">
@@ -495,7 +498,6 @@
   </div>
 
   <script>
-    // URL DA API DO GOOGLE APPS SCRIPT DO SEU DRIVE
     var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
 
     var perfilAcessoSelecionadoTab = 'diretoria';
@@ -516,6 +518,8 @@
       { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "05/2026" },
       { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" }
     ];
+
+    var bancoClientesInativos = [];
 
     var bancoColaboradores = [
       { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
@@ -545,58 +549,6 @@
     var bancoLotes4Etapas = [];
     var bancoMensagens = [{ id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao HUB S.O.S 2027!", data: "01/10/2026" }];
 
-    // COMUNICAÇÃO COM O GOOGLE DRIVE VIA APPS SCRIPT
-    function carregarDadosNovem() {
-      var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Atualizando do Drive...";
-      
-      fetch(GOOGLE_API_URL + "?action=carregarTudo")
-        .then(function(res) { return res.json(); })
-        .then(function(dados) {
-          if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
-          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) bancoColaboradores = dados.bancoColaboradores;
-          if(dados.bancoInsumosCompletos && Object.keys(dados.bancoInsumosCompletos).length > 0) bancoInsumosCompletos = dados.bancoInsumosCompletos;
-          if(dados.bancoModelosEncarte && Object.keys(dados.bancoModelosEncarte).length > 0) bancoModelosEncarte = dados.bancoModelosEncarte;
-          if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
-          if(dados.bancoLotes4Etapas) bancoLotes4Etapas = dados.bancoLotes4Etapas;
-          if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
-
-          if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
-          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
-        })
-        .catch(function(err) {
-          if(statusEl) statusEl.innerText = "⚠️ Modo Local (Off-line)";
-          console.log("Erro ao conectar no Drive:", err);
-        });
-    }
-
-    function salvarDadosNovem() {
-      var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Salvando no Drive...";
-
-      var payload = {
-        action: "salvarTudo",
-        bancoClientes: bancoClientes,
-        bancoColaboradores: bancoColaboradores,
-        bancoInsumosCompletos: bancoInsumosCompletos,
-        bancoModelosEncarte: bancoModelosEncarte,
-        bancoRegrasSetores: bancoRegrasSetores,
-        bancoLotes4Etapas: bancoLotes4Etapas,
-        bancoMensagens: bancoMensagens
-      };
-
-      fetch(GOOGLE_API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).then(function() {
-        if(statusEl) statusEl.innerText = "☁️ Dados Salvos no Drive!";
-      }).catch(function() {
-        if(statusEl) statusEl.innerText = "⚠️ Erro ao Salvar";
-      });
-    }
-
     function selecionarPerfilAcesso(p) {
       perfilAcessoSelecionadoTab = p;
       document.getElementById('tabCliente').classList.remove('active');
@@ -616,6 +568,64 @@
         document.getElementById('tabDiretoria').classList.add('active');
         bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.nome + '</option>'; });
       }
+    }
+
+    function carregarDadosNovem() {
+      var statusEl = document.getElementById('statusSync');
+      if(statusEl) statusEl.innerText = "⏳ Buscando dados...";
+      
+      fetch(GOOGLE_API_URL + "?action=carregarTudo")
+        .then(function(res) { return res.json(); })
+        .then(function(dados) {
+          if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
+          if(dados.bancoClientesInativos) bancoClientesInativos = dados.bancoClientesInativos;
+          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) bancoColaboradores = dados.bancoColaboradores;
+          if(dados.bancoInsumosCompletos && Object.keys(dados.bancoInsumosCompletos).length > 0) bancoInsumosCompletos = dados.bancoInsumosCompletos;
+          if(dados.bancoModelosEncarte && Object.keys(dados.bancoModelosEncarte).length > 0) bancoModelosEncarte = dados.bancoModelosEncarte;
+          if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
+          if(dados.bancoLotes4Etapas) bancoLotes4Etapas = dados.bancoLotes4Etapas;
+          if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
+
+          if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
+          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+          renderizarCardsClientesAmplo();
+        })
+        .catch(function(err) {
+          if(statusEl) statusEl.innerText = "⚠️ Modo Local";
+          console.log("Drive indisponível:", err);
+          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+        });
+    }
+
+    function salvarDadosNovem() {
+      var statusEl = document.getElementById('statusSync');
+      if(statusEl) statusEl.innerText = "⏳ Salvando...";
+
+      var payload = {
+        action: "salvarTudo",
+        bancoClientes: bancoClientes,
+        bancoClientesInativos: bancoClientesInativos,
+        bancoColaboradores: bancoColaboradores,
+        bancoInsumosCompletos: bancoInsumosCompletos,
+        bancoModelosEncarte: bancoModelosEncarte,
+        bancoRegrasSetores: bancoRegrasSetores,
+        bancoLotes4Etapas: bancoLotes4Etapas,
+        bancoMensagens: bancoMensagens
+      };
+
+      var bodyData = new URLSearchParams();
+      bodyData.append("dados", JSON.stringify(payload));
+
+      fetch(GOOGLE_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: bodyData.toString()
+      }).then(function() {
+        if(statusEl) statusEl.innerText = "☁️ Salvo no Drive!";
+      }).catch(function() {
+        if(statusEl) statusEl.innerText = "⚠️ Erro ao Salvar";
+      });
     }
 
     function autenticarUsuario(e) {
@@ -1065,7 +1075,7 @@
     }
 
     function excluirRegraSetorDirect(setor, idx) {
-      if(confirm("Excluir regra?")) {
+      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir esta regra?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir regra definitivamente?")) {
         bancoRegrasSetores[setor].splice(idx, 1);
         salvarDadosNovem();
         renderizarCardsSetoresRegrasDir();
@@ -1115,10 +1125,20 @@
             '<p style="font-size:0.82rem;">Login: ' + c.login + ' | Senha: ' + c.senha + '</p>' +
             '<div style="display:flex; gap:8px; margin-top:10px;">' +
               '<button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarCliente(' + c.id + ')">EDITAR</button>' +
-              '<button class="btn-main" style="background:#EF4444; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="excluirClienteSubmit(' + c.id + ')">EXCLUIR</button>' +
+              '<button class="btn-main" style="background:#EF4444; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="inativarClienteSubmit(' + c.id + ')">INATIVAR</button>' +
             '</div>' +
           '</div>';
-      }).join('');
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum cliente ativo.</p>";
+
+      var contInat = document.getElementById('containerCardsClientesInativos');
+      contInat.innerHTML = bancoClientesInativos.map(function(c) {
+        return '<div class="card-ampli-item" style="opacity:0.7; background:#F1F5F9;">' +
+            '<span class="badge-status badge-espera">INATIVO</span>' +
+            '<strong style="display:block; font-size:1.15rem; margin-top:8px;">' + c.marca + '</strong>' +
+            '<p style="font-size:0.82rem;">Login: ' + c.login + '</p>' +
+            '<button class="btn-main btn-green" style="padding:6px 12px; font-size:0.72rem; width:auto; margin-top:10px;" onclick="reativarClienteSubmit(' + c.id + ')">REATIVAR CLIENTE</button>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum cliente inativo.</p>";
     }
 
     function abrirModalCadastrarCliente() {
@@ -1175,11 +1195,25 @@
       selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
     }
 
-    function excluirClienteSubmit(id) {
+    function inativarClienteSubmit(id) {
       var c = bancoClientes.find(function(item) { return item.id === id; });
-      if(c && confirm("Excluir '" + c.marca + "'?")) {
+      if(c && confirm("⚠️ 1/2: Deseja mover o cliente '" + c.marca + "' para INATIVOS?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Inativar cliente? (O histórico de insumos e encartes será totalmente preservado)")) {
         var idx = bancoClientes.findIndex(function(item) { return item.id === id; });
-        if(idx > -1) bancoClientes.splice(idx, 1);
+        if(idx > -1) {
+          var clienteRemovido = bancoClientes.splice(idx, 1)[0];
+          bancoClientesInativos.push(clienteRemovido);
+        }
+        salvarDadosNovem();
+        renderizarCardsClientesAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function reativarClienteSubmit(id) {
+      var idx = bancoClientesInativos.findIndex(function(item) { return item.id === id; });
+      if(idx > -1) {
+        var clienteReativado = bancoClientesInativos.splice(idx, 1)[0];
+        bancoClientes.push(clienteReativado);
         salvarDadosNovem();
         renderizarCardsClientesAmplo();
         selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
@@ -1252,7 +1286,7 @@
 
     function excluirColaboradorSubmit(id) {
       var c = bancoColaboradores.find(function(item) { return item.id === id; });
-      if(c && confirm("Excluir '" + c.nome + "'?")) {
+      if(c && confirm("⚠️ 1/2: Tem certeza que deseja excluir o colaborador '" + c.nome + "'?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir colaborador definitivamente?")) {
         var idx = bancoColaboradores.findIndex(function(item) { return item.id === id; });
         if(idx > -1) bancoColaboradores.splice(idx, 1);
         salvarDadosNovem();
@@ -1276,7 +1310,7 @@
     function abrirDetalheInsumosClienteDirect(cli) {
       document.getElementById('secaoSelecaoClienteInsumo').style.display = 'none';
       document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'block';
-      document.getElementById('tituloInsumosClienteSel').innerText = cli + " — Estoque";
+      document.getElementById('tituloInsumosClienteSel').innerText = cli + " — Estoque de Insumos";
 
       var lista = bancoInsumosCompletos[cli] || [];
       var html = '<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gondula</th><th>Ações</th></tr></thead><tbody>';
@@ -1289,7 +1323,9 @@
             '<td><input type="text" value="' + (ins.gondula || '') + '" style="width:60px; padding:3px;" onchange="alterarGondulaInsumoDirect(\'' + cli + '\', ' + idx + ', this.value)"></td>' +
             '<td>' +
               '<button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'entrada\')">+ Entrada</button> ' +
-              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button>' +
+              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button> ' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#3B82F6;" onclick="editarInsumoDirect(\'' + cli + '\', ' + idx + ')">Editar</button> ' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#EF4444;" onclick="excluirInsumoDirect(\'' + cli + '\', ' + idx + ')">Excluir</button>' +
             '</td>' +
           '</tr>';
       });
@@ -1298,6 +1334,26 @@
     }
 
     function voltarSelecaoClienteInsumo() { renderizarSelecaoClientesInsumos(); }
+
+    function editarInsumoDirect(cli, idx) {
+      var ins = bancoInsumosCompletos[cli][idx];
+      var novaSub = prompt("Nova Subcategoria / Descrição:", ins.sub);
+      if (novaSub !== null) {
+        var novaQtd = parseInt(prompt("Nova Quantidade em Estoque:", ins.qtd)) || 0;
+        ins.sub = novaSub;
+        ins.qtd = novaQtd;
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function excluirInsumoDirect(cli, idx) {
+      if (confirm("⚠️ 1/2: Tem certeza que deseja excluir este insumo?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir insumo do sistema?")) {
+        bancoInsumosCompletos[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
 
     function lancarEntradaSaidaInsumo(cli, idx, tipo) {
       var v = parseInt(prompt("Quantidade para " + tipo.toUpperCase() + ":", "100")) || 0;
@@ -1500,7 +1556,7 @@
     }
 
     function excluirCategoriaJoiaCentral(idx) {
-      if(confirm("Excluir categoria?")) {
+      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir esta categoria?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir categoria?")) {
         bancoCategoriasJoias.splice(idx, 1);
         salvarDadosNovem();
         renderizarCategoriasJoiasCentral();
@@ -1515,7 +1571,7 @@
 
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado publicado!"); }
 
-    // INICIALIZAÇÃO COM CARREGAMENTO DO DRIVE
+    selecionarPerfilAcesso('diretoria');
     carregarDadosNovem();
   </script>
 </body>
