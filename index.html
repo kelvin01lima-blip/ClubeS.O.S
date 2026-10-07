@@ -69,6 +69,7 @@
     .cal-status-tag { font-size: 0.62rem; font-weight: bold; text-transform: uppercase; }
     .cal-nav-btn { background: var(--header-bg); color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.78rem; }
     .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; }
+    .loading-indicator { font-size: 0.75rem; color: var(--orange-accent); font-weight: bold; display: inline-block; margin-left: 10px; }
   </style>
 </head>
 <body>
@@ -76,7 +77,7 @@
   <div class="top-bar">
     <div>
       <h1>S.O.S SOLUÇÕES</h1>
-      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027</p>
+      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Nuvem OK</span></p>
     </div>
     <div id="userBadgeArea" style="display:none;">
       <div class="user-profile-badge">
@@ -494,66 +495,107 @@
   </div>
 
   <script>
-    function carregarDadosSalvos(chave, padrao) {
-      try {
-        var v = localStorage.getItem(chave);
-        return v ? JSON.parse(v) : padrao;
-      } catch(e) {
-        return padrao;
-      }
-    }
-    function salvarDadosLocal(chave, dados) {
-      try {
-        localStorage.setItem(chave, JSON.stringify(dados));
-      } catch(e) {}
-    }
+    // URL DA API DO GOOGLE APPS SCRIPT DO SEU DRIVE
+    var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
 
     var perfilAcessoSelecionadoTab = 'diretoria';
     var usuarioLogadoObjeto = null;
     var dataAgendamentoSelecionadaCli = "";
-    var fatorMediaPesoGlobal = carregarDadosSalvos('SOS_fatorMediaPesoGlobal', 3.2);
+    var fatorMediaPesoGlobal = 3.2;
 
     var DATA_HOJE_SISTEMA = new Date(2026, 9, 1);
     var anoCalendarioAtual = 2026;
     var mesCalendarioAtual = 9;
 
     var feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
-    var datasOcupadasAgenda = carregarDadosSalvos('SOS_datasOcupadasAgenda', []);
+    var datasOcupadasAgenda = [];
 
     var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin Lima & Brenda (Diretoria General)', login: 'kelvin', senha: '123' }];
 
-    var bancoClientes = carregarDadosSalvos('SOS_bancoClientes', [
+    var bancoClientes = [
       { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "05/2026" },
       { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" }
-    ]);
+    ];
 
-    var bancoColaboradores = carregarDadosSalvos('SOS_bancoColaboradores', [
+    var bancoColaboradores = [
       { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
       { id: 2, nome: "Equipe Bancada S.O.S", fone: "(19) 98841-0022", login: "equipe@sos.com", senha: "123", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
-    ]);
+    ];
 
     var listaSetoresFabricaGeral = ["1. Entrada Bruta", "2. Inspeção 3em1", "3. Fotografia", "4. CDE Catalogação", "5. Etiquetagem", "6. Encartelamento", "7. Finalização"];
 
-    var bancoCategoriasJoias = carregarDadosSalvos('SOS_bancoCategoriasJoias', ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"]);
-    var bancoTiposInsumos = carregarDadosSalvos('SOS_bancoTiposInsumos', ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"]);
+    var bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
+    var bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"];
 
-    var bancoInsumosCompletos = carregarDadosSalvos('SOS_bancoInsumosCompletos', {
+    var bancoInsumosCompletos = {
       "Niara Semijoias": [{ id: 101, catJoia: "Brinco Pequeno", tipo: "Saquinho", sub: "6.5x9+3+3 c/ solapa", qtd: 900, gondula: "11" }]
-    });
+    };
 
-    var bancoModelosEncarte = carregarDadosSalvos('SOS_bancoModelosEncarte', {
+    var bancoModelosEncarte = {
       "Niara Semijoias": [{ id: 1, catJoia: "Anel Regulável", passos: ["1. Etiqueta bem apertada no aro", "2. Encartelar na cartela"], saquinho: "Não utiliza saquinho", cartela: "Cartela Anéis", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Sem avarias" }]
-    });
+    };
 
-    var bancoRegrasSetores = carregarDadosSalvos('SOS_bancoRegrasSetores', {
+    var bancoRegrasSetores = {
       "2. Inspeção 3em1": [
         { id: 1, cliente: "Niara Semijoias", regra: "Atenção à numeração de anéis, somente par entra no card." },
         { id: 2, cliente: "Niara Semijoias", regra: "Atenção a bolhas de fundição, nada passa." }
       ]
-    });
+    };
 
-    var bancoLotes4Etapas = carregarDadosSalvos('SOS_bancoLotes4Etapas', []);
-    var bancoMensagens = carregarDadosSalvos('SOS_bancoMensagens', [{ id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao HUB S.O.S 2027!", data: "01/10/2026" }]);
+    var bancoLotes4Etapas = [];
+    var bancoMensagens = [{ id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao HUB S.O.S 2027!", data: "01/10/2026" }];
+
+    // COMUNICAÇÃO COM O GOOGLE DRIVE VIA APPS SCRIPT
+    function carregarDadosNovem() {
+      var statusEl = document.getElementById('statusSync');
+      if(statusEl) statusEl.innerText = "⏳ Atualizando do Drive...";
+      
+      fetch(GOOGLE_API_URL + "?action=carregarTudo")
+        .then(function(res) { return res.json(); })
+        .then(function(dados) {
+          if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
+          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) bancoColaboradores = dados.bancoColaboradores;
+          if(dados.bancoInsumosCompletos && Object.keys(dados.bancoInsumosCompletos).length > 0) bancoInsumosCompletos = dados.bancoInsumosCompletos;
+          if(dados.bancoModelosEncarte && Object.keys(dados.bancoModelosEncarte).length > 0) bancoModelosEncarte = dados.bancoModelosEncarte;
+          if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
+          if(dados.bancoLotes4Etapas) bancoLotes4Etapas = dados.bancoLotes4Etapas;
+          if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
+
+          if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
+          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+        })
+        .catch(function(err) {
+          if(statusEl) statusEl.innerText = "⚠️ Modo Local (Off-line)";
+          console.log("Erro ao conectar no Drive:", err);
+        });
+    }
+
+    function salvarDadosNovem() {
+      var statusEl = document.getElementById('statusSync');
+      if(statusEl) statusEl.innerText = "⏳ Salvando no Drive...";
+
+      var payload = {
+        action: "salvarTudo",
+        bancoClientes: bancoClientes,
+        bancoColaboradores: bancoColaboradores,
+        bancoInsumosCompletos: bancoInsumosCompletos,
+        bancoModelosEncarte: bancoModelosEncarte,
+        bancoRegrasSetores: bancoRegrasSetores,
+        bancoLotes4Etapas: bancoLotes4Etapas,
+        bancoMensagens: bancoMensagens
+      };
+
+      fetch(GOOGLE_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function() {
+        if(statusEl) statusEl.innerText = "☁️ Dados Salvos no Drive!";
+      }).catch(function() {
+        if(statusEl) statusEl.innerText = "⚠️ Erro ao Salvar";
+      });
+    }
 
     function selecionarPerfilAcesso(p) {
       perfilAcessoSelecionadoTab = p;
@@ -754,14 +796,13 @@
       if(pcs <= 0) { alert("⚠️ Informe a quantidade!"); return; }
 
       datasOcupadasAgenda.push(dataAgendamentoSelecionadaCli);
-      salvarDadosLocal('SOS_datasOcupadasAgenda', datasOcupadasAgenda);
 
       bancoLotes4Etapas.push({
         id: Date.now(), cliente: cli.marca, etapa: 1, label: "Aguardando Aprovação",
         pcs: pcs, peso: pesoG + "g", dataCadastro: "01/10/2026", dataAgendada: dataAgendamentoSelecionadaCli,
         obs: obs, numLote: "", setorAtual: "Pendente", modelos: mod, editadoColab: false
       });
-      salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+      salvarDadosNovem();
 
       alert("✅ LOTE AGENDADO COM SUCESSO!");
       navegarPaginaCliente('lotes');
@@ -802,7 +843,7 @@
       var txt = document.getElementById('inputTextoEnvioCli').value.trim();
       if(txt) {
         bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
-        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
+        salvarDadosNovem();
         document.getElementById('inputTextoEnvioCli').value = "";
         alert("✅ Mensagem enviada!");
         renderizarMensagensCliente();
@@ -879,7 +920,7 @@
         l.obs = document.getElementById('inputOpObs').value;
         l.editadoColab = true;
         if(l.setorAtual.indexOf("7. Finalização") !== -1) l.etapa = 4;
-        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+        salvarDadosNovem();
         alert("✅ Lote avançado com sucesso!");
         fecharModalOpBancadaLote();
         renderizarLotesColabBancada();
@@ -920,7 +961,7 @@
       var txt = document.getElementById('inputTextoEnvioColab').value.trim();
       if(txt) {
         bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.nome, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
-        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
+        salvarDadosNovem();
         document.getElementById('inputTextoEnvioColab').value = "";
         alert("✅ Mensagem enviada!");
         renderizarMensagensColab();
@@ -970,7 +1011,7 @@
 
       html += '<div class="coluna-etapa-lotes" style="background:#FEF3C7;"><h4 style="color:#B45309;">3. Cadastrados (' + lotes.filter(function(l){return l.etapa===3;}).length + ')</h4>';
       lotes.filter(function(l){return l.etapa===3;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Setor: ' + l.setorAtual + '</p></div>'; });
-      html += `</div>`;
+      html += '</div>';
 
       html += '<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (' + lotes.filter(function(l){return l.etapa===4;}).length + ')</h4>';
       lotes.filter(function(l){return l.etapa===4;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
@@ -1016,7 +1057,7 @@
 
       if(!bancoRegrasSetores[setor]) bancoRegrasSetores[setor] = [];
       bancoRegrasSetores[setor].push({ id: Date.now(), cliente: cli, regra: txt });
-      salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
+      salvarDadosNovem();
 
       alert("✅ Regra adicionada!");
       fecharModalAddRegraSetor();
@@ -1026,7 +1067,7 @@
     function excluirRegraSetorDirect(setor, idx) {
       if(confirm("Excluir regra?")) {
         bancoRegrasSetores[setor].splice(idx, 1);
-        salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
+        salvarDadosNovem();
         renderizarCardsSetoresRegrasDir();
       }
     }
@@ -1058,7 +1099,7 @@
         l.desconto = document.getElementById('editLoteDesconto').value;
         l.obs = document.getElementById('editLoteObs').value;
         l.editadoColab = false;
-        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
+        salvarDadosNovem();
         alert("✅ Lote atualizado!");
         fecharModalEditarLoteDir();
         renderizarLotes4Etapas();
@@ -1127,7 +1168,7 @@
         bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, cotaMax: cota, enviadoMes: 0, inicio: ini });
       }
 
-      salvarDadosLocal('SOS_bancoClientes', bancoClientes);
+      salvarDadosNovem();
       alert("✅ Cliente salvo!");
       fecharModalCadCliente();
       renderizarCardsClientesAmplo();
@@ -1139,7 +1180,7 @@
       if(c && confirm("Excluir '" + c.marca + "'?")) {
         var idx = bancoClientes.findIndex(function(item) { return item.id === id; });
         if(idx > -1) bancoClientes.splice(idx, 1);
-        salvarDadosLocal('SOS_bancoClientes', bancoClientes);
+        salvarDadosNovem();
         renderizarCardsClientesAmplo();
         selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
@@ -1202,7 +1243,7 @@
         bancoColaboradores.push({ id: Date.now(), nome: nome, fone: fone, login: login, senha: senha, setores: tags });
       }
 
-      salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
+      salvarDadosNovem();
       alert("✅ Colaborador salvo!");
       fecharModalCadColaborador();
       renderizarCardsColabAmplo();
@@ -1214,7 +1255,7 @@
       if(c && confirm("Excluir '" + c.nome + "'?")) {
         var idx = bancoColaboradores.findIndex(function(item) { return item.id === id; });
         if(idx > -1) bancoColaboradores.splice(idx, 1);
-        salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
+        salvarDadosNovem();
         renderizarCardsColabAmplo();
         selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
@@ -1263,14 +1304,14 @@
       if(v > 0) {
         if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
         else bancoInsumosCompletos[cli][idx].qtd -= v;
-        salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+        salvarDadosNovem();
         abrirDetalheInsumosClienteDirect(cli);
       }
     }
 
     function alterarGondulaInsumoDirect(cli, idx, val) {
       bancoInsumosCompletos[cli][idx].gondula = val;
-      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+      salvarDadosNovem();
       alert("✅ Gondula atualizada!");
     }
 
@@ -1306,7 +1347,6 @@
       if(val) {
         if(bancoTiposInsumos.indexOf(val) === -1) {
           bancoTiposInsumos.push(val);
-          salvarDadosLocal('SOS_bancoTiposInsumos', bancoTiposInsumos);
         }
         preencherSelectTiposInsumo();
         document.getElementById('mCadInsTipo').value = val;
@@ -1328,7 +1368,7 @@
 
       if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
       bancoInsumosCompletos[cli].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
-      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
+      salvarDadosNovem();
 
       alert("✅ Insumo cadastrado!");
       fecharModalCadInsumo();
@@ -1435,7 +1475,7 @@
 
       if(!bancoModelosEncarte[cli]) bancoModelosEncarte[cli] = [];
       bancoModelosEncarte[cli].push({ id: Date.now(), catJoia: catJ, passos: listaPassosEncarteAtual, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv, obs: obs });
-      salvarDadosLocal('SOS_bancoModelosEncarte', bancoModelosEncarte);
+      salvarDadosNovem();
 
       alert("✅ Modelo registrado!");
       fecharModalCadModeloEncarte();
@@ -1453,7 +1493,7 @@
       var val = document.getElementById('inputNovaCatJoia').value.trim();
       if(val && bancoCategoriasJoias.indexOf(val) === -1) {
         bancoCategoriasJoias.push(val);
-        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
+        salvarDadosNovem();
         document.getElementById('inputNovaCatJoia').value = "";
         renderizarCategoriasJoiasCentral();
       }
@@ -1462,7 +1502,7 @@
     function excluirCategoriaJoiaCentral(idx) {
       if(confirm("Excluir categoria?")) {
         bancoCategoriasJoias.splice(idx, 1);
-        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
+        salvarDadosNovem();
         renderizarCategoriasJoiasCentral();
       }
     }
@@ -1470,13 +1510,13 @@
     function salvarFatorDivisorSubmit() {
       var val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
       fatorMediaPesoGlobal = val;
-      salvarDadosLocal('SOS_fatorMediaPesoGlobal', fatorMediaPesoGlobal);
       alert("⚙️ Média ajustada para " + val + "g!");
     }
 
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado publicado!"); }
 
-    selecionarPerfilAcesso('diretoria');
+    // INICIALIZAÇÃO COM CARREGAMENTO DO DRIVE
+    carregarDadosNovem();
   </script>
 </body>
 </html>
