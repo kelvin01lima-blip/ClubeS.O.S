@@ -325,7 +325,7 @@
         </div>
       </div>
 
-      <!-- NOVA ABA 6 DIRETORIA: REGRAS DOS SETORES POR CLIENTE -->
+      <!-- ABA REGRAS DOS SETORES POR CLIENTE -->
       <div id="pagDirRegras" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>📋 Central de Regras Operacionais por Setor & Cliente</h3>
@@ -396,7 +396,6 @@
         <div class="cards-grid-amplos" id="containerColabFinalizados"></div>
       </div>
 
-      <!-- ABA REGRAS COLABORADOR -->
       <div id="pagOpRegras" class="panel-card" style="display:none;">
         <div class="panel-header">
           <h3>📋 Consulta de Regras dos Setores por Cliente</h3>
@@ -455,7 +454,6 @@
         <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 5. FALAR COM A DIRETORIA</button>
       </div>
 
-      <!-- ABA 1 CLIENTE: LOTES E PRAZOS -->
       <div id="pagCliLotes" class="panel-card">
         <h3>📦 Prazos de Produção em Dias Úteis</h3>
         <div class="prazos-bar">
@@ -470,7 +468,6 @@
         <div class="cards-grid-amplos" id="containerLotesClientePainel"></div>
       </div>
 
-      <!-- ABA 2 CLIENTE: AGENDAMENTO DE LOTES -->
       <div id="pagCliAgendar" class="panel-card" style="display:none;">
         <div style="background:#F0F9FF; border:1px solid #BAE6FD; padding:18px; border-radius:14px; margin-bottom:20px;">
           <h4 style="margin:0 0 8px 0; color:var(--header-bg);">📊 Cota Mensal do Clube S.O.S</h4>
@@ -498,7 +495,6 @@
           </div>
 
           <div>
-            <!-- BALANÇA DIGITAL ANIMADA -->
             <div class="scale-box-container">
               <div class="scale-header">
                 <h4>⚖️ BALANÇA DIGITAL S.O.S (CONVERSOR PESO / PEÇA)</h4>
@@ -527,7 +523,6 @@
         </div>
       </div>
 
-      <!-- ABA 3 CLIENTE: MODELOS DE ENCARTE -->
       <div id="pagCliEncarte" class="panel-card" style="display:none;">
         <h3>🎴 Modelos de Encarte da Sua Marca</h3>
         <div class="cards-grid-amplos" id="containerEncartesClienteExibicao"></div>
@@ -544,13 +539,11 @@
         </div>
       </div>
 
-      <!-- ABA 4 CLIENTE: MEUS INSUMOS -->
       <div id="pagCliInsumos" class="panel-card" style="display:none;">
         <h3>📦 Estoque de Insumos da Sua Marca</h3>
         <div id="containerTabelaInsumosClienteExibicao"></div>
       </div>
 
-      <!-- ABA 5 CLIENTE: MENSAGENS -->
       <div id="pagCliMensagens" class="panel-card" style="display:none;">
         <h3>💬 Atendimento Direto com a Diretoria</h3>
         <div class="grid-2col" style="margin-top:15px;">
@@ -570,7 +563,7 @@
 
   </div>
 
-  <!-- MODAL DE VISUALIZAÇÃO AMPLIADA DO LOTE -->
+  <!-- MODAIS DO SISTEMA -->
   <div id="modalDetalheCompletoLote" class="modal-overlay">
     <div class="modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #E2E8F0; padding-bottom:12px; margin-bottom:16px;">
@@ -584,7 +577,6 @@
     </div>
   </div>
 
-  <!-- MODAL ADICIONAR REGRA NO SETOR (DIRETORIA) -->
   <div id="modalAddRegraSetor" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 style="margin-top:0; color:var(--header-bg);" id="tituloModalRegraSetor">Adicionar Regra Operacional</h3>
@@ -600,7 +592,6 @@
     </div>
   </div>
 
-  <!-- MODAL OPERACIONAL DE BANCADA -->
   <div id="modalOpBancadaLote" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 style="margin-top:0; color:var(--header-bg);" id="tituloModalOpLote">Atuação Operacional do Lote</h3>
@@ -635,7 +626,6 @@
     </div>
   </div>
 
-  <!-- MODAIS DIRETORIA INTACTOS -->
   <div id="modalCadCliente" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 id="modalClienteTitulo" style="margin-top:0; color:var(--header-bg);">Cadastrar Novo Cliente do Clube</h3>
@@ -756,7 +746,6 @@
     </div>
   </div>
 
-  <!-- MODAL CADASTRO MODELO ENCARTE COM FOTOS OBRIGATÓRIAS -->
   <div id="modalCadModeloEncarte" class="modal-overlay">
     <div class="modal-card" style="max-width:700px;">
       <h3 style="margin-top:0; color:var(--header-bg);">Cadastrar / Editar Modelo de Encarte</h3>
@@ -791,76 +780,80 @@
   </div>
 
   <script>
+    // FUNÇÕES DE PERSISTÊNCIA LOCAL (LOCALSTORAGE)
+    function carregarDadosSalvos(chave, padrao) {
+      const v = localStorage.getItem(chave);
+      return v ? JSON.parse(v) : padrao;
+    }
+    function salvarDadosLocal(chave, dados) {
+      localStorage.setItem(chave, JSON.stringify(dados));
+    }
+
     let perfilAcessoSelecionadoTab = 'diretoria';
     let usuarioLogadoObjeto = null;
     let dataAgendamentoSelecionadaCli = "";
-    let fatorMediaPesoGlobal = 3.2;
+    let fatorMediaPesoGlobal = carregarDadosSalvos('SOS_fatorMediaPesoGlobal', 3.2);
 
-    // DATA ATUAL DE REFERÊNCIA (01/10/2026)
-    const DATA_HOJE_SISTEMA = new Date(2026, 9, 1); // Outubro 2026
+    const DATA_HOJE_SISTEMA = new Date(2026, 9, 1);
     let anoCalendarioAtual = 2026;
-    let mesCalendarioAtual = 9; // Outubro (0-indexed)
+    let mesCalendarioAtual = 9;
 
-    // FERIADOS EXATOS DE LIMEIRA-SP (2026)
     const feriadosLimeiraSP = [
       "2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04",
       "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02",
       "2026-11-15", "2026-11-20", "2026-12-25"
     ];
 
-    const datasOcupadasAgenda = [];
+    const datasOcupadasAgenda = carregarDadosSalvos('SOS_datasOcupadasAgenda', []);
 
     const bancoDiretoria = [
       { id: 'dir1', nome: 'Kelvin Lima & Brenda (Diretoria General)', login: 'kelvin', senha: '123' }
     ];
 
-    const bancoClientes = [
+    let bancoClientes = carregarDadosSalvos('SOS_bancoClientes', [
       { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "05/2026" },
       { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" }
-    ];
+    ]);
 
-    const bancoColaboradores = [
+    let bancoColaboradores = carregarDadosSalvos('SOS_bancoColaboradores', [
       { id: 1, nome: "Cíntia Lima", fone: "(19) 99821-3344", login: "cintia@sos.com", senha: "123", setores: ["1. Entrada Bruta", "2. Inspeção 3em1"] },
       { id: 2, nome: "Equipe Bancada S.O.S", fone: "(19) 98841-0022", login: "equipe@sos.com", senha: "123", setores: ["3. Fotografia", "5. Etiquetagem", "6. Encartelamento"] }
-    ];
+    ]);
 
     const listaSetoresFabricaGeral = [
       "1. Entrada Bruta", "2. Inspeção 3em1", "3. Fotografia",
       "4. CDE Catalogação", "5. Etiquetagem", "6. Encartelamento", "7. Finalização"
     ];
 
-    const bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
+    let bancoCategoriasJoias = carregarDadosSalvos('SOS_bancoCategoriasJoias', ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"]);
 
-    const bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"];
+    let bancoTiposInsumos = carregarDadosSalvos('SOS_bancoTiposInsumos', ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"]);
 
-    const bancoInsumosCompletos = {
+    let bancoInsumosCompletos = carregarDadosSalvos('SOS_bancoInsumosCompletos', {
       "Niara Semijoias": [
         { id: 101, catJoia: "Brinco Pequeno", tipo: "Saquinho", sub: "6.5x9+3+3 c/ solapa", qtd: 900, gondula: "11" }
       ]
-    };
+    });
 
-    const bancoModelosEncarte = {
+    let bancoModelosEncarte = carregarDadosSalvos('SOS_bancoModelosEncarte', {
       "Niara Semijoias": [
         { id: 1, catJoia: "Anel Regulável", passos: ["1. Etiqueta bem apertada no aro", "2. Encartelar na cartela"], saquinho: "Não utiliza saquinho", cartela: "Cartela Anéis", fotoFrente: "https://drive.google.com/...", fotoVerso: "https://drive.google.com/...", obs: "Sem avarias" }
       ]
-    };
+    });
 
-    // ESTRUTURA DE REGRAS DOS SETORES
-    const bancoRegrasSetores = {
+    let bancoRegrasSetores = carregarDadosSalvos('SOS_bancoRegrasSetores', {
       "2. Inspeção 3em1": [
         { id: 1, cliente: "Niara Semijoias", regra: "Atenção à numeração de anéis, somente par entra no card." },
         { id: 2, cliente: "Niara Semijoias", regra: "Atenção a bolhas de fundição, nada passa." }
       ]
-    };
+    });
 
-    // LOTES ZERADOS PARA NOVO INÍCIO
-    const bancoLotes4Etapas = [];
+    let bancoLotes4Etapas = carregarDadosSalvos('SOS_bancoLotes4Etapas', []);
 
-    const bancoMensagens = [
+    let bancoMensagens = carregarDadosSalvos('SOS_bancoMensagens', [
       { id: 1, remetente: "Diretoria General", destinatario: "TODOS", texto: "Sejam bem-vindos ao novo HUB S.O.S 2027!", data: "01/10/2026" }
-    ];
+    ]);
 
-    /* SELEÇÃO ABA LOGIN */
     function selecionarPerfilAcesso(p) {
       perfilAcessoSelecionadoTab = p;
       document.getElementById('tabCliente').classList.remove('active');
@@ -882,7 +875,6 @@
       }
     }
 
-    /* AUTENTICAÇÃO REAL */
     function autenticarUsuario(e) {
       e.preventDefault();
       const valId = document.getElementById('selectUsuarioLogin').value;
@@ -941,9 +933,6 @@
       document.getElementById('loginScreen').style.display = 'block';
     }
 
-    // =========================================================================
-    // LÓGICA E NAVEGAÇÃO CLIENTE
-    // =========================================================================
     function navegarPaginaCliente(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
 
@@ -1007,7 +996,7 @@
       if(!l) return;
 
       let vNum = parseFloat((l.valorTotal || "").replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
-      let valPorPca = (vNum > 0 && l.pcs > 0) ? `R$ ${(vNum / l.pcs).toFixed(2)}` : "Não calculated";
+      let valPorPca = (vNum > 0 && l.pcs > 0) ? `R$ ${(vNum / l.pcs).toFixed(2)}` : "Não calculado";
 
       let html = `
         <div style="background:#F8FAFC; padding:16px; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px;">
@@ -1040,7 +1029,6 @@
 
     function fecharModalDetalheLote() { document.getElementById('modalDetalheCompletoLote').style.display = 'none'; }
 
-    /* AGENDAMENTO E CALENDÁRIO COM BLOQUEIO DE DATAS PASSADAS */
     function renderizarAgendamentoCliente() {
       const cli = usuarioLogadoObjeto;
       document.getElementById('cliAgendCatTitle').innerText = cli.categoria;
@@ -1082,7 +1070,6 @@
         const dateObj = new Date(ano, mes, d);
         const diaSemana = dateObj.getDay();
 
-        // VALIDAÇÃO DE DATAS QUE JÁ PASSARAM
         let jaPassou = dateObj < DATA_HOJE_SISTEMA;
         let eSabDom = (diaSemana === 0 || diaSemana === 6);
         let eFeriado = feriadosLimeiraSP.includes(dataFull);
@@ -1148,6 +1135,7 @@
       if(pcs <= 0) { alert("⚠️ Informe a quantidade de peças ou o peso!"); return; }
 
       datasOcupadasAgenda.push(dataAgendamentoSelecionadaCli);
+      salvarDadosLocal('SOS_datasOcupadasAgenda', datasOcupadasAgenda);
 
       bancoLotes4Etapas.push({
         id: Date.now(),
@@ -1166,8 +1154,10 @@
         valorTotal: "",
         desconto: ""
       });
+      salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
 
       cli.enviadoMes = (cli.enviadoMes || 0) + pcs;
+      salvarDadosLocal('SOS_bancoClientes', bancoClientes);
 
       alert(`✅ LOTE AGENDADO COM SUCESSO PARA ${dataAgendamentoSelecionadaCli}!`);
       document.getElementById('inputAgendQtdPcs').value = "";
@@ -1213,6 +1203,7 @@
 
       if(txt) {
         bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: `[SOLICITAÇÃO DE AJUSTE NO ENCARTE - ${cat}]: ${txt}`, data: "01/10/2026" });
+        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
         document.getElementById('textoAjusteEncarteCli').value = "";
         alert("✅ Sua solicitação foi enviada para a Diretoria!");
       }
@@ -1248,15 +1239,13 @@
       const txt = document.getElementById('inputTextoEnvioCli').value.trim();
       if(txt) {
         bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.marca, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
         document.getElementById('inputTextoEnvioCli').value = "";
         alert("✅ Mensagem enviada!");
         renderizarMensagensCliente();
       }
     }
 
-    // =========================================================================
-    // LÓGICA E NAVEGAÇÃO COLABORADOR (COM REGRAS DOS SETORES)
-    // =========================================================================
     function navegarPaginaColab(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(b => b.classList.remove('active'));
 
@@ -1332,7 +1321,6 @@
       if(regrasSetor.length === 0) {
         html = `<p style="color:var(--text-muted);">Nenhuma regra cadastrada para este setor ainda.</p>`;
       } else {
-        // Agrupa por cliente
         bancoClientes.forEach(c => {
           const regrasCli = regrasSetor.filter(r => r.cliente === c.marca);
           if(regrasCli.length > 0) {
@@ -1386,6 +1374,8 @@
         l.editadoColab = true;
 
         if(proxSetor.includes("7. Finalização")) { l.etapa = 4; }
+
+        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
 
         alert(`✅ Lote #${l.numLote || l.id} avançado para '${proxSetor}'!`);
         fecharModalOpBancadaLote();
@@ -1443,15 +1433,13 @@
       const txt = document.getElementById('inputTextoEnvioColab').value.trim();
       if(txt) {
         bancoMensagens.push({ id: Date.now(), remetente: usuarioLogadoObjeto.nome, destinatario: "Diretoria General", texto: txt, data: "01/10/2026" });
+        salvarDadosLocal('SOS_bancoMensagens', bancoMensagens);
         document.getElementById('inputTextoEnvioColab').value = "";
         alert("✅ Mensagem enviada para a Diretoria!");
         renderizarMensagensColab();
       }
     }
 
-    // =========================================================================
-    // LÓGICA E NAVEGAÇÃO DIRETORIA
-    // =========================================================================
     function navegarPaginaDiretoria(pag) {
       document.querySelectorAll('.btn-pag-dir').forEach(b => b.classList.remove('active'));
 
@@ -1563,7 +1551,6 @@
       cont.innerHTML = html;
     }
 
-    /* GESTÃO DE REGRAS DOS SETORES (DIRETORIA) */
     function renderizarCardsSetoresRegrasDir() {
       const cont = document.getElementById('containerCardsSetoresRegrasDir');
       let html = "";
@@ -1619,6 +1606,8 @@
       if(!bancoRegrasSetores[setor]) bancoRegrasSetores[setor] = [];
       bancoRegrasSetores[setor].push({ id: Date.now(), cliente: cli, regra: txt });
 
+      salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
+
       alert("✅ Regra vinculada com sucesso no setor!");
       fecharModalAddRegraSetor();
       renderizarCardsSetoresRegrasDir();
@@ -1627,6 +1616,7 @@
     function excluirRegraSetorDirect(setor, idx) {
       if(confirm("Deseja excluir esta regra do setor?")) {
         bancoRegrasSetores[setor].splice(idx, 1);
+        salvarDadosLocal('SOS_bancoRegrasSetores', bancoRegrasSetores);
         renderizarCardsSetoresRegrasDir();
       }
     }
@@ -1658,6 +1648,8 @@
         l.desconto = document.getElementById('editLoteDesconto').value;
         l.obs = document.getElementById('editLoteObs').value;
         l.editadoColab = false;
+
+        salvarDadosLocal('SOS_bancoLotes4Etapas', bancoLotes4Etapas);
 
         alert(`✅ Lote #${l.numLote || l.id} atualizado!`);
         fecharModalEditarLoteDir();
@@ -1731,6 +1723,8 @@
         bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, cotaMax: cota, enviadoMes: 0, inicio: ini });
       }
 
+      salvarDadosLocal('SOS_bancoClientes', bancoClientes);
+
       alert("✅ Cliente salvo com sucesso!");
       fecharModalCadCliente();
       renderizarCardsClientesAmplo();
@@ -1742,6 +1736,7 @@
       if(c && confirm(`⚠ Deseja EXCLUIR '${c.marca}'?`)) {
         const idx = bancoClientes.findIndex(item => item.id === id);
         if(idx > -1) bancoClientes.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoClientes', bancoClientes);
         renderizarCardsClientesAmplo();
         selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
@@ -1808,6 +1803,8 @@
         bancoColaboradores.push({ id: Date.now(), nome: nome, fone: fone, login: login, senha: senha, setores: tags });
       }
 
+      salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
+
       alert("✅ Colaborador salvo!");
       fecharModalCadColaborador();
       renderizarCardsColabAmplo();
@@ -1819,6 +1816,7 @@
       if(c && confirm(`⚠ Deseja EXCLUIR '${c.nome}'?`)) {
         const idx = bancoColaboradores.findIndex(item => item.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoColaboradores', bancoColaboradores);
         renderizarCardsColabAmplo();
         selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
       }
@@ -1875,12 +1873,14 @@
       if(v > 0) {
         if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
         else bancoInsumosCompletos[cli][idx].qtd -= v;
+        salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
         abrirDetalheInsumosClienteDirect(cli);
       }
     }
 
     function alterarGondulaInsumoDirect(cli, idx, val) {
       bancoInsumosCompletos[cli][idx].gondula = val;
+      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
       alert("✅ Gondula atualizada!");
     }
 
@@ -1923,6 +1923,7 @@
       if(val) {
         if(!bancoTiposInsumos.includes(val)) {
           bancoTiposInsumos.push(val);
+          salvarDadosLocal('SOS_bancoTiposInsumos', bancoTiposInsumos);
         }
         preencherSelectTiposInsumo();
         document.getElementById('mCadInsTipo').value = val;
@@ -1946,6 +1947,8 @@
 
       if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
       bancoInsumosCompletos[cli].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+
+      salvarDadosLocal('SOS_bancoInsumosCompletos', bancoInsumosCompletos);
 
       alert("✅ Novo insumo cadastrado!");
       fecharModalCadInsumo();
@@ -2079,6 +2082,8 @@
       if(!bancoModelosEncarte[cli]) bancoModelosEncarte[cli] = [];
       bancoModelosEncarte[cli].push({ id: Date.now(), catJoia: catJ, passos: listaPassosEncarteAtual, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv, obs: obs });
 
+      salvarDadosLocal('SOS_bancoModelosEncarte', bancoModelosEncarte);
+
       alert("✅ Modelo de encarte registrado!");
       fecharModalCadModeloEncarte();
       renderizarSelecaoClientesEncarte();
@@ -2095,6 +2100,7 @@
       const val = document.getElementById('inputNovaCatJoia').value.trim();
       if(val && !bancoCategoriasJoias.includes(val)) {
         bancoCategoriasJoias.push(val);
+        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
         document.getElementById('inputNovaCatJoia').value = "";
         renderizarCategoriasJoiasCentral();
       }
@@ -2103,6 +2109,7 @@
     function excluirCategoriaJoiaCentral(idx) {
       if(confirm("Excluir esta categoria?")) {
         bancoCategoriasJoias.splice(idx, 1);
+        salvarDadosLocal('SOS_bancoCategoriasJoias', bancoCategoriasJoias);
         renderizarCategoriasJoiasCentral();
       }
     }
@@ -2110,12 +2117,12 @@
     function salvarFatorDivisorSubmit() {
       const val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 3.2;
       fatorMediaPesoGlobal = val;
+      salvarDadosLocal('SOS_fatorMediaPesoGlobal', fatorMediaPesoGlobal);
       alert(`⚙️ Média de peso ajustada para ${val}g por peça!`);
     }
 
     function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado oficial publicado!"); }
 
-    // INICIALIZAÇÃO NA DIRETORIA
     selecionarPerfilAcesso('diretoria');
   </script>
 </body>
