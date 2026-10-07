@@ -732,15 +732,18 @@
       <form onsubmit="salvarNovoInsumoSubmit(event)">
         <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca</label>
         <select id="mCadInsCli" class="form-control"></select>
-        <label style="font-size:0.78rem; font-weight:bold;">Categoria de Joia</label>
-        <select id="mCadInsCatJoia" class="form-control"></select>
+        
+        <label style="font-size:0.78rem; font-weight:bold; display:block; margin-bottom:6px;">Categorias de Joia (Selecione uma ou mais):</label>
+        <div id="boxCatJoiasInsumoTags" style="margin-bottom:12px; background:#F8FAFC; padding:8px; border-radius:10px; border:1px solid #E2E8F0;"></div>
+        
         <label style="font-size:0.78rem; font-weight:bold;">Tipo de Insumo</label>
-        <select id="mCadInsTipo" class="form-control">
-          <option value="Cartela">Cartela</option>
-          <option value="Saquinho">Saquinho</option>
-          <option value="Tag / Solapa">Tag / Solapa</option>
-          <option value="Fecho / Argola">Fecho / Argola</option>
-        </select>
+        <select id="mCadInsTipo" class="form-control"></select>
+        
+        <div style="display:flex; gap:6px; margin-bottom:12px;">
+          <input type="text" id="inputNovoTipoInsumoTemp" class="form-control" style="margin:0;" placeholder="Outro tipo de insumo...">
+          <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 12px; white-space:nowrap; font-size:0.75rem;" onclick="adicionarNovoTipoInsumoDirect()">+ ADICIONAR TIPO</button>
+        </div>
+
         <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Tamanho Específico</label>
         <input type="text" id="mCadInsSub" class="form-control" required placeholder="Ex: 6.5x9+3+3 c/ solapa">
         <label style="font-size:0.78rem; font-weight:bold;">Quantidade Inicial</label>
@@ -827,6 +830,8 @@
     ];
 
     const bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
+
+    const bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"];
 
     const bancoInsumosCompletos = {
       "Niara Semijoias": [
@@ -1002,7 +1007,7 @@
       if(!l) return;
 
       let vNum = parseFloat((l.valorTotal || "").replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
-      let valPorPca = (vNum > 0 && l.pcs > 0) ? `R$ ${(vNum / l.pcs).toFixed(2)}` : "Não calculado";
+      let valPorPca = (vNum > 0 && l.pcs > 0) ? `R$ ${(vNum / l.pcs).toFixed(2)}` : "Não calculated";
 
       let html = `
         <div style="background:#F8FAFC; padding:16px; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px;">
@@ -1734,7 +1739,7 @@
 
     function excluirClienteSubmit(id) {
       const c = bancoClientes.find(item => item.id === id);
-      if(c && confirm(`⚠️️ Deseja EXCLUIR '${c.marca}'?`)) {
+      if(c && confirm(`⚠ Deseja EXCLUIR '${c.marca}'?`)) {
         const idx = bancoClientes.findIndex(item => item.id === id);
         if(idx > -1) bancoClientes.splice(idx, 1);
         renderizarCardsClientesAmplo();
@@ -1794,7 +1799,7 @@
       const senha = document.getElementById('mCadColabSenha').value.trim();
       const tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(el => el.innerText);
 
-      if(!nome || !login) { alert("⚠️️ Preencha nome e login!"); return; }
+      if(!nome || !login) { alert("⚠ Preencha nome e login!"); return; }
 
       if(id) {
         const c = bancoColaboradores.find(item => item.id === parseInt(id));
@@ -1811,7 +1816,7 @@
 
     function excluirColaboradorSubmit(id) {
       const c = bancoColaboradores.find(item => item.id === id);
-      if(c && confirm(`⚠️️ Deseja EXCLUIR '${c.nome}'?`)) {
+      if(c && confirm(`⚠ Deseja EXCLUIR '${c.nome}'?`)) {
         const idx = bancoColaboradores.findIndex(item => item.id === id);
         if(idx > -1) bancoColaboradores.splice(idx, 1);
         renderizarCardsColabAmplo();
@@ -1881,11 +1886,50 @@
 
     function abrirModalCadastrarInsumo() {
       const selCli = document.getElementById('mCadInsCli');
-      const selCatJ = document.getElementById('mCadInsCatJoia');
-      selCli.innerHTML = ""; selCatJ.innerHTML = "";
+      selCli.innerHTML = "";
       bancoClientes.forEach(c => { selCli.innerHTML += `<option value="${c.marca}">${c.marca}</option>`; });
-      bancoCategoriasJoias.forEach(cj => { selCatJ.innerHTML += `<option value="${cj}">${cj}</option>`; });
+
+      renderizarTagsCategoriasJoiaInsumo();
+      preencherSelectTiposInsumo();
+
+      document.getElementById('inputNovoTipoInsumoTemp').value = "";
+      document.getElementById('mCadInsSub').value = "";
+      document.getElementById('mCadInsQtd').value = "";
+      document.getElementById('mCadInsGondula').value = "";
+
       document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function renderizarTagsCategoriasJoiaInsumo() {
+      const box = document.getElementById('boxCatJoiasInsumoTags');
+      let html = `<span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">Geral / Todas</span>`;
+      bancoCategoriasJoias.forEach(cj => {
+        html += `<span class="tag-setor-btn" onclick="toggleSetorTag(this)">${cj}</span>`;
+      });
+      box.innerHTML = html;
+    }
+
+    function preencherSelectTiposInsumo() {
+      const selTipo = document.getElementById('mCadInsTipo');
+      selTipo.innerHTML = "";
+      bancoTiposInsumos.forEach(t => {
+        selTipo.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+    }
+
+    function adicionarNovoTipoInsumoDirect() {
+      const inp = document.getElementById('inputNovoTipoInsumoTemp');
+      const val = inp.value.trim();
+      if(val) {
+        if(!bancoTiposInsumos.includes(val)) {
+          bancoTiposInsumos.push(val);
+        }
+        preencherSelectTiposInsumo();
+        document.getElementById('mCadInsTipo').value = val;
+        inp.value = "";
+      } else {
+        alert("⚠️ Digite o nome do novo tipo de insumo!");
+      }
     }
 
     function fecharModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'none'; }
@@ -1893,7 +1937,8 @@
     function salvarNovoInsumoSubmit(e) {
       e.preventDefault();
       const cli = document.getElementById('mCadInsCli').value;
-      const catJ = document.getElementById('mCadInsCatJoia').value;
+      const catsSel = Array.from(document.querySelectorAll('#boxCatJoiasInsumoTags .tag-setor-btn.selected')).map(el => el.innerText);
+      const catJ = catsSel.length > 0 ? catsSel.join(', ') : "Geral / Todas";
       const tipo = document.getElementById('mCadInsTipo').value;
       const sub = document.getElementById('mCadInsSub').value;
       const qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
