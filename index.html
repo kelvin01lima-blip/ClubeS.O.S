@@ -41,7 +41,7 @@
     .badge-espera { background: #E0F2FE; color: #0369A1; }
     .cards-grid-amplos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 15px; }
     .card-ampli-item { background: #FFF; border: 2px solid #E2E8F0; border-radius: 14px; padding: 20px; cursor: pointer; position: relative; }
-    .tag-setor-btn { display: inline-block; padding: 6px 12px; border-radius: 8px; border: 1px solid #CBD5E1; background: #F1F5F9; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin: 3px; }
+    .tag-setor-btn { display: inline-block; padding: 6px 12px; border-radius: 8px; border: 1px solid #CBD5E1; background: #F1F5F9; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin: 3px; user-select: none; }
     .tag-setor-btn.selected { background: var(--orange-accent); color: #FFF; border-color: var(--orange-accent); }
     table.tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
     table.tabela-sos th, table.tabela-sos td { text-align: left; padding: 10px 14px; border: 1px solid #CBD5E1; font-size: 0.85rem; }
@@ -442,14 +442,16 @@
       <input type="text" id="mCadColabFone" class="form-control" required placeholder="Telefone...">
       <input type="text" id="mCadColabLogin" class="form-control" required placeholder="Login...">
       <input type="text" id="mCadColabSenha" class="form-control" required value="123">
+      
+      <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px; color:var(--header-bg);">Áreas / Setores Liberados:</label>
       <div id="boxSetoresTagsColab">
-        <span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">1. Entrada Bruta</span>
-        <span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">2. Inspeção 3em1</span>
-        <span class="tag-setor-btn" onclick="toggleSetorTag(this)">3. Foto</span>
-        <span class="tag-setor-btn" onclick="toggleSetorTag(this)">4. CDE</span>
-        <span class="tag-setor-btn" onclick="toggleSetorTag(this)">5. Etiqueta</span>
-        <span class="tag-setor-btn" onclick="toggleSetorTag(this)">6. Encarte</span>
-        <span class="tag-setor-btn" onclick="toggleSetorTag(this)">7. Finalização</span>
+        <span class="tag-setor-btn" data-setor="1. Entrada Bruta" onclick="toggleSetorTag(this)">1. Entrada Bruta</span>
+        <span class="tag-setor-btn" data-setor="2. Inspeção 3em1" onclick="toggleSetorTag(this)">2. Inspeção 3em1</span>
+        <span class="tag-setor-btn" data-setor="3. Fotografia" onclick="toggleSetorTag(this)">3. Fotografia</span>
+        <span class="tag-setor-btn" data-setor="4. CDE Catalogação" onclick="toggleSetorTag(this)">4. CDE Catalogação</span>
+        <span class="tag-setor-btn" data-setor="5. Etiquetagem" onclick="toggleSetorTag(this)">5. Etiquetagem</span>
+        <span class="tag-setor-btn" data-setor="6. Encartelamento" onclick="toggleSetorTag(this)">6. Encartelamento</span>
+        <span class="tag-setor-btn" data-setor="7. Finalização" onclick="toggleSetorTag(this)">7. Finalização</span>
       </div>
       <button class="btn-main btn-orange" style="margin-top:16px;" onclick="salvarColaboradorModalSubmit()">SALVAR COLABORADOR</button>
       <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadColaborador()">CANCELAR</button>
@@ -607,14 +609,22 @@
       verificarSessaoSalva();
 
       var controller = new AbortController();
-      var timeoutId = setTimeout(function() { controller.abort(); }, 3500);
+      var timeoutId = setTimeout(function() { controller.abort(); }, 4000);
 
       fetch(GOOGLE_API_URL + "?action=carregarTudo", { signal: controller.signal })
         .then(function(res) { clearTimeout(timeoutId); return res.json(); })
         .then(function(dados) {
           if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
           if(dados.bancoClientesInativos) bancoClientesInativos = dados.bancoClientesInativos;
-          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) bancoColaboradores = dados.bancoColaboradores;
+          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) {
+            bancoColaboradores = dados.bancoColaboradores.map(function(c) {
+              if (typeof c.setores === 'string') {
+                try { c.setores = JSON.parse(c.setores); } catch(e) { c.setores = []; }
+              }
+              if (!Array.isArray(c.setores)) c.setores = [];
+              return c;
+            });
+          }
           if(dados.bancoInsumosCompletos && Object.keys(dados.bancoInsumosCompletos).length > 0) bancoInsumosCompletos = dados.bancoInsumosCompletos;
           if(dados.bancoModelosEncarte && Object.keys(dados.bancoModelosEncarte).length > 0) bancoModelosEncarte = dados.bancoModelosEncarte;
           if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
@@ -623,6 +633,9 @@
 
           if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
           selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+          
+          if(document.getElementById('pagDirColab').style.display === 'block') renderizarCardsColabAmplo();
+          if(document.getElementById('pagDirClientes').style.display === 'block') renderizarCardsClientesAmplo();
         })
         .catch(function(err) {
           if(statusEl) statusEl.innerText = "☁️ Modo Rápido (Local)";
@@ -930,11 +943,15 @@
 
     function renderizarLotesColabBancada() {
       var col = usuarioLogadoObjeto;
-      document.getElementById('subtituloColabBancada').innerText = "Setores Liberados: " + col.setores.join(', ');
+      var setoresColab = col && Array.isArray(col.setores) ? col.setores : [];
+      document.getElementById('subtituloColabBancada').innerText = "Setores Liberados: " + (setoresColab.join(', ') || "Nenhum setor atribuído");
       var cont = document.getElementById('containerColabMeuSetor');
       var htmlMeu = "";
       bancoLotes4Etapas.forEach(function(l) {
-        var estaNoMeuSetor = col.setores.some(function(s) { return l.setorAtual.indexOf(s.split('.')[1].trim()) !== -1; });
+        var estaNoMeuSetor = setoresColab.some(function(s) { 
+          var parteNome = s.split('.')[1] ? s.split('.')[1].trim() : s;
+          return l.setorAtual.indexOf(parteNome) !== -1; 
+        });
         if(estaNoMeuSetor && !l.editadoColab && l.etapa !== 4) {
           htmlMeu += '<div class="card-ampli-item" style="border-color:var(--orange-accent);" onclick="abrirModalOpBancadaLote(' + l.id + ')">' +
               '<span class="badge-status badge-andamento">MEU SETOR — LOTE #' + (l.numLote || 'PENDENTE') + '</span>' +
@@ -1307,15 +1324,18 @@
     function renderizarCardsColabAmplo() {
       var cont = document.getElementById('containerCardsColabAmplo');
       cont.innerHTML = bancoColaboradores.map(function(c) {
+        var setoresList = Array.isArray(c.setores) ? c.setores.join(', ') : '';
         return '<div class="card-ampli-item">' +
-            '<strong style="font-size:1.15rem;">' + c.nome + ' (' + c.login + ')</strong>' +
-            '<p style="font-size:0.82rem;">WhatsApp: ' + c.fone + '</p>' +
+            '<strong style="font-size:1.15rem;">' + c.nome + '</strong>' +
+            '<p style="font-size:0.82rem; margin:4px 0;">Login: <strong>' + c.login + '</strong> | Senha: <strong>' + c.senha + '</strong></p>' +
+            '<p style="font-size:0.82rem; margin:4px 0;">WhatsApp: ' + c.fone + '</p>' +
+            '<p style="font-size:0.78rem; color:var(--orange-accent); margin-top:6px;"><strong>Setores:</strong> ' + (setoresList || "Nenhum") + '</p>' +
             '<div style="display:flex; gap:8px; margin-top:10px;">' +
               '<button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarColaborador(' + c.id + ')">EDITAR</button>' +
               '<button class="btn-main" style="background:#EF4444; font-size:0.72rem; width:auto; padding:6px 12px;" onclick="excluirColaboradorSubmit(' + c.id + ')">EXCLUIR</button>' +
             '</div>' +
           '</div>';
-      }).join('');
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum colaborador cadastrado.</p>";
     }
 
     function abrirModalCadastrarColaborador() {
@@ -1325,6 +1345,11 @@
       document.getElementById('mCadColabFone').value = "";
       document.getElementById('mCadColabLogin').value = "";
       document.getElementById('mCadColabSenha').value = "123";
+      
+      document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+
       document.getElementById('modalCadColaborador').style.display = 'flex';
     }
 
@@ -1337,6 +1362,21 @@
         document.getElementById('mCadColabFone').value = c.fone;
         document.getElementById('mCadColabLogin').value = c.login;
         document.getElementById('mCadColabSenha').value = c.senha;
+
+        var setoresDoColab = Array.isArray(c.setores) ? c.setores : [];
+
+        document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn').forEach(function(el) {
+          var setorData = el.getAttribute('data-setor') || el.innerText;
+          var marcado = setoresDoColab.some(function(s) {
+            return s === setorData || setorData.indexOf(s) !== -1 || s.indexOf(setorData) !== -1;
+          });
+          if (marcado) {
+            el.classList.add('selected');
+          } else {
+            el.classList.remove('selected');
+          }
+        });
+
         document.getElementById('modalCadColaborador').style.display = 'flex';
       }
     }
@@ -1350,19 +1390,38 @@
       var fone = document.getElementById('mCadColabFone').value.trim();
       var login = document.getElementById('mCadColabLogin').value.trim();
       var senha = document.getElementById('mCadColabSenha').value.trim();
-      var tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(function(el) { return el.innerText; });
+      
+      var tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(function(el) { 
+        return el.getAttribute('data-setor') || el.innerText; 
+      });
 
-      if(!nome || !login) return;
+      if(!nome || !login) {
+        alert("⚠️ Informe o nome e o login do colaborador!");
+        return;
+      }
 
       if(id) {
         var c = bancoColaboradores.find(function(item) { return item.id === parseInt(id); });
-        if(c) { c.nome = nome; c.fone = fone; c.login = login; c.senha = senha; c.setores = tags; }
+        if(c) { 
+          c.nome = nome; 
+          c.fone = fone; 
+          c.login = login; 
+          c.senha = senha; 
+          c.setores = tags; 
+        }
       } else {
-        bancoColaboradores.push({ id: Date.now(), nome: nome, fone: fone, login: login, senha: senha, setores: tags });
+        bancoColaboradores.push({ 
+          id: Date.now(), 
+          nome: nome, 
+          fone: fone, 
+          login: login, 
+          senha: senha, 
+          setores: tags 
+        });
       }
 
       salvarDadosNovem();
-      alert("✅ Colaborador salvo!");
+      alert("✅ Colaborador salvo com sucesso!");
       fecharModalCadColaborador();
       renderizarCardsColabAmplo();
       selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
