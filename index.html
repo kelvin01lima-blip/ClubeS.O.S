@@ -77,7 +77,7 @@
   <div class="top-bar">
     <div>
       <h1>S.O.S SOLUÇÕES</h1>
-      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Conectando...</span></p>
+      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Sistema Pronto</span></p>
     </div>
     <div id="userBadgeArea" style="display:none;">
       <div class="user-profile-badge">
@@ -535,7 +535,8 @@
 
     var bancoClientes = [
       { id: 1, marca: "Niara Semijoias", login: "niara@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "05/2026" },
-      { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" }
+      { id: 2, marca: "Velt Joias", login: "velt@sos.com", senha: "123", categoria: "🥇 VIP Ouro", cotaMax: 1000, enviadoMes: 0, inicio: "04/2026" },
+      { id: 3, marca: "Ourolux Semijoias", login: "ourolux@sos.com", senha: "123", categoria: "💎 VIP Diamante", cotaMax: 1500, enviadoMes: 0, inicio: "06/2026" }
     ];
 
     var bancoClientesInativos = [];
@@ -591,10 +592,16 @@
 
     function carregarDadosNovem() {
       var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Buscando dados...";
-      
-      fetch(GOOGLE_API_URL + "?action=carregarTudo")
-        .then(function(res) { return res.json(); })
+      if(statusEl) statusEl.innerText = "⏳ Sincronizando...";
+
+      // Renderiza imediatamente com os dados armazenados no JavaScript local
+      verificarSessaoSalva();
+
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function() { controller.abort(); }, 3500); // 3.5 segundos max
+
+      fetch(GOOGLE_API_URL + "?action=carregarTudo", { signal: controller.signal })
+        .then(function(res) { clearTimeout(timeoutId); return res.json(); })
         .then(function(dados) {
           if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
           if(dados.bancoClientesInativos) bancoClientesInativos = dados.bancoClientesInativos;
@@ -606,13 +613,11 @@
           if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
 
           if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
-          
-          verificarSessaoSalva();
+          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
         })
         .catch(function(err) {
-          if(statusEl) statusEl.innerText = "⚠️ Modo Local";
-          console.log("Drive indisponível:", err);
-          verificarSessaoSalva();
+          if(statusEl) statusEl.innerText = "☁️ Modo Rápido (Local)";
+          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
         });
     }
 
@@ -1372,7 +1377,6 @@
       var contAtivos = document.getElementById('containerCardsClientesInsumosSelection');
       var contInativos = document.getElementById('containerCardsClientesInsumosInativosSelection');
 
-      var marcasAtivas = bancoClientes.map(function(c) { return c.marca; });
       var marcasInativas = bancoClientesInativos.map(function(c) { return c.marca; });
 
       var htmlAtivos = "";
@@ -1402,4 +1406,288 @@
       var html = '<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gondula</th><th>Ações</th></tr></thead><tbody>';
       lista.forEach(function(ins, idx) {
         html += '<tr>' +
-            '<td><strong>' + (ins
+            '<td><strong>' + (ins.catJoia || 'Geral') + '</strong></td>' +
+            '<td><strong>' + ins.tipo + '</strong></td>' +
+            '<td>' + ins.sub + '</td>' +
+            '<td><strong>' + ins.qtd + ' un</strong></td>' +
+            '<td><input type="text" value="' + (ins.gondula || '') + '" style="width:60px; padding:3px;" onchange="alterarGondulaInsumoDirect(\'' + cli + '\', ' + idx + ', this.value)"></td>' +
+            '<td>' +
+              '<button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'entrada\')">+ Entrada</button> ' +
+              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button> ' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#3B82F6;" onclick="editarInsumoDirect(\'' + cli + '\', ' + idx + ')">Editar</button> ' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#EF4444;" onclick="excluirInsumoDirect(\'' + cli + '\', ' + idx + ')">Excluir</button>' +
+            '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('containerInsumosTabelaDirect').innerHTML = html;
+    }
+
+    function voltarSelecaoClienteInsumo() { renderizarSelecaoClientesInsumos(); }
+
+    function editarInsumoDirect(cli, idx) {
+      var ins = bancoInsumosCompletos[cli][idx];
+      var novaSub = prompt("Nova Subcategoria / Descrição:", ins.sub);
+      if (novaSub !== null) {
+        var novaQtd = parseInt(prompt("Nova Quantidade em Estoque:", ins.qtd)) || 0;
+        ins.sub = novaSub;
+        ins.qtd = novaQtd;
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function excluirInsumoDirect(cli, idx) {
+      if (confirm("⚠️ 1/2: Tem certeza que deseja excluir este insumo?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir insumo do sistema?")) {
+        bancoInsumosCompletos[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function lancarEntradaSaidaInsumo(cli, idx, tipo) {
+      var v = parseInt(prompt("Quantidade para " + tipo.toUpperCase() + ":", "100")) || 0;
+      if(v > 0) {
+        if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
+        else bancoInsumosCompletos[cli][idx].qtd -= v;
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function alterarGondulaInsumoDirect(cli, idx, val) {
+      bancoInsumosCompletos[cli][idx].gondula = val;
+      salvarDadosNovem();
+      alert("✅ Gondula atualizada!");
+    }
+
+    function abrirModalCadastrarInsumo() {
+      var selCli = document.getElementById('mCadInsCli');
+      selCli.innerHTML = "";
+      bancoClientes.forEach(function(c) { selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
+      renderizarTagsCategoriasJoiaInsumo();
+      preencherSelectTiposInsumo();
+      document.getElementById('inputNovoTipoInsumoTemp').value = "";
+      document.getElementById('mCadInsSub').value = "";
+      document.getElementById('mCadInsQtd').value = "";
+      document.getElementById('mCadInsGondula').value = "";
+      document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function renderizarTagsCategoriasJoiaInsumo() {
+      var box = document.getElementById('boxCatJoiasInsumoTags');
+      var html = '<span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">Geral / Todas</span>';
+      bancoCategoriasJoias.forEach(function(cj) { html += '<span class="tag-setor-btn" onclick="toggleSetorTag(this)">' + cj + '</span>'; });
+      box.innerHTML = html;
+    }
+
+    function preencherSelectTiposInsumo() {
+      var selTipo = document.getElementById('mCadInsTipo');
+      selTipo.innerHTML = "";
+      bancoTiposInsumos.forEach(function(t) { selTipo.innerHTML += '<option value="' + t + '">' + t + '</option>'; });
+    }
+
+    function adicionarNovoTipoInsumoDirect() {
+      var inp = document.getElementById('inputNovoTipoInsumoTemp');
+      var val = inp.value.trim();
+      if(val) {
+        if(bancoTiposInsumos.indexOf(val) === -1) {
+          bancoTiposInsumos.push(val);
+        }
+        preencherSelectTiposInsumo();
+        document.getElementById('mCadInsTipo').value = val;
+        inp.value = "";
+      }
+    }
+
+    function fecharModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'none'; }
+
+    function salvarNovoInsumoSubmit(e) {
+      e.preventDefault();
+      var cli = document.getElementById('mCadInsCli').value;
+      var catsSel = Array.from(document.querySelectorAll('#boxCatJoiasInsumoTags .tag-setor-btn.selected')).map(function(el) { return el.innerText; });
+      var catJ = catsSel.length > 0 ? catsSel.join(', ') : "Geral / Todas";
+      var tipo = document.getElementById('mCadInsTipo').value;
+      var sub = document.getElementById('mCadInsSub').value;
+      var qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
+      var gon = document.getElementById('mCadInsGondula').value;
+
+      if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
+      bancoInsumosCompletos[cli].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+      salvarDadosNovem();
+
+      alert("✅ Insumo cadastrado!");
+      fecharModalCadInsumo();
+      renderizarSelecaoClientesInsumos();
+    }
+
+    function renderizarSelecaoClientesEncarte() {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      
+      var contAtivos = document.getElementById('containerCardsClientesEncarteSelection');
+      var contInativos = document.getElementById('containerCardsClientesEncarteInativosSelection');
+
+      var marcasInativas = bancoClientesInativos.map(function(c) { return c.marca; });
+
+      var htmlAtivos = "";
+      var htmlInativos = "";
+
+      Object.keys(bancoModelosEncarte).forEach(function(cli) {
+        var eInativo = marcasInativas.indexOf(cli) !== -1;
+        var card = '<div class="card-ampli-item" ' + (eInativo ? 'style="opacity:0.7; background:#F1F5F9;"' : '') + ' onclick="abrirDetalheEncarteClienteDirect(\'' + cli + '\')">' +
+            '<strong style="font-size:1.15rem;">' + cli + (eInativo ? ' (INATIVO)' : '') + '</strong>' +
+            '<p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">Modelos: <strong>' + bancoModelosEncarte[cli].length + '</strong></p>' +
+          '</div>';
+
+        if (eInativo) htmlInativos += card;
+        else htmlAtivos += card;
+      });
+
+      contAtivos.innerHTML = htmlAtivos || "<p style='color:var(--text-muted);'>Nenhum encarte de cliente ativo.</p>";
+      contInativos.innerHTML = htmlInativos || "<p style='color:var(--text-muted);'>Nenhum encarte de cliente inativo.</p>";
+    }
+
+    function abrirDetalheEncarteClienteDirect(cli) {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'none';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'block';
+      document.getElementById('tituloEncarteClienteSel').innerText = cli + " — Modelos de Encarte";
+      var cont = document.getElementById('containerCardsCategoriasEncarteClienteSel');
+      var lista = bancoModelosEncarte[cli] || [];
+      cont.innerHTML = lista.map(function(m, idx) {
+        return '<div class="card-ampli-item">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+              '<span class="badge-status badge-andamento">' + m.catJoia.toUpperCase() + '</span>' +
+              '<button class="btn-main" style="width:auto; padding:4px 10px; background:#EF4444; font-size:0.7rem;" onclick="excluirModeloEncarteDirect(\'' + cli + '\', ' + idx + ')">EXCLUIR MODELO</button>' +
+            '</div>' +
+            '<div style="margin:8px 0; background:#F8FAFC; padding:10px; border-radius:8px;">' +
+              m.passos.map(function(p) { return '<div>• ' + p + '</div>'; }).join('') +
+            '</div>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum modelo cadastrado.</p>";
+    }
+
+    function excluirModeloEncarteDirect(cli, idx) {
+      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir este modelo de encarte?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir modelo? (A marca continuará no sistema)")) {
+        bancoModelosEncarte[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheEncarteClienteDirect(cli);
+      }
+    }
+
+    function voltarSelecaoClienteEncarte() {
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+    }
+
+    function abrirModalCadastrarModeloEncarte() {
+      listaPassosEncarteAtual = [];
+      renderizarPassosEncarteLista();
+      var selCli = document.getElementById('mCadEncCli');
+      var selCatJ = document.getElementById('mCadEncCatJoia');
+      selCli.innerHTML = ""; selCatJ.innerHTML = "";
+      bancoClientes.forEach(function(c) { selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
+      bancoCategoriasJoias.forEach(function(cj) { selCatJ.innerHTML += '<option value="' + cj + '">' + cj + '</option>'; });
+      atualizarSelectsInsumosModeloEncarte();
+      document.getElementById('modalCadModeloEncarte').style.display = 'flex';
+    }
+
+    function fecharModalCadModeloEncarte() { document.getElementById('modalCadModeloEncarte').style.display = 'none'; }
+
+    var listaPassosEncarteAtual = [];
+    function adicionarPassoEncarteLista() {
+      var inp = document.getElementById('inputPassoEncarteTemp');
+      var txt = inp.value.trim();
+      if(txt) {
+        listaPassosEncarteAtual.push((listaPassosEncarteAtual.length + 1) + ". " + txt);
+        inp.value = "";
+        renderizarPassosEncarteLista();
+      }
+    }
+
+    function renderizarPassosEncarteLista() {
+      var box = document.getElementById('containerPassosEncarteLista');
+      box.innerHTML = listaPassosEncarteAtual.map(function(p, idx) {
+        return '<div style="font-size:0.8rem; margin:2px 0; display:flex; justify-content:space-between;">' +
+            '<span>' + p + '</span><b style="color:red; cursor:pointer;" onclick="removerPassoEncarte(' + idx + ')">✕</b>' +
+          '</div>';
+      }).join('') || '<span style="font-size:0.78rem; color:var(--text-muted);">Nenhuma instrução.</span>';
+    }
+
+    function removerPassoEncarte(idx) {
+      listaPassosEncarteAtual.splice(idx, 1);
+      renderizarPassosEncarteLista();
+    }
+
+    function atualizarSelectsInsumosModeloEncarte() {
+      var cli = document.getElementById('mCadEncCli').value;
+      var insumos = bancoInsumosCompletos[cli] || [];
+      var selectSaq = document.getElementById('mCadEncSaquinho');
+      var selectCar = document.getElementById('mCadEncCartela');
+      selectSaq.innerHTML = "<option value='Não utiliza saquinho'>Não Utiliza Saquinho</option>";
+      selectCar.innerHTML = "<option value='Não utiliza cartela'>Não Utiliza Cartela</option>";
+
+      insumos.forEach(function(i) {
+        if(i.tipo === "Saquinho") selectSaq.innerHTML += '<option value="' + i.tipo + ' ' + i.sub + '">' + i.tipo + ' ' + i.sub + '</option>';
+        if(i.tipo === "Cartela") selectCar.innerHTML += '<option value="' + i.tipo + ' ' + i.sub + '">' + i.tipo + ' ' + i.sub + '</option>';
+      });
+    }
+
+    function salvarModeloEncarteCompletoSubmit(e) {
+      e.preventDefault();
+      var cli = document.getElementById('mCadEncCli').value;
+      var catJ = document.getElementById('mCadEncCatJoia').value;
+      var saq = document.getElementById('mCadEncSaquinho').value;
+      var car = document.getElementById('mCadEncCartela').value;
+      var ff = document.getElementById('mCadEncFotoFrente').value.trim();
+      var fv = document.getElementById('mCadEncFotoVerso').value.trim();
+      var obs = document.getElementById('mCadEncObs').value;
+
+      if(listaPassosEncarteAtual.length === 0) { alert("⚠️ Adicione ao menos 1 passo!"); return; }
+
+      if(!bancoModelosEncarte[cli]) bancoModelosEncarte[cli] = [];
+      bancoModelosEncarte[cli].push({ id: Date.now(), catJoia: catJ, passos: listaPassosEncarteAtual, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv, obs: obs });
+      salvarDadosNovem();
+
+      alert("✅ Modelo registrado!");
+      fecharModalCadModeloEncarte();
+      renderizarSelecaoClientesEncarte();
+    }
+
+    function renderizarCategoriasJoiasCentral() {
+      var box = document.getElementById('boxListaCategoriasJoiasCentral');
+      box.innerHTML = bancoCategoriasJoias.map(function(cj, idx) {
+        return '<span class="tag-setor-btn selected" style="margin:4px;">' + cj + ' <b onclick="excluirCategoriaJoiaCentral(' + idx + ')">✕</b></span>';
+      }).join('');
+    }
+
+    function cadastrarNovaCategoriaJoiaSubmit() {
+      var val = document.getElementById('inputNovaCatJoia').value.trim();
+      if(val && bancoCategoriasJoias.indexOf(val) === -1) {
+        bancoCategoriasJoias.push(val);
+        salvarDadosNovem();
+        document.getElementById('inputNovaCatJoia').value = "";
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function excluirCategoriaJoiaCentral(idx) {
+      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir esta categoria?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir categoria?")) {
+        bancoCategoriasJoias.splice(idx, 1);
+        salvarDadosNovem();
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function salvarFatorDivisorSubmit() {
+      var val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 2.1;
+      fatorMediaPesoGlobal = val;
+      alert("⚙️ Média ajustada para " + val + "g!");
+    }
+
+    function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado publicado!"); }
+
+    carregarDadosNovem();
+  </script>
+</body>
+</html>
