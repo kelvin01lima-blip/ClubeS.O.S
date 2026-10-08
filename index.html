@@ -214,12 +214,22 @@
           </div>
           <div>
             <h4>📢 Publicação de Comunicado Oficial</h4>
-            <select id="selectFiltroAvisoDir" class="form-control">
+            <label style="font-size:0.78rem; font-weight:bold;">Enviar Para:</label>
+            <select id="selectTipoDestinatarioAviso" class="form-control" onchange="alternarExibicaoDestinatariosAviso()">
               <option value="TODOS">TODOS OS CLIENTES E COLABORADORES</option>
-              <option value="EQUIPE">EQUIPE DE COLABORADORES</option>
+              <option value="TODOS_CLIENTES">TODOS OS CLIENTES</option>
+              <option value="TODOS_COLABORADORES">TODOS OS COLABORADORES</option>
+              <option value="SELECIONAR_CLIENTES">SELECIONAR CLIENTES ESPECÍFICOS</option>
+              <option value="SELECIONAR_COLABORADORES">SELECIONAR COLABORADORES ESPECÍFICOS</option>
             </select>
+
+            <div id="boxSelecaoClientesAviso" style="display:none; background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; max-height:150px; overflow-y:auto;"></div>
+            <div id="boxSelecaoColabAviso" style="display:none; background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; max-height:150px; overflow-y:auto;"></div>
+
+            <label style="font-size:0.78rem; font-weight:bold;">Mensagem / Comunicado:</label>
             <textarea id="textoAvisoDir" class="form-control" style="height:80px;" placeholder="Ex: Feriado municipal..."></textarea>
             <button class="btn-main btn-orange" onclick="salvarAvisoComunicadoSubmit()">PUBLICAR COMUNICADO</button>
+
             <h4 style="margin-top:16px;">⚙️ Média de Peso por Peça (Divisor Interno)</h4>
             <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="2.1">
             <button class="btn-main btn-green" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DE PESO</button>
@@ -594,11 +604,10 @@
       var statusEl = document.getElementById('statusSync');
       if(statusEl) statusEl.innerText = "⏳ Sincronizando...";
 
-      // Renderiza imediatamente com os dados armazenados no JavaScript local
       verificarSessaoSalva();
 
       var controller = new AbortController();
-      var timeoutId = setTimeout(function() { controller.abort(); }, 3500); // 3.5 segundos max
+      var timeoutId = setTimeout(function() { controller.abort(); }, 3500);
 
       fetch(GOOGLE_API_URL + "?action=carregarTudo", { signal: controller.signal })
         .then(function(res) { clearTimeout(timeoutId); return res.json(); })
@@ -1659,6 +1668,38 @@
       box.innerHTML = bancoCategoriasJoias.map(function(cj, idx) {
         return '<span class="tag-setor-btn selected" style="margin:4px;">' + cj + ' <b onclick="excluirCategoriaJoiaCentral(' + idx + ')">✕</b></span>';
       }).join('');
+
+      popularListasDestinatariosAviso();
+    }
+
+    function popularListasDestinatariosAviso() {
+      var boxCli = document.getElementById('boxSelecaoClientesAviso');
+      var boxColab = document.getElementById('boxSelecaoColabAviso');
+
+      if (boxCli) {
+        boxCli.innerHTML = bancoClientes.map(function(c) {
+          return '<label style="display:block; font-size:0.82rem; font-weight:bold; margin-bottom:4px; cursor:pointer;">' +
+                   '<input type="checkbox" class="chk-aviso-cli" value="' + c.marca + '"> ' + c.marca +
+                 '</label>';
+        }).join('');
+      }
+
+      if (boxColab) {
+        boxColab.innerHTML = bancoColaboradores.map(function(col) {
+          return '<label style="display:block; font-size:0.82rem; font-weight:bold; margin-bottom:4px; cursor:pointer;">' +
+                   '<input type="checkbox" class="chk-aviso-colab" value="' + col.nome + '"> ' + col.nome +
+                 '</label>';
+        }).join('');
+      }
+    }
+
+    function alternarExibicaoDestinatariosAviso() {
+      var tipo = document.getElementById('selectTipoDestinatarioAviso').value;
+      var boxCli = document.getElementById('boxSelecaoClientesAviso');
+      var boxColab = document.getElementById('boxSelecaoColabAviso');
+
+      boxCli.style.display = (tipo === 'SELECIONAR_CLIENTES') ? 'block' : 'none';
+      boxColab.style.display = (tipo === 'SELECIONAR_COLABORADORES') ? 'block' : 'none';
     }
 
     function cadastrarNovaCategoriaJoiaSubmit() {
@@ -1685,7 +1726,51 @@
       alert("⚙️ Média ajustada para " + val + "g!");
     }
 
-    function salvarAvisoComunicadoSubmit() { alert("📢 Comunicado publicado!"); }
+    function salvarAvisoComunicadoSubmit() {
+      var tipo = document.getElementById('selectTipoDestinatarioAviso').value;
+      var txt = document.getElementById('textoAvisoDir').value.trim();
+
+      if (!txt) {
+        alert("⚠️ Por favor, digite o texto do comunicado!");
+        return;
+      }
+
+      var dataHoje = "01/10/2026";
+      var destinatarios = [];
+
+      if (tipo === 'TODOS') {
+        destinatarios.push("TODOS");
+      } else if (tipo === 'TODOS_CLIENTES') {
+        bancoClientes.forEach(function(c) { destinatarios.push(c.marca); });
+      } else if (tipo === 'TODOS_COLABORADORES') {
+        destinatarios.push("EQUIPE");
+      } else if (tipo === 'SELECIONAR_CLIENTES') {
+        var marcados = document.querySelectorAll('.chk-aviso-cli:checked');
+        marcados.forEach(function(chk) { destinatarios.push(chk.value); });
+      } else if (tipo === 'SELECIONAR_COLABORADORES') {
+        var marcadosColab = document.querySelectorAll('.chk-aviso-colab:checked');
+        marcadosColab.forEach(function(chk) { destinatarios.push(chk.value); });
+      }
+
+      if (destinatarios.length === 0) {
+        alert("⚠️ Selecione pelo menos um cliente ou colaborador para enviar!");
+        return;
+      }
+
+      destinatarios.forEach(function(dest) {
+        bancoMensagens.push({
+          id: Date.now() + Math.random(),
+          remetente: "Diretoria General",
+          destinatario: dest,
+          texto: txt,
+          data: dataHoje
+        });
+      });
+
+      salvarDadosNovem();
+      document.getElementById('textoAvisoDir').value = "";
+      alert("📢 Comunicado publicado com sucesso!");
+    }
 
     carregarDadosNovem();
   </script>
