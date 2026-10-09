@@ -162,9 +162,12 @@
           <div class="cards-grid-amplos" id="containerCardsClientesInsumosInativosSelection"></div>
         </div>
         <div id="secaoDetalheInsumosClienteSel" style="display:none; margin-top:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#F0F9FF; padding:12px 18px; border-radius:12px; margin-bottom:15px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#F0F9FF; padding:12px 18px; border-radius:12px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
             <strong id="tituloInsumosClienteSel" style="font-size:1.1rem; color:var(--header-bg);">Niara Semijoias</strong>
-            <button class="btn-main" style="width:auto; padding:6px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteInsumo()">← VOLTAR PARA CLIENTES</button>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-main btn-green" style="width:auto; padding:8px 14px; font-size:0.75rem;" onclick="abrirModalCadastrarInsumoParaClienteAtual()">+ CADASTRAR INSUMO PARA ESTA MARCA</button>
+              <button class="btn-main" style="width:auto; padding:8px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteInsumo()">← VOLTAR PARA CLIENTES</button>
+            </div>
           </div>
           <div id="containerInsumosTabelaDirect"></div>
         </div>
@@ -488,19 +491,34 @@
 
   <div id="modalCadInsumo" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
-      <h3 style="margin-top:0;">Cadastrar Insumo</h3>
+      <h3 id="modalInsumoTitulo" style="margin-top:0;">Cadastrar Insumo</h3>
       <form onsubmit="salvarNovoInsumoSubmit(event)">
+        <input type="hidden" id="mEditInsumoCliOriginalHidden">
+        <input type="hidden" id="mEditInsumoIdxHidden">
+        
+        <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca Pertencente:</label>
         <select id="mCadInsCli" class="form-control"></select>
+        
+        <label style="font-size:0.78rem; font-weight:bold; margin-top:6px; display:block;">Categorias de Joias Atribuidas:</label>
         <div id="boxCatJoiasInsumoTags" style="margin-bottom:12px; background:#F8FAFC; padding:8px; border-radius:10px;"></div>
+        
+        <label style="font-size:0.78rem; font-weight:bold;">Tipo de Insumo:</label>
         <select id="mCadInsTipo" class="form-control"></select>
         <div style="display:flex; gap:6px; margin-bottom:12px;">
           <input type="text" id="inputNovoTipoInsumoTemp" class="form-control" style="margin:0;" placeholder="Novo tipo...">
           <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 12px; font-size:0.75rem;" onclick="adicionarNovoTipoInsumoDirect()">+ ADICIONAR</button>
         </div>
+
+        <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Descrição (ex: Prata, Ouro, M, P, etc):</label>
         <input type="text" id="mCadInsSub" class="form-control" required placeholder="Subcategoria/Tamanho...">
+        
+        <label style="font-size:0.78rem; font-weight:bold;">Quantidade em Estoque:</label>
         <input type="number" id="mCadInsQtd" class="form-control" required placeholder="Quantidade...">
-        <input type="text" id="mCadInsGondula" class="form-control" placeholder="Gondula...">
-        <button type="submit" class="btn-main btn-green">SALVAR INSUMO</button>
+        
+        <label style="font-size:0.78rem; font-weight:bold;">Gôndola / Localização:</label>
+        <input type="text" id="mCadInsGondula" class="form-control" placeholder="Gôndola...">
+        
+        <button type="submit" class="btn-main btn-green" id="btnSalvarModalInsumo">SALVAR INSUMO</button>
         <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadInsumo()">CANCELAR</button>
       </form>
     </div>
@@ -536,6 +554,7 @@
     var dataAgendamentoSelecionadaCli = "";
     var fatorMediaPesoGlobal = 2.1;
     var dadosCarregadosDaNovem = false;
+    var clienteInsumosSelecionadoAtual = "";
 
     var DATA_HOJE_SISTEMA = new Date(2026, 9, 1);
     var anoCalendarioAtual = 2026;
@@ -553,7 +572,7 @@
     var listaSetoresFabricaGeral = ["1. Entrada Bruta", "2. Inspeção 3em1", "3. Fotografia", "4. CDE Catalogação", "5. Etiquetagem", "6. Encartelamento", "7. Finalização"];
 
     var bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
-    var bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola"];
+    var bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola", "Trava anel", "Extensor", "Fecho / Argola"];
 
     var bancoInsumosCompletos = {};
     var bancoModelosEncarte = {};
@@ -1485,24 +1504,25 @@
     }
 
     function abrirDetalheInsumosClienteDirect(cli) {
+      clienteInsumosSelecionadoAtual = cli;
       document.getElementById('secaoSelecaoClienteInsumo').style.display = 'none';
       document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'block';
       document.getElementById('tituloInsumosClienteSel').innerText = cli + " — Estoque de Insumos";
 
       var lista = bancoInsumosCompletos[cli] || [];
-      var html = '<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gondula</th><th>Ações</th></tr></thead><tbody>';
+      var html = '<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gôndola</th><th>Ações</th></tr></thead><tbody>';
       lista.forEach(function(ins, idx) {
         html += '<tr>' +
-            '<td><strong>' + (ins.catJoia || 'Geral') + '</strong></td>' +
+            '<td><strong>' + (ins.catJoia || 'Geral / Todas') + '</strong></td>' +
             '<td><strong>' + ins.tipo + '</strong></td>' +
             '<td>' + ins.sub + '</td>' +
             '<td><strong>' + ins.qtd + ' un</strong></td>' +
-            '<td><input type="text" value="' + (ins.gondula || '') + '" style="width:60px; padding:3px;" onchange="alterarGondulaInsumoDirect(\'' + cli + '\', ' + idx + ', this.value)"></td>' +
+            '<td><input type="text" value="' + (ins.gondula || '') + '" style="width:70px; padding:4px;" onchange="alterarGondulaInsumoDirect(\'' + cli + '\', ' + idx + ', this.value)"></td>' +
             '<td>' +
-              '<button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'entrada\')">+ Entrada</button> ' +
-              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button> ' +
-              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#3B82F6;" onclick="editarInsumoDirect(\'' + cli + '\', ' + idx + ')">Editar</button> ' +
-              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#EF4444;" onclick="excluirInsumoDirect(\'' + cli + '\', ' + idx + ')">Excluir</button>' +
+              '<button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto; margin-right:2px;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'entrada\')">+ Entrada</button>' +
+              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto; margin-right:4px;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button>' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#3B82F6; margin-right:2px;" onclick="abrirModalEditarInsumoDirect(\'' + cli + '\', ' + idx + ')">EDITAR</button>' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#EF4444;" onclick="excluirInsumoDirect(\'' + cli + '\', ' + idx + ')">EXCLUIR</button>' +
             '</td>' +
           '</tr>';
       });
@@ -1510,49 +1530,34 @@
       document.getElementById('containerInsumosTabelaDirect').innerHTML = html;
     }
 
-    function voltarSelecaoClienteInsumo() { renderizarSelecaoClientesInsumos(); }
-
-    function editarInsumoDirect(cli, idx) {
-      var ins = bancoInsumosCompletos[cli][idx];
-      var novaSub = prompt("Nova Subcategoria / Descrição:", ins.sub);
-      if (novaSub !== null) {
-        var novaQtd = parseInt(prompt("Nova Quantidade em Estoque:", ins.qtd)) || 0;
-        ins.sub = novaSub;
-        ins.qtd = novaQtd;
-        salvarDadosNovem();
-        abrirDetalheInsumosClienteDirect(cli);
-      }
+    function voltarSelecaoClienteInsumo() { 
+      clienteInsumosSelecionadoAtual = "";
+      renderizarSelecaoClientesInsumos(); 
     }
 
-    function excluirInsumoDirect(cli, idx) {
-      if (confirm("⚠️ 1/2: Tem certeza que deseja excluir este insumo?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir insumo do sistema?")) {
-        bancoInsumosCompletos[cli].splice(idx, 1);
-        salvarDadosNovem();
-        abrirDetalheInsumosClienteDirect(cli);
-      }
+    function abrirModalCadastrarInsumoParaClienteAtual() {
+      abrirModalCadastrarInsumo(clienteInsumosSelecionadoAtual);
     }
 
-    function lancarEntradaSaidaInsumo(cli, idx, tipo) {
-      var v = parseInt(prompt("Quantidade para " + tipo.toUpperCase() + ":", "100")) || 0;
-      if(v > 0) {
-        if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
-        else bancoInsumosCompletos[cli][idx].qtd -= v;
-        salvarDadosNovem();
-        abrirDetalheInsumosClienteDirect(cli);
-      }
-    }
+    function abrirModalCadastrarInsumo(clientePreSelecionado) {
+      document.getElementById('mEditInsumoCliOriginalHidden').value = "";
+      document.getElementById('mEditInsumoIdxHidden').value = "";
+      document.getElementById('modalInsumoTitulo').innerText = "Cadastrar Novo Insumo";
+      document.getElementById('btnSalvarModalInsumo').innerText = "SALVAR INSUMO";
 
-    function alterarGondulaInsumoDirect(cli, idx, val) {
-      bancoInsumosCompletos[cli][idx].gondula = val;
-      salvarDadosNovem();
-      alert("✅ Gondula atualizada!");
-    }
-
-    function abrirModalCadastrarInsumo() {
       var selCli = document.getElementById('mCadInsCli');
       selCli.innerHTML = "";
-      bancoClientes.forEach(function(c) { selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
-      renderizarTagsCategoriasJoiaInsumo();
+      bancoClientes.forEach(function(c) { 
+        selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; 
+      });
+
+      if (clientePreSelecionado && clientePreSelecionado !== "") {
+        selCli.value = clientePreSelecionado;
+      } else if (clienteInsumosSelecionadoAtual !== "") {
+        selCli.value = clienteInsumosSelecionadoAtual;
+      }
+
+      renderizarTagsCategoriasJoiaInsumo([]);
       preencherSelectTiposInsumo();
       document.getElementById('inputNovoTipoInsumoTemp').value = "";
       document.getElementById('mCadInsSub').value = "";
@@ -1561,10 +1566,49 @@
       document.getElementById('modalCadInsumo').style.display = 'flex';
     }
 
-    function renderizarTagsCategoriasJoiaInsumo() {
+    function abrirModalEditarInsumoDirect(cli, idx) {
+      var ins = bancoInsumosCompletos[cli][idx];
+      if (!ins) return;
+
+      document.getElementById('mEditInsumoCliOriginalHidden').value = cli;
+      document.getElementById('mEditInsumoIdxHidden').value = idx;
+      document.getElementById('modalInsumoTitulo').innerText = "Editar Insumo — " + cli;
+      document.getElementById('btnSalvarModalInsumo').innerText = "ATUALIZAR INSUMO";
+
+      var selCli = document.getElementById('mCadInsCli');
+      selCli.innerHTML = "";
+      bancoClientes.forEach(function(c) { 
+        selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; 
+      });
+      selCli.value = cli;
+
+      var arrayCategoriasAtribuídas = ins.catJoia ? ins.catJoia.split(',').map(function(s){ return s.trim(); }) : [];
+      renderizarTagsCategoriasJoiaInsumo(arrayCategoriasAtribuídas);
+
+      preencherSelectTiposInsumo();
+      if (ins.tipo && bancoTiposInsumos.indexOf(ins.tipo) === -1) {
+        bancoTiposInsumos.push(ins.tipo);
+        preencherSelectTiposInsumo();
+      }
+      document.getElementById('mCadInsTipo').value = ins.tipo;
+
+      document.getElementById('mCadInsSub').value = ins.sub || "";
+      document.getElementById('mCadInsQtd').value = ins.qtd || 0;
+      document.getElementById('mCadInsGondula').value = ins.gondula || "";
+
+      document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function renderizarTagsCategoriasJoiaInsumo(categoriasSelecionadas) {
+      if (!Array.isArray(categoriasSelecionadas)) categoriasSelecionadas = [];
       var box = document.getElementById('boxCatJoiasInsumoTags');
-      var html = '<span class="tag-setor-btn selected" onclick="toggleSetorTag(this)">Geral / Todas</span>';
-      bancoCategoriasJoias.forEach(function(cj) { html += '<span class="tag-setor-btn" onclick="toggleSetorTag(this)">' + cj + '</span>'; });
+      var eGeral = categoriasSelecionadas.indexOf("Geral / Todas") !== -1 || categoriasSelecionadas.length === 0;
+
+      var html = '<span class="tag-setor-btn ' + (eGeral ? 'selected' : '') + '" onclick="toggleSetorTag(this)">Geral / Todas</span>';
+      bancoCategoriasJoias.forEach(function(cj) { 
+        var marcada = categoriasSelecionadas.indexOf(cj) !== -1;
+        html += '<span class="tag-setor-btn ' + (marcada ? 'selected' : '') + '" onclick="toggleSetorTag(this)">' + cj + '</span>'; 
+      });
       box.innerHTML = html;
     }
 
@@ -1591,21 +1635,64 @@
 
     function salvarNovoInsumoSubmit(e) {
       e.preventDefault();
-      var cli = document.getElementById('mCadInsCli').value;
+      var cliOrig = document.getElementById('mEditInsumoCliOriginalHidden').value;
+      var idxOrig = document.getElementById('mEditInsumoIdxHidden').value;
+
+      var cliNovo = document.getElementById('mCadInsCli').value;
       var catsSel = Array.from(document.querySelectorAll('#boxCatJoiasInsumoTags .tag-setor-btn.selected')).map(function(el) { return el.innerText; });
       var catJ = catsSel.length > 0 ? catsSel.join(', ') : "Geral / Todas";
       var tipo = document.getElementById('mCadInsTipo').value;
-      var sub = document.getElementById('mCadInsSub').value;
+      var sub = document.getElementById('mCadInsSub').value.trim();
       var qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
-      var gon = document.getElementById('mCadInsGondula').value;
+      var gon = document.getElementById('mCadInsGondula').value.trim();
 
-      if(!bancoInsumosCompletos[cli]) bancoInsumosCompletos[cli] = [];
-      bancoInsumosCompletos[cli].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+      if (idxOrig !== "") {
+        var idxInt = parseInt(idxOrig);
+        if (cliOrig === cliNovo) {
+          bancoInsumosCompletos[cliNovo][idxInt] = { id: bancoInsumosCompletos[cliNovo][idxInt].id || Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon };
+        } else {
+          bancoInsumosCompletos[cliOrig].splice(idxInt, 1);
+          if (!bancoInsumosCompletos[cliNovo]) bancoInsumosCompletos[cliNovo] = [];
+          bancoInsumosCompletos[cliNovo].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+        }
+      } else {
+        if(!bancoInsumosCompletos[cliNovo]) bancoInsumosCompletos[cliNovo] = [];
+        bancoInsumosCompletos[cliNovo].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+      }
+
       salvarDadosNovem();
-
-      alert("✅ Insumo cadastrado!");
+      alert("✅ Insumo salvo com sucesso!");
       fecharModalCadInsumo();
-      renderizarSelecaoClientesInsumos();
+
+      if (clienteInsumosSelecionadoAtual !== "") {
+        abrirDetalheInsumosClienteDirect(clienteInsumosSelecionadoAtual);
+      } else {
+        renderizarSelecaoClientesInsumos();
+      }
+    }
+
+    function excluirInsumoDirect(cli, idx) {
+      if (confirm("⚠️ 1/2: Tem certeza que deseja excluir este insumo?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir insumo do sistema?")) {
+        bancoInsumosCompletos[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function lancarEntradaSaidaInsumo(cli, idx, tipo) {
+      var v = parseInt(prompt("Quantidade para " + tipo.toUpperCase() + ":", "100")) || 0;
+      if(v > 0) {
+        if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
+        else bancoInsumosCompletos[cli][idx].qtd -= v;
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function alterarGondulaInsumoDirect(cli, idx, val) {
+      bancoInsumosCompletos[cli][idx].gondula = val;
+      salvarDadosNovem();
+      alert("✅ Gôndola atualizada!");
     }
 
     function renderizarSelecaoClientesEncarte() {
