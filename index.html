@@ -73,6 +73,7 @@
     .historico-setores-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-top: 12px; }
     .item-setor-hist { display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E1; padding: 8px 0; font-size: 0.85rem; }
     .finance-summary-box { background: #ECFDF5; border: 1px solid #10B981; border-radius: 12px; padding: 14px; margin-top: 12px; color: #065F46; }
+    .setor-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; align-items: center; }
   </style>
 </head><body>
 
@@ -402,7 +403,7 @@
     </div>
   </div>
 
-  <!-- MODAL BANCADA OPERACIONAL (COM QUANTIDADE OBRIGATÓRIA DO SETOR) -->
+  <!-- MODAL BANCADA OPERACIONAL (COLABORADORES - COM QUANTIDADE OBRIGATÓRIA DO SETOR) -->
   <div id="modalOpBancadaLote" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 style="margin-top:0;" id="tituloModalOpLote">Atuação Operacional do Lote</h3>
@@ -412,11 +413,11 @@
         <p style="margin:2px 0;" id="infoOpLoteSetor"></p>
       </div>
       
-      <label style="font-size:0.78rem; font-weight:bold;">Qtd Total do Lote (Peças):</label>
+      <label style="font-size:0.78rem; font-weight:bold;">Qtd Total Declarada do Lote:</label>
       <input type="number" id="inputOpQtdReal" class="form-control" placeholder="Qtd Real Contada...">
       
       <label style="font-size:0.78rem; font-weight:bold; color:var(--orange-accent);">* Qtd Produzida Neste Setor (OBRIGATÓRIO):</label>
-      <input type="number" id="inputOpQtdServicoSetor" class="form-control" placeholder="Ex: 300 (Inspeções / Fotos / Encartes...)">
+      <input type="number" id="inputOpQtdServicoSetor" class="form-control" placeholder="Ex: 300 (Inspeções / Fotos / Cadastros / Encartes...)">
       <span id="msgAvisoQtdObrig" style="display:none; color:red; font-size:0.75rem; font-weight:bold; margin-bottom:8px;">⚠️ A quantidade é obrigatória para este setor!</span>
       
       <label style="font-size:0.78rem; font-weight:bold;">Modelos Identificados:</label>
@@ -440,9 +441,9 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR LOTE DIRETORIA (COM ABA FINANCIAL & DESCONTO AUTOMÁTICO) -->
+  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) COM ÁREA DE QUANTIDADE POR SETOR E FINANCEIRO -->
   <div id="modalEditarLoteDir" class="modal-overlay">
-    <div class="modal-card" style="max-width:600px;">
+    <div class="modal-card" style="max-width:650px;">
       <h3 style="margin-top:0;">Editar / Finalizar Lote (Diretoria)</h3>
       <input type="hidden" id="editLoteIdHidden">
       
@@ -452,31 +453,63 @@
           <input type="text" id="editLoteNum" class="form-control" placeholder="Nº Lote...">
         </div>
         <div>
-          <label style="font-size:0.78rem; font-weight:bold;">Volume de Peças:</label>
+          <label style="font-size:0.78rem; font-weight:bold;">Volume de Peças (Total):</label>
           <input type="number" id="editLotePcs" class="form-control" placeholder="Total pcs..." oninput="calcularValoresFinanceirosEditLote()">
         </div>
       </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Etapa do Lote:</label>
-      <select id="editLoteEtapa" class="form-control">
-        <option value="1">1. Aguardando Aprovação</option>
-        <option value="2">2. Aguardando Chegada Física</option>
-        <option value="3">3. Cadastrado / Em Andamento</option>
-        <option value="4">4. Finalizado / Liberado</option>
-      </select>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div>
+          <label style="font-size:0.78rem; font-weight:bold;">Etapa do Lote:</label>
+          <select id="editLoteEtapa" class="form-control">
+            <option value="1">1. Aguardando Aprovação</option>
+            <option value="2">2. Aguardando Chegada Física</option>
+            <option value="3">3. Cadastrado / Em Andamento</option>
+            <option value="4">4. Finalizado / Liberado</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.78rem; font-weight:bold;">Setor Atual:</label>
+          <select id="editLoteSetorAtual" class="form-control">
+            <option value="1. Entrada Bruta">1. Entrada Bruta</option>
+            <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
+            <option value="3. Fotografia">3. Fotografia</option>
+            <option value="4. CDE Catalogação">4. CDE Catalogação</option>
+            <option value="5. Etiquetagem">5. Etiquetagem</option>
+            <option value="6. Encartelamento">6. Encartelamento</option>
+            <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
+          </select>
+        </div>
+      </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Setor Atual:</label>
-      <select id="editLoteSetorAtual" class="form-control">
-        <option value="1. Entrada Bruta">1. Entrada Bruta</option>
-        <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
-        <option value="3. Fotografia">3. Fotografia</option>
-        <option value="4. CDE Catalogação">4. CDE Catalogação</option>
-        <option value="5. Etiquetagem">5. Etiquetagem</option>
-        <option value="6. Encartelamento">6. Encartelamento</option>
-        <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
-      </select>
+      <!-- NOVA ÁREA: REGISTRO DE QUANTIDADES PRODUZIDAS POR SETOR -->
+      <div style="background:#FFF7ED; border:1px solid #FF5722; padding:14px; border-radius:12px; margin-bottom:12px;">
+        <h4 style="margin:0 0 8px 0; color:#C2410C;">📊 Quantidade de Serviço Efetuada por Setor</h4>
+        <p style="font-size:0.75rem; color:#9A3412; margin-top:0; margin-bottom:10px;">(Entrada Bruta é opcional; todos os demais setores exigem quantidade contada)</p>
 
-      <!-- PAINEL FINANCEIRO DE CÁLCULO E DESCONTO -->
+        <div class="setor-input-grid">
+          <span style="font-size:0.8rem; font-weight:bold;">2. Inspeção 3em1:</span>
+          <input type="number" id="inputDirQtdInspecao" class="form-control" style="margin:0;" placeholder="Qtd Inspecionada">
+        </div>
+        <div class="setor-input-grid">
+          <span style="font-size:0.8rem; font-weight:bold;">3. Fotografia:</span>
+          <input type="number" id="inputDirQtdFotografia" class="form-control" style="margin:0;" placeholder="Qtd Fotografada">
+        </div>
+        <div class="setor-input-grid">
+          <span style="font-size:0.8rem; font-weight:bold;">4. CDE Catalogação:</span>
+          <input type="number" id="inputDirQtdCatalogacao" class="form-control" style="margin:0;" placeholder="Qtd Catalogada">
+        </div>
+        <div class="setor-input-grid">
+          <span style="font-size:0.8rem; font-weight:bold;">5. Etiquetagem:</span>
+          <input type="number" id="inputDirQtdEtiquetagem" class="form-control" style="margin:0;" placeholder="Qtd Etiquetada">
+        </div>
+        <div class="setor-input-grid">
+          <span style="font-size:0.8rem; font-weight:bold;">6. Encartelamento:</span>
+          <input type="number" id="inputDirQtdEncartelamento" class="form-control" style="margin:0;" placeholder="Qtd Encartelada">
+        </div>
+      </div>
+
+      <!-- PAINEL FINANCEIRO DE CÁLCULO E DESCONTO AUTOMÁTICO -->
       <div style="background:#F0F9FF; border:1px solid #0284C7; padding:14px; border-radius:12px; margin-bottom:12px;">
         <h4 style="margin:0 0 8px 0; color:#0369A1;">💰 Fechamento Financeiro & Valores</h4>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -502,7 +535,7 @@
         </div>
       </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Observações do Lote:</label>
+      <label style="font-size:0.78rem; font-weight:bold;">Observações Gerais do Lote:</label>
       <textarea id="editLoteObs" class="form-control" placeholder="Observações..."></textarea>
       
       <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES</button>
@@ -895,7 +928,6 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
-    /* MONTAGEM DO RELATÓRIO COMPLETO COM QUANTIDADES POR SETOR E RESUMO FINANCEIRO */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -962,7 +994,6 @@
 
     function fecharModalOpBancadaLote() { document.getElementById('modalOpBancadaLote').style.display = 'none'; }
 
-    /* LÓGICA DE TRAVA DE QUANTIDADE POR SETOR NA BANCADA OPERACIONAL */
     function concluirAvançarLoteBancadaSubmit() {
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -972,7 +1003,6 @@
       var inputQtdVal = document.getElementById('inputOpQtdServicoSetor').value.trim();
       var qtdServico = parseInt(inputQtdVal);
 
-      // Trava de obrigatoriedade: apenas Entrada Bruta pode passar sem quantidade
       if (setorExecutado !== "1. Entrada Bruta" && (!inputQtdVal || isNaN(qtdServico) || qtdServico <= 0)) {
         document.getElementById('msgAvisoQtdObrig').style.display = 'block';
         alert("⚠️ ATENÇÃO: A quantidade de peças processadas neste setor é OBRIGATÓRIA para liberar para o próximo setor!");
@@ -1008,7 +1038,6 @@
       renderizarLotesColabBancada();
     }
 
-    /* CALCULADORA FINANCEIRA EM TEMPO REAL NA DIRETORIA */
     function calcularValoresFinanceirosEditLote() {
       var pcs = parseInt(document.getElementById('editLotePcs').value) || 0;
       var vBruto = parseFloat(document.getElementById('editLoteValorBruto').value) || 0;
@@ -1022,6 +1051,7 @@
       document.getElementById('labelValPorPecaFinal').innerText = "R$ " + vPorPeca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / pc";
     }
 
+    /* PREENCHIMENTO E RECUPERAÇÃO DAS QUANTIDADES DOS SETORES NO MODAL DA DIRETORIA */
     function abrirModalEditarLoteDir(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(l) {
@@ -1030,10 +1060,23 @@
         document.getElementById('editLotePcs').value = l.pcs || "";
         document.getElementById('editLoteEtapa').value = l.etapa;
         document.getElementById('editLoteSetorAtual').value = l.setorAtual || "1. Entrada Bruta";
+        
         document.getElementById('editLoteValorBruto').value = l.valorTotalBruto || l.valorTotal || "";
         document.getElementById('editLoteDesconto').value = l.descontoPct || l.desconto || "";
         document.getElementById('editLoteObs').value = l.obs || "";
-        
+
+        var hList = l.historicoSetores || [];
+        var getQtd = function(nomeSetor) {
+          var item = hList.find(function(h) { return h.setor.indexOf(nomeSetor) !== -1; });
+          return item ? item.qtdServico : "";
+        };
+
+        document.getElementById('inputDirQtdInspecao').value = getQtd("Inspeção");
+        document.getElementById('inputDirQtdFotografia').value = getQtd("Fotografia");
+        document.getElementById('inputDirQtdCatalogacao').value = getQtd("CDE") || getQtd("Catalogação");
+        document.getElementById('inputDirQtdEtiquetagem').value = getQtd("Etiquetagem");
+        document.getElementById('inputDirQtdEncartelamento').value = getQtd("Encartelamento");
+
         calcularValoresFinanceirosEditLote();
         document.getElementById('modalEditarLoteDir').style.display = 'flex';
       }
@@ -1041,6 +1084,7 @@
 
     function fecharModalEditarLoteDir() { document.getElementById('modalEditarLoteDir').style.display = 'none'; }
 
+    /* SALVAMENTO DAS QUANTIDADES POR SETOR DIGITADAS NA DIRETORIA */
     function salvarEdicaoLoteDir() {
       var id = parseInt(document.getElementById('editLoteIdHidden').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1059,9 +1103,28 @@
         l.descontoPct = descPct;
         l.valTotalComDesconto = vFinal.toFixed(2);
         l.valPorPecaFinal = vPorPeca.toFixed(2);
-
         l.obs = document.getElementById('editLoteObs').value;
         l.editadoColab = false;
+
+        if (!l.historicoSetores) l.historicoSetores = [];
+
+        var atualizarHistorico = function(nomeSetorCompleto, inputId) {
+          var val = parseInt(document.getElementById(inputId).value);
+          if (!isNaN(val) && val > 0) {
+            var item = l.historicoSetores.find(function(h) { return h.setor === nomeSetorCompleto; });
+            if (item) {
+              item.qtdServico = val;
+            } else {
+              l.historicoSetores.push({ setor: nomeSetorCompleto, qtdServico: val, data: "01/10/2026" });
+            }
+          }
+        };
+
+        atualizarHistorico("2. Inspeção 3em1", "inputDirQtdInspecao");
+        atualizarHistorico("3. Fotografia", "inputDirQtdFotografia");
+        atualizarHistorico("4. CDE Catalogação", "inputDirQtdCatalogacao");
+        atualizarHistorico("5. Etiquetagem", "inputDirQtdEtiquetagem");
+        atualizarHistorico("6. Encartelamento", "inputDirQtdEncartelamento");
 
         if (l.etapa === 4 || l.setorAtual === "7. Finalização / Liberado") {
           l.etapa = 4;
@@ -1069,13 +1132,12 @@
         }
 
         salvarDadosNovem();
-        alert("✅ Lote e valores financeiros atualizados!");
+        alert("✅ Lote, quantidades dos setores e dados financeiros gravados com sucesso!");
         fecharModalEditarLoteDir();
         renderizarLotes4Etapas();
       }
     }
 
-    /* DEMAIS NAVEGAÇÕES E REQUISITOS */
     function renderizarLotesColabBancada() {
       var col = usuarioLogadoObjeto;
       var setoresColab = col && Array.isArray(col.setores) ? col.setores : [];
