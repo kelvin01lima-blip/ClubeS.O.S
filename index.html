@@ -70,6 +70,8 @@
     .cal-nav-btn { background: var(--header-bg); color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.78rem; }
     .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
     .loading-indicator { font-size: 0.75rem; color: #FFB703; font-weight: bold; display: inline-block; margin-left: 10px; }
+    .historico-setores-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; margin-top: 10px; }
+    .item-setor-hist { display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E1; padding: 6px 0; font-size: 0.82rem; }
   </style>
 </head><body>
 
@@ -305,11 +307,12 @@
         <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, agende entregas e consulte seu estoque:</span>
       </div>
       <div class="menu-paginas-operacional">
-        <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 1. MEUS LOTES</button>
-        <button id="btnNavCliAgendar" class="btn-pag-op" onclick="navegarPaginaCliente('agendar')">📅 2. AGENDAR LOTE</button>
-        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 3. ENCARTES</button>
-        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 4. MEUS INSUMOS</button>
-        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 5. MENSAGENS</button>
+        <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 1. LOTES EM ANDAMENTO</button>
+        <button id="btnNavCliFinalizados" class="btn-pag-op" onclick="navegarPaginaCliente('finalizados')">✅ 2. LOTES FINALIZADOS</button>
+        <button id="btnNavCliAgendar" class="btn-pag-op" onclick="navegarPaginaCliente('agendar')">📅 3. AGENDAR LOTE</button>
+        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 4. ENCARTES</button>
+        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 5. MEUS INSUMOS</button>
+        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 6. MENSAGENS</button>
       </div>
 
       <div id="pagCliLotes" class="panel-card">
@@ -321,6 +324,11 @@
           <div class="prazo-item">+1.500 pcs: <span>Mínimo 15 Dias Úteis</span></div>
         </div>
         <div class="cards-grid-amplos" id="containerLotesClientePainel"></div>
+      </div>
+
+      <div id="pagCliFinalizados" class="panel-card" style="display:none;">
+        <h3>✅ Histórico de Lotes Finalizados e Liberados</h3>
+        <div class="cards-grid-amplos" id="containerLotesFinalizadosClientePainel"></div>
       </div>
 
       <div id="pagCliAgendar" class="panel-card" style="display:none;">
@@ -399,8 +407,16 @@
         <p style="margin:2px 0;" id="infoOpLoteMarca"></p>
         <p style="margin:2px 0;" id="infoOpLoteSetor"></p>
       </div>
+      <label style="font-size:0.78rem; font-weight:bold;">Qtd de Peças Total no Lote:</label>
       <input type="number" id="inputOpQtdReal" class="form-control" placeholder="Qtd Real Contada...">
+      
+      <label style="font-size:0.78rem; font-weight:bold; color:var(--orange-accent);">Qtd de Serviço Efetuada Neste Setor Atual:</label>
+      <input type="number" id="inputOpQtdServicoSetor" class="form-control" placeholder="Ex: 500 pcs inspecionadas/fotografadas/etc...">
+      
+      <label style="font-size:0.78rem; font-weight:bold;">Modelos Identificados:</label>
       <input type="number" id="inputOpQtdModelosReal" class="form-control" placeholder="Modelos Identificados...">
+      
+      <label style="font-size:0.78rem; font-weight:bold;">Avançar Para o Próximo Setor:</label>
       <select id="selectOpProximoSetor" class="form-control">
         <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
         <option value="3. Fotografia">3. Fotografia</option>
@@ -409,7 +425,10 @@
         <option value="6. Encartelamento">6. Encartelamento</option>
         <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
       </select>
+      
+      <label style="font-size:0.78rem; font-weight:bold;">Observação do Setor:</label>
       <input type="text" id="inputOpObs" class="form-control" placeholder="Observação...">
+      
       <button class="btn-main btn-orange" onclick="concluirAvançarLoteBancadaSubmit()">CONCLUIR E AVANÇAR ➔</button>
       <button class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalOpBancadaLote()">CANCELAR</button>
     </div>
@@ -786,12 +805,14 @@
     function navegarPaginaCliente(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(function(b) { b.classList.remove('active'); });
       document.getElementById('pagCliLotes').style.display = 'none';
+      document.getElementById('pagCliFinalizados').style.display = 'none';
       document.getElementById('pagCliAgendar').style.display = 'none';
       document.getElementById('pagCliEncarte').style.display = 'none';
       document.getElementById('pagCliInsumos').style.display = 'none';
       document.getElementById('pagCliMensagens').style.display = 'none';
 
       if(pag === 'lotes') { document.getElementById('btnNavCliLotes').classList.add('active'); document.getElementById('pagCliLotes').style.display = 'block'; renderizarPainelClienteLotes(); }
+      else if(pag === 'finalizados') { document.getElementById('btnNavCliFinalizados').classList.add('active'); document.getElementById('pagCliFinalizados').style.display = 'block'; renderizarPainelClienteLotesFinalizados(); }
       else if(pag === 'agendar') { document.getElementById('btnNavCliAgendar').classList.add('active'); document.getElementById('pagCliAgendar').style.display = 'block'; renderizarAgendamentoCliente(); }
       else if(pag === 'encarte') { document.getElementById('btnNavCliEncarte').classList.add('active'); document.getElementById('pagCliEncarte').style.display = 'block'; renderizarEncartesCliente(); }
       else if(pag === 'insumos') { document.getElementById('btnNavCliInsumos').classList.add('active'); document.getElementById('pagCliInsumos').style.display = 'block'; renderizarInsumosCliente(); }
@@ -803,33 +824,75 @@
       document.getElementById('tituloClientePainel').innerText = "💎 PAINEL DO CLIENTE — " + cli.marca.toUpperCase();
       var cont = document.getElementById('containerLotesClientePainel');
       var html = "";
-      var meusLotes = bancoLotes4Etapas.filter(function(l) { return l.cliente === cli.marca; });
+      var meusLotes = bancoLotes4Etapas.filter(function(l) { return l.cliente === cli.marca && l.etapa !== 4 && l.setorAtual !== "7. Finalização / Liberado"; });
 
       meusLotes.forEach(function(l) {
         var badgeClass = "badge-andamento";
-        if(l.etapa === 2) badgeClass = "badge-espera";
-        if(l.etapa === 4) badgeClass = "badge-concluido";
+        var labelTexto = l.label || "EM ANDAMENTO";
+
+        if(l.etapa === 2) { badgeClass = "badge-espera"; labelTexto = "AGUARDANDO CHEGADA"; }
+        if(l.etapa === 1) { badgeClass = "badge-andamento"; labelTexto = "AGUARDANDO APROVAÇÃO"; }
+        if(l.etapa === 3) { badgeClass = "badge-andamento"; labelTexto = "EM PRODUÇÃO"; }
+
         html += '<div class="card-ampli-item" onclick="abrirModalDetalheLote(' + l.id + ')">' +
-            '<span class="badge-status ' + badgeClass + '">' + l.label.toUpperCase() + '</span>' +
+            '<span class="badge-status ' + badgeClass + '">' + labelTexto.toUpperCase() + '</span>' +
             '<strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ' + (l.numLote ? '#' + l.numLote : 'Pendente') + '</strong>' +
-            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Volume: ' + l.pcs + ' pcs | Peso: ' + l.peso + '</p>' +
+            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Setor: <strong>' + (l.setorAtual || 'Pendente') + '</strong></p>' +
+            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Volume: ' + l.pcs + ' pcs | Peso: ' + l.peso + '</p>' +
           '</div>';
       });
-      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote cadastrado para a sua marca ainda.</p>";
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote em andamento para a sua marca.</p>";
+    }
+
+    function renderizarPainelClienteLotesFinalizados() {
+      var cli = usuarioLogadoObjeto;
+      var cont = document.getElementById('containerLotesFinalizadosClientePainel');
+      var html = "";
+      var meusLotesFin = bancoLotes4Etapas.filter(function(l) { return l.cliente === cli.marca && (l.etapa === 4 || l.setorAtual === "7. Finalização / Liberado"); });
+
+      meusLotesFin.forEach(function(l) {
+        html += '<div class="card-ampli-item" style="border-color:var(--green-val);" onclick="abrirModalDetalheLote(' + l.id + ')">' +
+            '<span class="badge-status badge-concluido">FINALIZADO / LIBERADO</span>' +
+            '<strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ' + (l.numLote ? '#' + l.numLote : 'Pendente') + '</strong>' +
+            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Volume Final: ' + l.pcs + ' pcs | Peso: ' + l.peso + '</p>' +
+            '<button class="btn-main btn-green" style="margin-top:10px; padding:6px; font-size:0.75rem;">VER RELATÓRIO COMPLETO ➔</button>' +
+          '</div>';
+      });
+      cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
+
+      var eFinalizado = (l.etapa === 4 || l.setorAtual === "7. Finalização / Liberado");
+      var badgeHtml = eFinalizado ? 
+          '<span class="badge-status badge-concluido">FINALIZADO / LIBERADO</span>' : 
+          '<span class="badge-status badge-andamento">' + (l.label || 'EM ANDAMENTO').toUpperCase() + '</span>';
+
+      var histHtml = "";
+      if (l.historicoSetores && l.historicoSetores.length > 0) {
+        histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços por Setor:</h4>';
+        l.historicoSetores.forEach(function(h) {
+          histHtml += '<div class="item-setor-hist"><span>📍 <strong>' + h.setor + ':</strong></span> <span><strong>' + h.qtdServico + ' pcs</strong> (' + h.data + ')</span></div>';
+        });
+        histHtml += '</div>';
+      } else {
+        histHtml = '<p style="font-size:0.78rem; color:var(--text-muted); margin-top:8px;">Nenhum registro de setor detalhado ainda.</p>';
+      }
+
       var html = '<div style="background:#F8FAFC; padding:16px; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px;">' +
           '<h4 style="margin:0 0 6px 0;">Lote ' + (l.numLote ? '#' + l.numLote : 'Pendente') + ' — ' + l.cliente + '</h4>' +
-          '<span class="badge-status badge-andamento">' + l.label + '</span>' +
+          badgeHtml +
           '<p style="margin:8px 0 2px 0;">Setor Atual: <strong>' + l.setorAtual + '</strong></p>' +
         '</div>' +
         '<div>' +
-          '<p style="font-size:0.85rem;">• Peças: <strong>' + l.pcs + ' pcs</strong></p>' +
+          '<p style="font-size:0.85rem;">• Peças Total: <strong>' + l.pcs + ' pcs</strong></p>' +
           '<p style="font-size:0.85rem;">• Peso Total: <strong>' + l.peso + '</strong></p>' +
-        '</div>';
+          (l.obs ? '<p style="font-size:0.85rem;">• Observações: <strong>' + l.obs + '</strong></p>' : '') +
+        '</div>' +
+        histHtml;
+
       document.getElementById('mDetLoteConteudo').innerHTML = html;
       document.getElementById('modalDetalheCompletoLote').style.display = 'flex';
     }
@@ -916,7 +979,7 @@
       bancoLotes4Etapas.push({
         id: Date.now(), cliente: cli.marca, etapa: 1, label: "Aguardando Aprovação",
         pcs: pcs, peso: pesoG + "g", dataCadastro: "01/10/2026", dataAgendada: dataAgendamentoSelecionadaCli,
-        obs: obs, numLote: "", setorAtual: "Pendente", modelos: mod, editadoColab: false
+        obs: obs, numLote: "", setorAtual: "Pendente", modelos: mod, editadoColab: false, historicoSetores: []
       });
       salvarDadosNovem();
 
@@ -1053,6 +1116,7 @@
         document.getElementById('infoOpLoteMarca').innerText = "Cliente: " + l.cliente;
         document.getElementById('infoOpLoteSetor').innerText = "Setor Atual: " + l.setorAtual;
         document.getElementById('inputOpQtdReal').value = l.pcs;
+        document.getElementById('inputOpQtdServicoSetor').value = l.pcs;
         document.getElementById('modalOpBancadaLote').style.display = 'flex';
       }
     }
@@ -1063,13 +1127,34 @@
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(l) {
+        var setorExecutado = l.setorAtual;
+        var qtdServico = parseInt(document.getElementById('inputOpQtdServicoSetor').value) || l.pcs;
+
+        if (!l.historicoSetores) l.historicoSetores = [];
+        
+        var existeHist = l.historicoSetores.find(function(h) { return h.setor === setorExecutado; });
+        if (existeHist) {
+          existeHist.qtdServico = qtdServico;
+        } else {
+          l.historicoSetores.push({
+            setor: setorExecutado,
+            qtdServico: qtdServico,
+            data: "01/10/2026"
+          });
+        }
+
         l.pcs = parseInt(document.getElementById('inputOpQtdReal').value) || l.pcs;
         l.setorAtual = document.getElementById('selectOpProximoSetor').value;
         l.obs = document.getElementById('inputOpObs').value;
         l.editadoColab = true;
-        if(l.setorAtual.indexOf("7. Finalização") !== -1) l.etapa = 4;
+
+        if(l.setorAtual.indexOf("7. Finalização") !== -1 || l.setorAtual === "7. Finalização / Liberado") {
+          l.etapa = 4;
+          l.label = "Finalizado / Liberado";
+        }
+
         salvarDadosNovem();
-        alert("✅ Lote avançado com sucesso!");
+        alert("✅ Lote e produções do setor gravados com sucesso!");
         fecharModalOpBancadaLote();
         renderizarLotesColabBancada();
       }
@@ -1157,12 +1242,12 @@
       lotes.filter(function(l){return l.etapa===2;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
       html += '</div>';
 
-      html += '<div class="coluna-etapa-lotes" style="background:#FEF3C7;"><h4 style="color:#B45309;">3. Cadastrados (' + lotes.filter(function(l){return l.etapa===3;}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===3;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Setor: ' + l.setorAtual + '</p></div>'; });
+      html += '<div class="coluna-etapa-lotes" style="background:#FEF3C7;"><h4 style="color:#B45309;">3. Cadastrados (' + lotes.filter(function(l){return l.etapa===3 && l.setorAtual !== "7. Finalização / Liberado";}).length + ')</h4>';
+      lotes.filter(function(l){return l.etapa===3 && l.setorAtual !== "7. Finalização / Liberado";}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Setor: ' + l.setorAtual + '</p></div>'; });
       html += '</div>';
 
-      html += '<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (' + lotes.filter(function(l){return l.etapa===4;}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===4;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
+      html += '<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (' + lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).length + ')</h4>';
+      lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
       html += '</div></div>';
       cont.innerHTML = html;
     }
@@ -1257,6 +1342,12 @@
         l.desconto = document.getElementById('editLoteDesconto').value;
         l.obs = document.getElementById('editLoteObs').value;
         l.editadoColab = false;
+
+        if (l.etapa === 4 || l.setorAtual === "7. Finalização / Liberado") {
+          l.etapa = 4;
+          l.label = "Finalizado / Liberado";
+        }
+
         salvarDadosNovem();
         alert("✅ Lote atualizado!");
         fecharModalEditarLoteDir();
