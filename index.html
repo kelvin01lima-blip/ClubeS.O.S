@@ -71,8 +71,7 @@
     .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
     .loading-indicator { font-size: 0.75rem; color: #FFB703; font-weight: bold; display: inline-block; margin-left: 10px; }
   </style>
-</head>
-<body>
+</head><body>
 
   <div class="top-bar">
     <div>
@@ -370,9 +369,7 @@
       </div>
     </div>
 
-  </div>
-
-  <div id="modalDetalheCompletoLote" class="modal-overlay">
+  </div><div id="modalDetalheCompletoLote" class="modal-overlay">
     <div class="modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #E2E8F0; padding-bottom:12px; margin-bottom:16px;">
         <h3 style="margin:0; color:var(--header-bg);" id="mDetLoteTitulo">Relatório Detalhado do Lote</h3>
@@ -990,12 +987,18 @@
       document.getElementById('subtituloColabBancada').innerText = "Setores Liberados: " + (setoresColab.join(', ') || "Nenhum setor atribuído");
       var cont = document.getElementById('containerColabMeuSetor');
       var htmlMeu = "";
+      
       bancoLotes4Etapas.forEach(function(l) {
+        if (!l.setorAtual || l.etapa === 4) return;
+
+        var setorLoteLimpo = l.setorAtual.replace(/^[0-9]+\.\s*/, '').trim().toLowerCase();
+
         var estaNoMeuSetor = setoresColab.some(function(s) { 
-          var parteNome = s.split('.')[1] ? s.split('.')[1].trim() : s;
-          return l.setorAtual.indexOf(parteNome) !== -1; 
+          var setorColabLimpo = s.replace(/^[0-9]+\.\s*/, '').trim().toLowerCase();
+          return setorLoteLimpo === setorColabLimpo || l.setorAtual === s;
         });
-        if(estaNoMeuSetor && !l.editadoColab && l.etapa !== 4) {
+
+        if (estaNoMeuSetor) {
           htmlMeu += '<div class="card-ampli-item" style="border-color:var(--orange-accent);" onclick="abrirModalOpBancadaLote(' + l.id + ')">' +
               '<span class="badge-status badge-andamento">MEU SETOR — LOTE #' + (l.numLote || 'PENDENTE') + '</span>' +
               '<strong style="display:block; margin-top:6px;">' + l.cliente + '</strong>' +
@@ -1004,6 +1007,7 @@
             '</div>';
         }
       });
+      
       cont.innerHTML = htmlMeu || "<p style='color:var(--text-muted);'>Nenhum lote pendente no seu setor.</p>";
     }
 
