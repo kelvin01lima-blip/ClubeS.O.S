@@ -544,9 +544,7 @@
         <button type="button" class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalCadModeloEncarte()">CANCELAR</button>
       </form>
     </div>
-  </div>
-
-  <script>
+  </div><script>
     var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
 
     var perfilAcessoSelecionadoTab = 'diretoria';
@@ -619,9 +617,6 @@
           if (cData.bancoMensagens) bancoMensagens = cData.bancoMensagens;
           if (cData.bancoCategoriasJoias) bancoCategoriasJoias = cData.bancoCategoriasJoias;
           if (cData.bancoTiposInsumos) bancoTiposInsumos = cData.bancoTiposInsumos;
-          if (cData.fatorMediaPesoGlobal) fatorMediaPesoGlobal = cData.fatorMediaPesoGlobal;
-          
-          document.getElementById('inputFatorDivisorDir').value = fatorMediaPesoGlobal;
           selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
         } catch(e){}
       }
@@ -649,12 +644,8 @@
           if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
           if(dados.bancoLotes4Etapas) bancoLotes4Etapas = dados.bancoLotes4Etapas;
           if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
-          if(dados.bancoCategoriasJoias && dados.bancoCategoriasJoias.length > 0) bancoCategoriasJoias = dados.bancoCategoriasJoias;
-          if(dados.bancoTiposInsumos && dados.bancoTiposInsumos.length > 0) bancoTiposInsumos = dados.bancoTiposInsumos;
-          if(dados.fatorMediaPesoGlobal) {
-            fatorMediaPesoGlobal = dados.fatorMediaPesoGlobal;
-            document.getElementById('inputFatorDivisorDir').value = fatorMediaPesoGlobal;
-          }
+          if(dados.bancoCategoriasJoias) bancoCategoriasJoias = dados.bancoCategoriasJoias;
+          if(dados.bancoTiposInsumos) bancoTiposInsumos = dados.bancoTiposInsumos;
 
           salvarBackupLocalCache();
 
@@ -663,7 +654,6 @@
           
           if(document.getElementById('pagDirColab').style.display === 'block') renderizarCardsColabAmplo();
           if(document.getElementById('pagDirClientes').style.display === 'block') renderizarCardsClientesAmplo();
-          if(document.getElementById('pagDirConfigs').style.display === 'block') renderizarCategoriasJoiasCentral();
         })
         .catch(function(err) {
           dadosCarregadosDaNovem = true;
@@ -683,8 +673,7 @@
         bancoLotes4Etapas: bancoLotes4Etapas,
         bancoMensagens: bancoMensagens,
         bancoCategoriasJoias: bancoCategoriasJoias,
-        bancoTiposInsumos: bancoTiposInsumos,
-        fatorMediaPesoGlobal: fatorMediaPesoGlobal
+        bancoTiposInsumos: bancoTiposInsumos
       };
       localStorage.setItem("sos_banco_backup_local", JSON.stringify(localPayload));
     }
@@ -726,8 +715,7 @@
         bancoLotes4Etapas: bancoLotes4Etapas,
         bancoMensagens: bancoMensagens,
         bancoCategoriasJoias: bancoCategoriasJoias,
-        bancoTiposInsumos: bancoTiposInsumos,
-        fatorMediaPesoGlobal: fatorMediaPesoGlobal
+        bancoTiposInsumos: bancoTiposInsumos
       };
 
       var bodyData = new URLSearchParams();
@@ -735,7 +723,6 @@
 
       fetch(GOOGLE_API_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: bodyData.toString()
       }).then(function() {
@@ -1232,7 +1219,7 @@
     }
 
     function excluirRegraSetorDirect(setor, idx) {
-      if(confirm("⚠️ 1/2: Tem certeza que deseja excluir esta regra?") && confirm("⚠️ 2/2: CONFIRMAÇÃO FINAL: Excluir regra definitivamente?")) {
+      if(confirm("⚠️ AVISO 1/2: Tem certeza que deseja excluir esta regra?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Excluir regra definitivamente?")) {
         bancoRegrasSetores[setor].splice(idx, 1);
         salvarDadosNovem();
         renderizarCardsSetoresRegrasDir();
@@ -1248,4 +1235,715 @@
         document.getElementById('editLoteSetorAtual').value = l.setorAtual || "1. Entrada Bruta";
         document.getElementById('editLoteValorTotal').value = l.valorTotal || "";
         document.getElementById('editLoteDesconto').value = l.desconto || "";
-        document.getElementById('editLoteObs
+        document.getElementById('editLoteObs').value = l.obs || "";
+        document.getElementById('modalEditarLoteDir').style.display = 'flex';
+      }
+    }
+
+    function fecharModalEditarLoteDir() { document.getElementById('modalEditarLoteDir').style.display = 'none'; }
+
+    function salvarEdicaoLoteDir() {
+      var id = parseInt(document.getElementById('editLoteIdHidden').value);
+      var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
+      if(l) {
+        l.numLote = document.getElementById('editLoteNum').value.trim();
+        l.etapa = parseInt(document.getElementById('editLoteEtapa').value);
+        l.setorAtual = document.getElementById('editLoteSetorAtual').value;
+        l.valorTotal = document.getElementById('editLoteValorTotal').value;
+        l.desconto = document.getElementById('editLoteDesconto').value;
+        l.obs = document.getElementById('editLoteObs').value;
+        l.editadoColab = false;
+        salvarDadosNovem();
+        alert("✅ Lote atualizado!");
+        fecharModalEditarLoteDir();
+        renderizarLotes4Etapas();
+      }
+    }
+
+    function renderizarCardsClientesAmplo() {
+      var cont = document.getElementById('containerCardsClientesAmplo');
+      cont.innerHTML = bancoClientes.map(function(c) {
+        return '<div class="card-ampli-item">' +
+            '<span class="badge-status badge-concluido">' + c.categoria + '</span>' +
+            '<strong style="display:block; font-size:1.15rem; margin-top:8px;">' + c.marca + '</strong>' +
+            '<p style="font-size:0.82rem;">Login: ' + c.login + ' | Senha: ' + c.senha + '</p>' +
+            '<div style="display:flex; gap:8px; margin-top:10px;">' +
+              '<button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarCliente(' + c.id + ')">EDITAR</button>' +
+              '<button class="btn-main" style="background:#EF4444; padding:6px 12px; font-size:0.72rem; width:auto;" onclick="inativarClienteSubmit(' + c.id + ')">INATIVAR</button>' +
+            '</div>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum cliente ativo.</p>";
+
+      var contInat = document.getElementById('containerCardsClientesInativos');
+      contInat.innerHTML = bancoClientesInativos.map(function(c) {
+        return '<div class="card-ampli-item" style="opacity:0.7; background:#F1F5F9;">' +
+            '<span class="badge-status badge-espera">INATIVO</span>' +
+            '<strong style="display:block; font-size:1.15rem; margin-top:8px;">' + c.marca + '</strong>' +
+            '<p style="font-size:0.82rem;">Login: ' + c.login + '</p>' +
+            '<button class="btn-main btn-green" style="padding:6px 12px; font-size:0.72rem; width:auto; margin-top:10px;" onclick="reativarClienteSubmit(' + c.id + ')">REATIVAR CLIENTE</button>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum cliente inativo.</p>";
+    }
+
+    function abrirModalCadastrarCliente() {
+      document.getElementById('mEditCliIdHidden').value = "";
+      document.getElementById('modalClienteTitulo').innerText = "Cadastrar Cliente";
+      document.getElementById('mCadCliNome').value = "";
+      document.getElementById('mCadCliLogin').value = "";
+      document.getElementById('mCadCliSenha').value = "123";
+      document.getElementById('modalCadCliente').style.display = 'flex';
+    }
+
+    function abrirModalEditarCliente(id) {
+      var c = bancoClientes.find(function(item) { return item.id == id; });
+      if(c) {
+        document.getElementById('mEditCliIdHidden').value = c.id;
+        document.getElementById('modalClienteTitulo').innerText = "Editar Cliente — " + c.marca;
+        document.getElementById('mCadCliNome').value = c.marca;
+        document.getElementById('mCadCliLogin').value = c.login;
+        document.getElementById('mCadCliSenha').value = c.senha;
+        document.getElementById('mCadCliCat').value = c.categoria.indexOf("Diamante") !== -1 ? "Diamante" : "Ouro";
+        document.getElementById('mCadCliInicio').value = c.inicio;
+        document.getElementById('modalCadCliente').style.display = 'flex';
+      }
+    }
+
+    function fecharModalCadCliente() { document.getElementById('modalCadCliente').style.display = 'none'; }
+
+    function salvarClienteModalSubmit() {
+      var id = document.getElementById('mEditCliIdHidden').value;
+      var nome = document.getElementById('mCadCliNome').value.trim();
+      var login = document.getElementById('mCadCliLogin').value.trim();
+      var senha = document.getElementById('mCadCliSenha').value.trim();
+      var cat = document.getElementById('mCadCliCat').value;
+      var ini = document.getElementById('mCadCliInicio').value.trim();
+
+      var cota = 1500;
+      if(cat.indexOf("Iniciante") !== -1) cota = 500;
+      if(cat.indexOf("Ouro") !== -1) cota = 1000;
+      if(cat.indexOf("Black") !== -1) cota = 2000;
+
+      if(!nome || !login) return;
+
+      if(id) {
+        var c = bancoClientes.find(function(item) { return item.id == id; });
+        if(c) { c.marca = nome; c.login = login; c.senha = senha; c.categoria = cat; c.cotaMax = cota; c.inicio = ini; }
+      } else {
+        bancoClientes.push({ id: Date.now(), marca: nome, login: login, senha: senha, categoria: cat, cotaMax: cota, enviadoMes: 0, inicio: ini });
+      }
+
+      salvarDadosNovem();
+      alert("✅ Cliente salvo!");
+      fecharModalCadCliente();
+      renderizarCardsClientesAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+    }
+
+    function inativarClienteSubmit(id) {
+      var c = bancoClientes.find(function(item) { return item.id == id; });
+      if(c && confirm("⚠️ AVISO 1/2: Deseja mover o cliente '" + c.marca + "' para INATIVOS?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Inativar cliente? (O histórico de insumos e encartes será totalmente preservado)")) {
+        var idx = bancoClientes.findIndex(function(item) { return item.id == id; });
+        if(idx > -1) {
+          var clienteRemovido = bancoClientes.splice(idx, 1)[0];
+          bancoClientesInativos.push(clienteRemovido);
+        }
+        salvarDadosNovem();
+        renderizarCardsClientesAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function reativarClienteSubmit(id) {
+      var idx = bancoClientesInativos.findIndex(function(item) { return item.id == id; });
+      if(idx > -1) {
+        var clienteReativado = bancoClientesInativos.splice(idx, 1)[0];
+        bancoClientes.push(clienteReativado);
+        salvarDadosNovem();
+        renderizarCardsClientesAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function renderizarCardsColabAmplo() {
+      var cont = document.getElementById('containerCardsColabAmplo');
+      cont.innerHTML = bancoColaboradores.map(function(c) {
+        var setoresList = Array.isArray(c.setores) ? c.setores.join(', ') : '';
+        return '<div class="card-ampli-item">' +
+            '<strong style="font-size:1.15rem;">' + c.nome + '</strong>' +
+            '<p style="font-size:0.82rem; margin:4px 0;">Login: <strong>' + c.login + '</strong> | Senha: <strong>' + c.senha + '</strong></p>' +
+            '<p style="font-size:0.82rem; margin:4px 0;">WhatsApp: ' + c.fone + '</p>' +
+            '<p style="font-size:0.78rem; color:var(--orange-accent); margin-top:6px;"><strong>Setores:</strong> ' + (setoresList || "Nenhum") + '</p>' +
+            '<div style="display:flex; gap:8px; margin-top:10px;">' +
+              '<button class="btn-main btn-orange" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="abrirModalEditarColaborador(' + c.id + ')">EDITAR</button>' +
+              '<button class="btn-main" style="background:#EF4444; font-size:0.72rem; width:auto; padding:6px 12px;" onclick="excluirColaboradorSubmit(' + c.id + ')">EXCLUIR</button>' +
+            '</div>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum colaborador cadastrado.</p>";
+    }
+
+    function abrirModalCadastrarColaborador() {
+      document.getElementById('mEditColabIdHidden').value = "";
+      document.getElementById('modalColabTitulo').innerText = "Cadastrar Colaborador";
+      document.getElementById('mCadColabNome').value = "";
+      document.getElementById('mCadColabFone').value = "";
+      document.getElementById('mCadColabLogin').value = "";
+      document.getElementById('mCadColabSenha').value = "123";
+      
+      document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+
+      document.getElementById('modalCadColaborador').style.display = 'flex';
+    }
+
+    function abrirModalEditarColaborador(id) {
+      var c = bancoColaboradores.find(function(item) { return item.id == id; });
+      if(c) {
+        document.getElementById('mEditColabIdHidden').value = c.id;
+        document.getElementById('modalColabTitulo').innerText = "Editar Colaborador — " + c.nome;
+        document.getElementById('mCadColabNome').value = c.nome;
+        document.getElementById('mCadColabFone').value = c.fone;
+        document.getElementById('mCadColabLogin').value = c.login;
+        document.getElementById('mCadColabSenha').value = c.senha;
+
+        var setoresDoColab = Array.isArray(c.setores) ? c.setores : [];
+
+        document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn').forEach(function(el) {
+          var setorData = el.getAttribute('data-setor') || el.innerText;
+          var marcado = setoresDoColab.some(function(s) {
+            return s === setorData || setorData.indexOf(s) !== -1 || s.indexOf(setorData) !== -1;
+          });
+          if (marcado) {
+            el.classList.add('selected');
+          } else {
+            el.classList.remove('selected');
+          }
+        });
+
+        document.getElementById('modalCadColaborador').style.display = 'flex';
+      }
+    }
+
+    function fecharModalCadColaborador() { document.getElementById('modalCadColaborador').style.display = 'none'; }
+    function toggleSetorTag(el) { el.classList.toggle('selected'); }
+
+    function salvarColaboradorModalSubmit() {
+      var id = document.getElementById('mEditColabIdHidden').value;
+      var nome = document.getElementById('mCadColabNome').value.trim();
+      var fone = document.getElementById('mCadColabFone').value.trim();
+      var login = document.getElementById('mCadColabLogin').value.trim();
+      var senha = document.getElementById('mCadColabSenha').value.trim();
+      
+      var tags = Array.from(document.querySelectorAll('#boxSetoresTagsColab .tag-setor-btn.selected')).map(function(el) { 
+        return el.getAttribute('data-setor') || el.innerText; 
+      });
+
+      if(!nome || !login) {
+        alert("⚠️ Informe o nome e o login do colaborador!");
+        return;
+      }
+
+      if(id) {
+        var c = bancoColaboradores.find(function(item) { return item.id == id; });
+        if(c) { 
+          c.nome = nome; 
+          c.fone = fone; 
+          c.login = login; 
+          c.senha = senha; 
+          c.setores = tags; 
+        }
+      } else {
+        bancoColaboradores.push({ 
+          id: Date.now(), 
+          nome: nome, 
+          fone: fone, 
+          login: login, 
+          senha: senha, 
+          setores: tags 
+        });
+      }
+
+      salvarDadosNovem();
+      alert("✅ Colaborador salvo com sucesso!");
+      fecharModalCadColaborador();
+      renderizarCardsColabAmplo();
+      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+    }
+
+    function excluirColaboradorSubmit(id) {
+      var c = bancoColaboradores.find(function(item) { return item.id == id; });
+      if(c && confirm("⚠️ AVISO 1/2: Tem certeza que deseja excluir o colaborador '" + c.nome + "'?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Excluir colaborador definitivamente?")) {
+        var idx = bancoColaboradores.findIndex(function(item) { return item.id == id; });
+        if(idx > -1) bancoColaboradores.splice(idx, 1);
+        salvarDadosNovem();
+        renderizarCardsColabAmplo();
+        selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      }
+    }
+
+    function renderizarSelecaoClientesInsumos() {
+      document.getElementById('secaoSelecaoClienteInsumo').style.display = 'block';
+      document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'none';
+      
+      var contAtivos = document.getElementById('containerCardsClientesInsumosSelection');
+      var contInativos = document.getElementById('containerCardsClientesInsumosInativosSelection');
+
+      var marcasInativas = bancoClientesInativos.map(function(c) { return c.marca; });
+
+      var htmlAtivos = "";
+      var htmlInativos = "";
+
+      Object.keys(bancoInsumosCompletos).forEach(function(cli) {
+        var eInativo = marcasInativas.indexOf(cli) !== -1;
+        var card = '<div class="card-ampli-item" ' + (eInativo ? 'style="opacity:0.7; background:#F1F5F9;"' : '') + ' onclick="abrirDetalheInsumosClienteDirect(\'' + cli + '\')">' +
+            '<strong style="font-size:1.15rem;">' + cli + (eInativo ? ' (INATIVO)' : '') + '</strong>' +
+            '<p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">Itens: <strong>' + bancoInsumosCompletos[cli].length + '</strong></p>' +
+          '</div>';
+
+        if (eInativo) htmlInativos += card;
+        else htmlAtivos += card;
+      });
+
+      contAtivos.innerHTML = htmlAtivos || "<p style='color:var(--text-muted);'>Nenhum insumo de cliente ativo.</p>";
+      contInativos.innerHTML = htmlInativos || "<p style='color:var(--text-muted);'>Nenhum insumo de cliente inativo.</p>";
+    }
+
+    function abrirDetalheInsumosClienteDirect(cli) {
+      clienteInsumosSelecionadoAtual = cli;
+      document.getElementById('secaoSelecaoClienteInsumo').style.display = 'none';
+      document.getElementById('secaoDetalheInsumosClienteSel').style.display = 'block';
+      document.getElementById('tituloInsumosClienteSel').innerText = cli + " — Estoque de Insumos";
+
+      var lista = bancoInsumosCompletos[cli] || [];
+      var html = '<table class="tabela-sos"><thead><tr><th>Categoria Joia</th><th>Tipo</th><th>Subcategoria</th><th>Estoque</th><th>Gôndola</th><th>Ações</th></tr></thead><tbody>';
+      lista.forEach(function(ins, idx) {
+        html += '<tr>' +
+            '<td><strong>' + (ins.catJoia || 'Geral / Todas') + '</strong></td>' +
+            '<td><strong>' + ins.tipo + '</strong></td>' +
+            '<td>' + ins.sub + '</td>' +
+            '<td><strong>' + ins.qtd + ' un</strong></td>' +
+            '<td><input type="text" value="' + (ins.gondula || '') + '" style="width:70px; padding:4px;" onchange="alterarGondulaInsumoDirect(\'' + cli + '\', ' + idx + ', this.value)"></td>' +
+            '<td>' +
+              '<button class="btn-main btn-green" style="padding:4px 8px; font-size:0.7rem; width:auto; margin-right:2px;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'entrada\')">+ Entrada</button>' +
+              '<button class="btn-main btn-orange" style="padding:4px 8px; font-size:0.7rem; width:auto; margin-right:4px;" onclick="lancarEntradaSaidaInsumo(\'' + cli + '\', ' + idx + ', \'saida\')">- Baixa</button>' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#3B82F6; margin-right:2px;" onclick="abrirModalEditarInsumoDirect(\'' + cli + '\', ' + idx + ')">EDITAR</button>' +
+              '<button class="btn-main" style="padding:4px 8px; font-size:0.7rem; width:auto; background:#EF4444;" onclick="excluirInsumoDirect(\'' + cli + '\', ' + idx + ')">EXCLUIR</button>' +
+            '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('containerInsumosTabelaDirect').innerHTML = html;
+    }
+
+    function voltarSelecaoClienteInsumo() { 
+      clienteInsumosSelecionadoAtual = "";
+      renderizarSelecaoClientesInsumos(); 
+    }
+
+    function abrirModalCadastrarInsumoParaClienteAtual() {
+      abrirModalCadastrarInsumo(clienteInsumosSelecionadoAtual);
+    }
+
+    function abrirModalCadastrarInsumo(clientePreSelecionado) {
+      document.getElementById('mEditInsumoCliOriginalHidden').value = "";
+      document.getElementById('mEditInsumoIdxHidden').value = "";
+      document.getElementById('modalInsumoTitulo').innerText = "Cadastrar Novo Insumo";
+      document.getElementById('btnSalvarModalInsumo').innerText = "SALVAR INSUMO";
+
+      var selCli = document.getElementById('mCadInsCli');
+      selCli.innerHTML = "";
+      bancoClientes.forEach(function(c) { 
+        selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; 
+      });
+
+      if (clientePreSelecionado && clientePreSelecionado !== "") {
+        selCli.value = clientePreSelecionado;
+      } else if (clienteInsumosSelecionadoAtual !== "") {
+        selCli.value = clienteInsumosSelecionadoAtual;
+      }
+
+      renderizarTagsCategoriasJoiaInsumo([]);
+      preencherSelectTiposInsumo();
+      document.getElementById('inputNovoTipoInsumoTemp').value = "";
+      document.getElementById('mCadInsSub').value = "";
+      document.getElementById('mCadInsQtd').value = "";
+      document.getElementById('mCadInsGondula').value = "";
+      document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function abrirModalEditarInsumoDirect(cli, idx) {
+      var ins = bancoInsumosCompletos[cli][idx];
+      if (!ins) return;
+
+      document.getElementById('mEditInsumoCliOriginalHidden').value = cli;
+      document.getElementById('mEditInsumoIdxHidden').value = idx;
+      document.getElementById('modalInsumoTitulo').innerText = "Editar Insumo — " + cli;
+      document.getElementById('btnSalvarModalInsumo').innerText = "ATUALIZAR INSUMO";
+
+      var selCli = document.getElementById('mCadInsCli');
+      selCli.innerHTML = "";
+      bancoClientes.forEach(function(c) { 
+        selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; 
+      });
+      selCli.value = cli;
+
+      var arrayCategoriasAtribuídas = ins.catJoia ? ins.catJoia.split(',').map(function(s){ return s.trim(); }) : [];
+      renderizarTagsCategoriasJoiaInsumo(arrayCategoriasAtribuídas);
+
+      preencherSelectTiposInsumo();
+      if (ins.tipo && bancoTiposInsumos.indexOf(ins.tipo) === -1) {
+        bancoTiposInsumos.push(ins.tipo);
+        preencherSelectTiposInsumo();
+      }
+      document.getElementById('mCadInsTipo').value = ins.tipo;
+
+      document.getElementById('mCadInsSub').value = ins.sub || "";
+      document.getElementById('mCadInsQtd').value = ins.qtd || 0;
+      document.getElementById('mCadInsGondula').value = ins.gondula || "";
+
+      document.getElementById('modalCadInsumo').style.display = 'flex';
+    }
+
+    function renderizarTagsCategoriasJoiaInsumo(categoriasSelecionadas) {
+      if (!Array.isArray(categoriasSelecionadas)) categoriasSelecionadas = [];
+      var box = document.getElementById('boxCatJoiasInsumoTags');
+      var eGeral = categoriasSelecionadas.indexOf("Geral / Todas") !== -1 || categoriasSelecionadas.length === 0;
+
+      var html = '<span class="tag-setor-btn ' + (eGeral ? 'selected' : '') + '" onclick="toggleSetorTag(this)">Geral / Todas</span>';
+      bancoCategoriasJoias.forEach(function(cj) { 
+        var marcada = categoriasSelecionadas.indexOf(cj) !== -1;
+        html += '<span class="tag-setor-btn ' + (marcada ? 'selected' : '') + '" onclick="toggleSetorTag(this)">' + cj + '</span>'; 
+      });
+      box.innerHTML = html;
+    }
+
+    function preencherSelectTiposInsumo() {
+      var selTipo = document.getElementById('mCadInsTipo');
+      selTipo.innerHTML = "";
+      bancoTiposInsumos.forEach(function(t) { selTipo.innerHTML += '<option value="' + t + '">' + t + '</option>'; });
+    }
+
+    function adicionarNovoTipoInsumoDirect() {
+      var inp = document.getElementById('inputNovoTipoInsumoTemp');
+      var val = inp.value.trim();
+      if(val) {
+        if(bancoTiposInsumos.indexOf(val) === -1) {
+          bancoTiposInsumos.push(val);
+          salvarDadosNovem();
+        }
+        preencherSelectTiposInsumo();
+        document.getElementById('mCadInsTipo').value = val;
+        inp.value = "";
+      }
+    }
+
+    function fecharModalCadInsumo() { document.getElementById('modalCadInsumo').style.display = 'none'; }
+
+    function salvarNovoInsumoSubmit(e) {
+      e.preventDefault();
+      var cliOrig = document.getElementById('mEditInsumoCliOriginalHidden').value;
+      var idxOrig = document.getElementById('mEditInsumoIdxHidden').value;
+
+      var cliNovo = document.getElementById('mCadInsCli').value;
+      var catsSel = Array.from(document.querySelectorAll('#boxCatJoiasInsumoTags .tag-setor-btn.selected')).map(function(el) { return el.innerText; });
+      var catJ = catsSel.length > 0 ? catsSel.join(', ') : "Geral / Todas";
+      var tipo = document.getElementById('mCadInsTipo').value;
+      var sub = document.getElementById('mCadInsSub').value.trim();
+      var qtd = parseInt(document.getElementById('mCadInsQtd').value) || 0;
+      var gon = document.getElementById('mCadInsGondula').value.trim();
+
+      if (idxOrig !== "") {
+        var idxInt = parseInt(idxOrig);
+        if (cliOrig === cliNovo) {
+          bancoInsumosCompletos[cliNovo][idxInt] = { id: bancoInsumosCompletos[cliNovo][idxInt].id || Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon };
+        } else {
+          bancoInsumosCompletos[cliOrig].splice(idxInt, 1);
+          if (!bancoInsumosCompletos[cliNovo]) bancoInsumosCompletos[cliNovo] = [];
+          bancoInsumosCompletos[cliNovo].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+        }
+      } else {
+        if(!bancoInsumosCompletos[cliNovo]) bancoInsumosCompletos[cliNovo] = [];
+        bancoInsumosCompletos[cliNovo].push({ id: Date.now(), catJoia: catJ, tipo: tipo, sub: sub, qtd: qtd, gondula: gon });
+      }
+
+      salvarDadosNovem();
+      alert("✅ Insumo salvo com sucesso!");
+      fecharModalCadInsumo();
+
+      if (clienteInsumosSelecionadoAtual !== "") {
+        abrirDetalheInsumosClienteDirect(clienteInsumosSelecionadoAtual);
+      } else {
+        renderizarSelecaoClientesInsumos();
+      }
+    }
+
+    function excluirInsumoDirect(cli, idx) {
+      if (confirm("⚠️ AVISO 1/2: Tem certeza que deseja excluir este insumo?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Excluir insumo do sistema?")) {
+        bancoInsumosCompletos[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function lancarEntradaSaidaInsumo(cli, idx, tipo) {
+      var v = parseInt(prompt("Quantidade para " + tipo.toUpperCase() + ":", "100")) || 0;
+      if(v > 0) {
+        if(tipo === 'entrada') bancoInsumosCompletos[cli][idx].qtd += v;
+        else bancoInsumosCompletos[cli][idx].qtd -= v;
+        salvarDadosNovem();
+        abrirDetalheInsumosClienteDirect(cli);
+      }
+    }
+
+    function alterarGondulaInsumoDirect(cli, idx, val) {
+      bancoInsumosCompletos[cli][idx].gondula = val;
+      salvarDadosNovem();
+      alert("✅ Gôndola atualizada!");
+    }
+
+    function renderizarSelecaoClientesEncarte() {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      
+      var contAtivos = document.getElementById('containerCardsClientesEncarteSelection');
+      var contInativos = document.getElementById('containerCardsClientesEncarteInativosSelection');
+
+      var marcasInativas = bancoClientesInativos.map(function(c) { return c.marca; });
+
+      var htmlAtivos = "";
+      var htmlInativos = "";
+
+      Object.keys(bancoModelosEncarte).forEach(function(cli) {
+        var eInativo = marcasInativas.indexOf(cli) !== -1;
+        var card = '<div class="card-ampli-item" ' + (eInativo ? 'style="opacity:0.7; background:#F1F5F9;"' : '') + ' onclick="abrirDetalheEncarteClienteDirect(\'' + cli + '\')">' +
+            '<strong style="font-size:1.15rem;">' + cli + (eInativo ? ' (INATIVO)' : '') + '</strong>' +
+            '<p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">Modelos: <strong>' + bancoModelosEncarte[cli].length + '</strong></p>' +
+          '</div>';
+
+        if (eInativo) htmlInativos += card;
+        else htmlAtivos += card;
+      });
+
+      contAtivos.innerHTML = htmlAtivos || "<p style='color:var(--text-muted);'>Nenhum encarte de cliente ativo.</p>";
+      contInativos.innerHTML = htmlInativos || "<p style='color:var(--text-muted);'>Nenhum encarte de cliente inativo.</p>";
+    }
+
+    function abrirDetalheEncarteClienteDirect(cli) {
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'none';
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'block';
+      document.getElementById('tituloEncarteClienteSel').innerText = cli + " — Modelos de Encarte";
+      var cont = document.getElementById('containerCardsCategoriasEncarteClienteSel');
+      var lista = bancoModelosEncarte[cli] || [];
+      cont.innerHTML = lista.map(function(m, idx) {
+        return '<div class="card-ampli-item">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+              '<span class="badge-status badge-andamento">' + m.catJoia.toUpperCase() + '</span>' +
+              '<button class="btn-main" style="width:auto; padding:4px 10px; background:#EF4444; font-size:0.7rem;" onclick="excluirModeloEncarteDirect(\'' + cli + '\', ' + idx + ')">EXCLUIR MODELO</button>' +
+            '</div>' +
+            '<div style="margin:8px 0; background:#F8FAFC; padding:10px; border-radius:8px;">' +
+              m.passos.map(function(p) { return '<div>• ' + p + '</div>'; }).join('') +
+            '</div>' +
+          '</div>';
+      }).join('') || "<p style='color:var(--text-muted);'>Nenhum modelo cadastrado.</p>";
+    }
+
+    function excluirModeloEncarteDirect(cli, idx) {
+      if(confirm("⚠️ AVISO 1/2: Tem certeza que deseja excluir este modelo de encarte?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Excluir modelo? (A marca continuará no sistema)")) {
+        bancoModelosEncarte[cli].splice(idx, 1);
+        salvarDadosNovem();
+        abrirDetalheEncarteClienteDirect(cli);
+      }
+    }
+
+    function voltarSelecaoClienteEncarte() {
+      document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
+      document.getElementById('secaoSelecaoClienteEncarte').style.display = 'block';
+    }
+
+    function abrirModalCadastrarModeloEncarte() {
+      listaPassosEncarteAtual = [];
+      renderizarPassosEncarteLista();
+      var selCli = document.getElementById('mCadEncCli');
+      var selCatJ = document.getElementById('mCadEncCatJoia');
+      selCli.innerHTML = ""; selCatJ.innerHTML = "";
+      bancoClientes.forEach(function(c) { selCli.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
+      bancoCategoriasJoias.forEach(function(cj) { selCatJ.innerHTML += '<option value="' + cj + '">' + cj + '</option>'; });
+      atualizarSelectsInsumosModeloEncarte();
+      document.getElementById('modalCadModeloEncarte').style.display = 'flex';
+    }
+
+    function fecharModalCadModeloEncarte() { document.getElementById('modalCadModeloEncarte').style.display = 'none'; }
+
+    var listaPassosEncarteAtual = [];
+    function adicionarPassoEncarteLista() {
+      var inp = document.getElementById('inputPassoEncarteTemp');
+      var txt = inp.value.trim();
+      if(txt) {
+        listaPassosEncarteAtual.push((listaPassosEncarteAtual.length + 1) + ". " + txt);
+        inp.value = "";
+        renderizarPassosEncarteLista();
+      }
+    }
+
+    function renderizarPassosEncarteLista() {
+      var box = document.getElementById('containerPassosEncarteLista');
+      box.innerHTML = listaPassosEncarteAtual.map(function(p, idx) {
+        return '<div style="font-size:0.8rem; margin:2px 0; display:flex; justify-content:space-between;">' +
+            '<span>' + p + '</span><b style="color:red; cursor:pointer;" onclick="removerPassoEncarte(' + idx + ')">✕</b>' +
+          '</div>';
+      }).join('') || '<span style="font-size:0.78rem; color:var(--text-muted);">Nenhuma instrução.</span>';
+    }
+
+    function removerPassoEncarte(idx) {
+      listaPassosEncarteAtual.splice(idx, 1);
+      renderizarPassosEncarteLista();
+    }
+
+    function atualizarSelectsInsumosModeloEncarte() {
+      var cli = document.getElementById('mCadEncCli').value;
+      var insumos = bancoInsumosCompletos[cli] || [];
+      var selectSaq = document.getElementById('mCadEncSaquinho');
+      var selectCar = document.getElementById('mCadEncCartela');
+      selectSaq.innerHTML = "<option value='Não utiliza saquinho'>Não Utiliza Saquinho</option>";
+      selectCar.innerHTML = "<option value='Não utiliza cartela'>Não Utiliza Cartela</option>";
+
+      insumos.forEach(function(i) {
+        if(i.tipo === "Saquinho") selectSaq.innerHTML += '<option value="' + i.tipo + ' ' + i.sub + '">' + i.tipo + ' ' + i.sub + '</option>';
+        if(i.tipo === "Cartela") selectCar.innerHTML += '<option value="' + i.tipo + ' ' + i.sub + '">' + i.tipo + ' ' + i.sub + '</option>';
+      });
+    }
+
+    function salvarModeloEncarteCompletoSubmit(e) {
+      e.preventDefault();
+      var cli = document.getElementById('mCadEncCli').value;
+      var catJ = document.getElementById('mCadEncCatJoia').value;
+      var saq = document.getElementById('mCadEncSaquinho').value;
+      var car = document.getElementById('mCadEncCartela').value;
+      var ff = document.getElementById('mCadEncFotoFrente').value.trim();
+      var fv = document.getElementById('mCadEncFotoVerso').value.trim();
+      var obs = document.getElementById('mCadEncObs').value;
+
+      if(listaPassosEncarteAtual.length === 0) { alert("⚠️ Adicione ao menos 1 passo!"); return; }
+
+      if(!bancoModelosEncarte[cli]) bancoModelosEncarte[cli] = [];
+      bancoModelosEncarte[cli].push({ id: Date.now(), catJoia: catJ, passos: listaPassosEncarteAtual, saquinho: saq, cartela: car, fotoFrente: ff, fotoVerso: fv, obs: obs });
+      salvarDadosNovem();
+
+      alert("✅ Modelo registrado!");
+      fecharModalCadModeloEncarte();
+      renderizarSelecaoClientesEncarte();
+    }
+
+    function renderizarCategoriasJoiasCentral() {
+      var box = document.getElementById('boxListaCategoriasJoiasCentral');
+      box.innerHTML = bancoCategoriasJoias.map(function(cj, idx) {
+        return '<span class="tag-setor-btn selected" style="margin:4px;">' + cj + ' <b onclick="excluirCategoriaJoiaCentral(' + idx + ')">✕</b></span>';
+      }).join('');
+
+      popularListasDestinatariosAviso();
+    }
+
+    function popularListasDestinatariosAviso() {
+      var boxCli = document.getElementById('boxSelecaoClientesAviso');
+      var boxColab = document.getElementById('boxSelecaoColabAviso');
+
+      if (boxCli) {
+        boxCli.innerHTML = bancoClientes.map(function(c) {
+          return '<label style="display:block; font-size:0.82rem; font-weight:bold; margin-bottom:4px; cursor:pointer;">' +
+                   '<input type="checkbox" class="chk-aviso-cli" value="' + c.marca + '"> ' + c.marca +
+                 '</label>';
+        }).join('');
+      }
+
+      if (boxColab) {
+        boxColab.innerHTML = bancoColaboradores.map(function(col) {
+          return '<label style="display:block; font-size:0.82rem; font-weight:bold; margin-bottom:4px; cursor:pointer;">' +
+                   '<input type="checkbox" class="chk-aviso-colab" value="' + col.nome + '"> ' + col.nome +
+                 '</label>';
+        }).join('');
+      }
+    }
+
+    function alternarExibicaoDestinatariosAviso() {
+      var tipo = document.getElementById('selectTipoDestinatarioAviso').value;
+      var boxCli = document.getElementById('boxSelecaoClientesAviso');
+      var boxColab = document.getElementById('boxSelecaoColabAviso');
+
+      boxCli.style.display = (tipo === 'SELECIONAR_CLIENTES') ? 'block' : 'none';
+      boxColab.style.display = (tipo === 'SELECIONAR_COLABORADORES') ? 'block' : 'none';
+    }
+
+    function cadastrarNovaCategoriaJoiaSubmit() {
+      var val = document.getElementById('inputNovaCatJoia').value.trim();
+      if(val && bancoCategoriasJoias.indexOf(val) === -1) {
+        bancoCategoriasJoias.push(val);
+        salvarDadosNovem();
+        document.getElementById('inputNovaCatJoia').value = "";
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function excluirCategoriaJoiaCentral(idx) {
+      if(confirm("⚠️ AVISO 1/2: Tem certeza que deseja excluir esta categoria?") && confirm("⚠️ AVISO 2/2: CONFIRMAÇÃO FINAL: Excluir categoria?")) {
+        bancoCategoriasJoias.splice(idx, 1);
+        salvarDadosNovem();
+        renderizarCategoriasJoiasCentral();
+      }
+    }
+
+    function salvarFatorDivisorSubmit() {
+      var val = parseFloat(document.getElementById('inputFatorDivisorDir').value) || 2.1;
+      fatorMediaPesoGlobal = val;
+      alert("⚙️ Média ajustada para " + val + "g!");
+    }
+
+    function salvarAvisoComunicadoSubmit() {
+      var tipo = document.getElementById('selectTipoDestinatarioAviso').value;
+      var txt = document.getElementById('textoAvisoDir').value.trim();
+
+      if (!txt) {
+        alert("⚠️ Por favor, digite o texto do comunicado!");
+        return;
+      }
+
+      var dataHoje = "01/10/2026";
+      var destinatarios = [];
+
+      if (tipo === 'TODOS') {
+        destinatarios.push("TODOS");
+      } else if (tipo === 'TODOS_CLIENTES') {
+        bancoClientes.forEach(function(c) { destinatarios.push(c.marca); });
+      } else if (tipo === 'TODOS_COLABORADORES') {
+        destinatarios.push("EQUIPE");
+      } else if (tipo === 'SELECIONAR_CLIENTES') {
+        var marcados = document.querySelectorAll('.chk-aviso-cli:checked');
+        marcados.forEach(function(chk) { destinatarios.push(chk.value); });
+      } else if (tipo === 'SELECIONAR_COLABORADORES') {
+        var marcadosColab = document.querySelectorAll('.chk-aviso-colab:checked');
+        marcadosColab.forEach(function(chk) { destinatarios.push(chk.value); });
+      }
+
+      if (destinatarios.length === 0) {
+        alert("⚠️ Selecione pelo menos um cliente ou colaborador para enviar!");
+        return;
+      }
+
+      destinatarios.forEach(function(dest) {
+        bancoMensagens.push({
+          id: Date.now() + Math.random(),
+          remetente: "Diretoria General",
+          destinatario: dest,
+          texto: txt,
+          data: dataHoje
+        });
+      });
+
+      salvarDadosNovem();
+      document.getElementById('textoAvisoDir').value = "";
+      alert("📢 Comunicado publicado com sucesso!");
+    }
+
+    carregarDadosNovem();
+  </script>
+</body>
+</html>
