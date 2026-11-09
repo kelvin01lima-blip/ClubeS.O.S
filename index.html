@@ -627,7 +627,7 @@
         </div>
       </div>
 
-      <!-- PAINEL EDITÁVEL DE HISTÓRICO DE SETORES, TEMPOS E QUANTIDADES -->
+      <!-- PAINEL EDITÁVEL DE HISTÓRICO DE SETORES, TEMPOS E QUANTIDADES COM SERVIÇOS EXTRAS -->
       <div style="margin-bottom:15px; background:#F8FAFC; padding:14px; border-radius:14px; border:1px solid var(--border-color);">
         <h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Histórico e Edição dos Setores Operacionais:</h4>
         <div id="containerHistoricoSetoresDiretoria"></div>
@@ -784,7 +784,7 @@
     var feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
     var datasOcupadasAgenda = [];
 
-    // DIRETORIA COM NOME CORRIGIDO: Kelvin (Diretoria)
+    // NOME DA DIRETORIA CORRIGIDO: Kelvin (Diretoria)
     var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin (Diretoria)', login: 'kelvin', senha: '123' }];
     var bancoClientes = [];
     var bancoClientesInativos = [];
@@ -816,21 +816,14 @@
       bancoClientes.forEach(function(c) { marcasValidas.push(c.marca); });
       bancoClientesInativos.forEach(function(c) { marcasValidas.push(c.marca); });
 
-      // Limpar insumos de clientes que não existem mais
       Object.keys(bancoInsumosCompletos).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) {
-          delete bancoInsumosCompletos[cli];
-        }
+        if (marcasValidas.indexOf(cli) === -1) delete bancoInsumosCompletos[cli];
       });
 
-      // Limpar modelos de encarte de clientes que não existem mais
       Object.keys(bancoModelosEncarte).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) {
-          delete bancoModelosEncarte[cli];
-        }
+        if (marcasValidas.indexOf(cli) === -1) delete bancoModelosEncarte[cli];
       });
 
-      // Limpar regras associadas a clientes excluídos
       Object.keys(bancoRegrasSetores).forEach(function(setor) {
         if (Array.isArray(bancoRegrasSetores[setor])) {
           bancoRegrasSetores[setor] = bancoRegrasSetores[setor].filter(function(r) {
@@ -1034,7 +1027,6 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'block';
       
-      // Nome exato da diretoria formatado
       var rotuloUser = loginStr;
       if (perfil === 'diretoria') rotuloUser = "Kelvin (DIRETORIA)";
       else rotuloUser = loginStr + " (" + perfil.toUpperCase() + ")";
@@ -1148,7 +1140,6 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
-    /* RELATÓRIO COMPLETO DE TEMPO E VALORES */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -1382,24 +1373,37 @@
       renderizarLotesColabBancada();
     }
 
-    /* HISTÓRICO E EDIÇÃO LIBERADA DE SETORES PELA DIRETORIA */
+    /* HISTÓRICO E EDIÇÃO LIBERADA DE SETORES E SERVIÇOS ADICIONAIS PELA DIRETORIA */
     function renderizarEdicaoSetoresDiretoria(l) {
       var container = document.getElementById('containerHistoricoSetoresDiretoria');
       if (!l.historicoSetores) l.historicoSetores = [];
 
       var html = '<table class="tabela-sos" style="margin:0;">' +
-        '<thead><tr><th>Setor</th><th>Qtd Peças</th><th>Início / Fim</th><th>Operador</th></tr></thead><tbody>';
+        '<thead><tr><th>Setor / Trabalhos Extras</th><th>Qtd Peças</th><th>Início / Fim</th><th>Operador</th></tr></thead><tbody>';
 
-      listaSetoresFabricaGeral.forEach(function(setor, idx) {
+      listaSetoresFabricaGeral.forEach(function(setor) {
         var hSetor = l.historicoSetores.find(function(h) { return h.setor === setor; }) || {
-          setor: setor, qtdServico: 0, dataInicio: "", dataFim: "", operador: ""
+          setor: setor, qtdServico: 0, dataInicio: "", dataFim: "", operador: "", servicosEspeciais: []
         };
 
+        var servExtrasHtml = "";
+        if (hSetor.servicosEspeciais && hSetor.servicosEspeciais.length > 0) {
+          servExtrasHtml = '<div style="margin-top:6px; padding:6px 8px; background:#F0FDFA; border-left:3px solid #0D9488; border-radius:6px; font-size:0.76rem; color:#0D9488;">' +
+            '<strong>🛠️ Serviços Extras Registrados:</strong><br>' +
+            hSetor.servicosEspeciais.map(function(se) { 
+              return '• ' + se.tipo + ': <strong>' + se.qtd + ' pcs</strong>'; 
+            }).join('<br>') +
+          '</div>';
+        }
+
         html += '<tr>' +
-            '<td><strong>' + setor + '</strong></td>' +
-            '<td><input type="number" class="form-control edit-dir-qtd" data-setor="' + setor + '" value="' + (hSetor.qtdServico || 0) + '" style="margin:0; padding:4px 8px; width:90px;"></td>' +
-            '<td><input type="text" class="form-control edit-dir-tempo" data-setor="' + setor + '" value="' + (hSetor.dataInicio || hSetor.dataFim || '') + '" placeholder="Data/Hora..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
-            '<td><input type="text" class="form-control edit-dir-colab" data-setor="' + setor + '" value="' + (hSetor.operador || '') + '" placeholder="Operador..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
+            '<td style="vertical-align:top;">' +
+              '<strong>' + setor + '</strong>' +
+              servExtrasHtml +
+            '</td>' +
+            '<td style="vertical-align:top;"><input type="number" class="form-control edit-dir-qtd" data-setor="' + setor + '" value="' + (hSetor.qtdServico || 0) + '" style="margin:0; padding:4px 8px; width:90px;"></td>' +
+            '<td style="vertical-align:top;"><input type="text" class="form-control edit-dir-tempo" data-setor="' + setor + '" value="' + (hSetor.dataInicio || hSetor.dataFim || '') + '" placeholder="Data/Hora..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
+            '<td style="vertical-align:top;"><input type="text" class="form-control edit-dir-colab" data-setor="' + setor + '" value="' + (hSetor.operador || '') + '" placeholder="Operador..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
           '</tr>';
       });
 
@@ -1437,7 +1441,6 @@
       });
     }
 
-    /* EXCLUSÃO DEFINITIVA DE LOTE PELA DIRETORIA */
     function excluirLoteDefinitivoDir() {
       var id = parseInt(document.getElementById('editLoteIdHidden').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1836,7 +1839,6 @@
       bancoClientes.forEach(function(c) { sel.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
     }
 
-    /* RENDERIZAÇÃO E CLIQUE GARANTIDO NOS CARDS DOS LOTES DA DIRETORIA */
     function renderizarLotes4Etapas() {
       var filtro = document.getElementById('filtroCliLotes4Etapas').value;
       var cont = document.getElementById('containerLotes4EtapasAmplo');
