@@ -3,384 +3,467 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HUB S.O.S 2027 — Sistema Operacional de Setores</title>
+  <title>EloHub — Operações em Semijoias</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --header-bg: #0B132B; --orange-accent: #FF5722; --body-bg: #F0F4F8;
-      --card-bg: #FFFFFF; --input-bg: #F8FAFC; --text-dark: #0B132B;
-      --text-muted: #64748B; --green-val: #10B981; --red-val: #EF4444;
-      --blue-val: #3B82F6; --gold-val: #D97706; --gold-bright: #FFB703;
+      --bg-main: #F0F4F8;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --header-bg: #0F172A;
+      --primary-blue: #2563EB;
+      --primary-blue-hover: #1D4ED8;
+      --accent-cyan: #06B6D4;
+      --green-val: #059669;
+      --green-hover: #047857;
+      --orange-accent: #EA580C;
+      --orange-hover: #C2410C;
+      --purple-accent: #7C3AED;
+      --text-dark: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --glass-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --glow-blue: 0 0 20px rgba(37, 99, 235, 0.25);
     }
-    * { box-sizing: border-box; font-family: 'Montserrat', -apple-system, sans-serif; }
-    body { margin: 0; padding: 0; background-color: var(--body-bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
-    .top-bar { background-color: var(--header-bg); border-bottom: 4px solid var(--orange-accent); padding: 16px 28px; color: #FFF; display: flex; justify-content: space-between; align-items: center; }
-    .top-bar h1 { margin: 0; font-size: 1.4rem; font-weight: 900; }
-    .top-bar p { margin: 2px 0 0 0; color: var(--orange-accent); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; }
-    .user-profile-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: #FFF; display: flex; align-items: center; gap: 10px; }
-    .btn-logout { background: #EF4444; border: none; color: #FFF; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: bold; }
-    .main-container { flex: 1; padding: 24px; max-width: 1280px; margin: 0 auto; width: 100%; }
-    .login-wrapper { max-width: 450px; margin: 60px auto; background: var(--card-bg); padding: 32px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--orange-accent); }
-    .login-wrapper h2 { margin: 0 0 8px 0; color: var(--header-bg); text-align: center; }
-    .login-wrapper p { margin: 0 0 20px 0; color: var(--text-muted); text-align: center; font-size: 0.85rem; }
-    .tabs-perfil { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab-btn { flex: 1; padding: 10px 6px; border: 1px solid #E2E8F0; background: var(--input-bg); border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer; text-align: center; }
-    .tab-btn.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
-    .menu-paginas-diretoria, .menu-paginas-operacional { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px; }
-    .btn-pag-dir, .btn-pag-op { background: #FFF; border: 2px solid #E2E8F0; padding: 12px 18px; border-radius: 12px; font-weight: bold; font-size: 0.82rem; cursor: pointer; color: var(--header-bg); white-space: nowrap; }
-    .btn-pag-dir.active, .btn-pag-op.active { background: var(--header-bg); color: #FFF; border-color: var(--header-bg); }
-    .panel-card { background: var(--card-bg); border-radius: 18px; padding: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 22px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
-    .panel-header h3 { margin: 0; color: var(--header-bg); font-size: 1.25rem; font-weight: 800; }
-    .form-control { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid #E2E8F0; background-color: var(--input-bg); color: var(--text-dark); font-size: 0.88rem; margin-bottom: 12px; outline: none; }
-    .btn-main { width: 100%; padding: 12px; border-radius: 10px; border: none; background-color: var(--header-bg); color: #FFF; font-size: 0.88rem; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-    .btn-orange { background-color: var(--orange-accent); }
-    .btn-green { background-color: var(--green-val); }
-    .badge-status { padding: 5px 12px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; display: inline-block; text-transform: uppercase; }
-    .badge-andamento { background: #FEF3C7; color: #92400E; }
-    .badge-concluido { background: #D1FAE5; color: #065F46; }
-    .badge-espera { background: #E0F2FE; color: #0369A1; }
-    .cards-grid-amplos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 15px; }
-    .card-ampli-item { background: #FFF; border: 2px solid #E2E8F0; border-radius: 14px; padding: 20px; cursor: pointer; position: relative; }
-    .tag-setor-btn { display: inline-block; padding: 6px 12px; border-radius: 8px; border: 1px solid #CBD5E1; background: #F1F5F9; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin: 3px; user-select: none; }
-    .tag-setor-btn.selected { background: var(--orange-accent); color: #FFF; border-color: var(--orange-accent); }
-    table.tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table.tabela-sos th, table.tabela-sos td { text-align: left; padding: 10px 14px; border: 1px solid #CBD5E1; font-size: 0.85rem; }
-    table.tabela-sos th { background-color: #F1F5F9; color: #0B132B; font-weight: bold; }
-    .coluna-etapa-lotes { border-radius: 14px; padding: 16px; max-height: 620px; overflow-y: auto; }
-    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(11, 19, 43, 0.88); z-index: 9990; justify-content: center; align-items: center; padding: 20px; }
-    .modal-card { background: #fff; padding: 28px; border-radius: 20px; max-width: 820px; width: 100%; max-height: 88vh; overflow-y: auto; }
-    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
-    .prazos-bar { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 12px 18px; border-radius: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .prazo-item { font-size: 0.78rem; font-weight: bold; color: var(--header-bg); }
-    .prazo-item span { color: var(--orange-accent); }
-    .scale-box-container { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border: 2px solid #FF5722; border-radius: 16px; padding: 18px; color: #FFF; margin-bottom: 15px; }
-    .scale-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .scale-header h4 { margin: 0; color: #FFB703; font-size: 0.95rem; font-weight: 800; }
-    .scale-display { background: #020617; border: 2px solid #1E293B; border-radius: 12px; padding: 12px; text-align: center; margin-top: 10px; }
-    .scale-number { font-family: 'Courier New', monospace; font-size: 1.6rem; font-weight: 900; color: #10B981; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-    .cal-day-header { text-align: center; font-weight: bold; font-size: 0.75rem; color: var(--text-muted); padding: 4px; }
-    .cal-day { background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 8px; padding: 8px 4px; text-align: center; font-size: 0.8rem; cursor: pointer; min-height: 52px; display: flex; flex-direction: column; justify-content: space-between; }
-    .cal-day.disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; }
-    .cal-day.indisponivel { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; cursor: not-allowed; }
-    .cal-day.disponivel { background: #ECFDF5; border-color: #6EE7B7; color: #065F46; }
-    .cal-day.selected { background: var(--orange-accent) !important; color: #FFF !important; }
-    .cal-status-tag { font-size: 0.62rem; font-weight: bold; text-transform: uppercase; }
-    .cal-nav-btn { background: var(--header-bg); color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.78rem; }
-    .regra-item-box { background: #F8FAFC; border-left: 4px solid var(--orange-accent); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
-    .loading-indicator { font-size: 0.75rem; color: #FFB703; font-weight: bold; display: inline-block; margin-left: 10px; }
-    .historico-setores-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-top: 12px; }
-    .item-setor-hist { display: flex; flex-direction: column; border-bottom: 1px dashed #CBD5E1; padding: 8px 0; font-size: 0.85rem; }
-    .finance-summary-box { background: #ECFDF5; border: 1px solid #10B981; border-radius: 12px; padding: 14px; margin-top: 12px; color: #065F46; }
-    .setor-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; align-items: center; }
-    .stamp-time { font-size: 0.73rem; color: var(--text-muted); margin-top: 2px; }
-  </style>
-</head><body>
 
-  <div class="top-bar">
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    body { background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%); color: var(--text-dark); margin: 0; padding: 16px; min-height: 100vh; }
+
+    /* CONTAINERS E CARDS FUTURISTAS */
+    .app-header {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 20px 24px;
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-title { margin: 0; font-size: 1.6rem; font-weight: 800; tracking: -0.02em; background: linear-gradient(90deg, #FFFFFF, #93C5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .card-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--glass-shadow);
+      margin-bottom: 24px;
+    }
+
+    .cards-grid-amplos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+    .coluna-etapa-lotes {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .coluna-etapa-lotes h4 { margin-top: 0; font-size: 0.95rem; font-weight: 700; border-bottom: 2px solid currentColor; padding-bottom: 8px; }
+
+    .card-ampli-item {
+      background: #FFFFFF;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-ampli-item:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: var(--glow-blue);
+      border-color: var(--primary-blue);
+    }
+
+    /* BOTÕES E CONTROLES */
+    .btn-main {
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary-blue);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-main:hover { background: var(--primary-blue-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+    .btn-green { background: var(--green-val); box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
+    .btn-green:hover { background: var(--green-hover); box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4); }
+    .btn-orange { background: var(--orange-accent); box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3); }
+    .btn-orange:hover { background: var(--orange-hover); box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4); }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+    /* NAVEGAÇÃO / TABS */
+    .nav-tabs-bar { display: flex; gap: 8px; background: rgba(226, 232, 240, 0.6); padding: 6px; border-radius: 14px; margin-bottom: 20px; overflow-x: auto; }
+    .btn-pag-dir, .btn-pag-op, .profile-tab-btn {
+      flex: 1; padding: 10px 16px; border: none; border-radius: 10px; background: transparent; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; white-space: nowrap; text-align: center;
+    }
+    .btn-pag-dir.active, .btn-pag-op.active, .profile-tab-btn.active {
+      background: #FFFFFF; color: var(--header-bg); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* BADGES */
+    .badge-status { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
+    .badge-andamento { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
+    .badge-espera { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+    .badge-concluido { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+
+    /* CALENDÁRIO FUTURISTA */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .cal-day-header { font-weight: 700; font-size: 0.75rem; text-align: center; color: var(--text-muted); padding: 4px; }
+    .cal-day {
+      background: #FFFFFF; border-radius: 12px; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.85rem; cursor: pointer; min-height: 52px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .cal-day.disponivel:hover { border-color: var(--green-val); background: #ECFDF5; }
+    .cal-day.selected { border: 2px solid var(--green-val); background: #D1FAE5; box-shadow: 0 0 12px rgba(5, 150, 105, 0.3); }
+    .cal-day.disabled { background: #F1F5F9; opacity: 0.4; cursor: not-allowed; }
+    .cal-day.indisponivel { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; cursor: not-allowed; }
+    .cal-status-tag { font-size: 0.65rem; font-weight: 700; display: block; margin-top: 2px; }
+
+    /* ESTRUTURA DOS HISTÓRICOS DE SETOR */
+    .historico-setores-box { background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-top: 14px; }
+    .item-setor-hist { background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .item-setor-hist .stamp-time { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px; font-weight: 600; }
+    .item-setor-hist .stamp-operator { font-size: 0.73rem; color: var(--primary-blue); font-weight: 700; margin-top: 2px; display: block; }
+    
+    /* BLOCO DE SERVIÇOS ADICIONAIS NA INSPEÇÃO */
+    .box-servico-adicional { background: #F0FDFA; border: 1px solid #99F6E4; padding: 12px; border-radius: 12px; margin-bottom: 12px; }
+
+    /* MODAIS */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 16px; }
+    .modal-card { background: #FFFFFF; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.8); }
+
+    .tag-setor-btn { display: inline-block; padding: 6px 12px; background: #F1F5F9; border-radius: 8px; font-size: 0.78rem; font-weight: 600; margin: 2px; cursor: pointer; border: 1px solid var(--border-color); }
+    .tag-setor-btn.selected { background: var(--header-bg); color: #FFFFFF; border-color: var(--header-bg); }
+
+    .tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .tabela-sos th, .tabela-sos td { padding: 10px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 0.85rem; }
+    .tabela-sos th { background: #F8FAFC; color: var(--text-muted); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- CABEÇALHO GLOBAL DO SISTEMA -->
+  <div class="app-header">
     <div>
-      <h1>S.O.S SOLUÇÕES</h1>
-      <p>SISTEMA OPERACIONAL DE SETORES & ESTOQUE DE INSUMOS 2027 <span id="statusSync" class="loading-indicator">☁️ Carregando Dados...</span></p>
+      <h1 class="brand-title">EloHub</h1>
+      <span style="font-size:0.75rem; color:#94A3B8; font-weight:600; tracking:0.05em;">OPERAÇÕES EM SEMIJOIAS</span>
     </div>
-    <div id="userBadgeArea" style="display:none;">
-      <div class="user-profile-badge">
-        <span id="nomeUsuarioBadge">kelvin (Diretoria)</span>
-        <button class="btn-logout" onclick="fazerLogout()">SAIR</button>
+    <div id="userBadgeArea" style="display:none; text-align:right;">
+      <span id="nomeUsuarioBadge" style="font-weight:700; font-size:0.9rem; display:block;"></span>
+      <span id="statusSync" style="font-size:0.72rem; color:#38BDF8; font-weight:600;">☁️ Nuvem Conectada</span> | 
+      <a href="javascript:void(0)" onclick="fazerLogout()" style="color:#FCA5A5; text-decoration:none; font-size:0.75rem; font-weight:700;">SAIR</a>
+    </div>
+  </div>
+
+  <!-- TELA DE LOGIN UNIFICADA -->
+  <div id="loginScreen" class="card-panel" style="max-width:420px; margin:40px auto; text-align:center;">
+    <h2 style="margin-top:0; color:var(--header-bg); font-weight:800;">Acesso ao Sistema</h2>
+    <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:20px;">Selecione seu perfil e entre com suas credenciais</p>
+    
+    <div class="nav-tabs-bar">
+      <button id="tabCliente" class="profile-tab-btn active" onclick="selecionarPerfilAcesso('cliente')">Cliente</button>
+      <button id="tabEquipe" class="profile-tab-btn" onclick="selecionarPerfilAcesso('equipe')">Equipe</button>
+      <button id="tabDiretoria" class="profile-tab-btn" onclick="selecionarPerfilAcesso('diretoria')">Diretoria</button>
+    </div>
+
+    <form onsubmit="autenticarUsuario(event)">
+      <select id="selectUsuarioLogin" class="form-control" required></select>
+      <input type="password" id="inputSenha" class="form-control" placeholder="Sua senha..." required>
+      <button type="submit" class="btn-main" style="margin-top:10px;">ENTRAR NO SISTEMA ➔</button>
+    </form>
+  </div><!-- PAINEL CLIENTE -->
+  <div id="painelCliente" style="display:none;">
+    <div class="card-panel">
+      <h2 id="tituloClientePainel" style="margin-top:0; color:var(--header-bg);">💎 PAINEL DO CLIENTE</h2>
+      
+      <div class="nav-tabs-bar">
+        <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 Lotes em Andamento</button>
+        <button id="btnNavCliFinalizados" class="btn-pag-op" onclick="navegarPaginaCliente('finalizados')">✅ Concluídos / Liberados</button>
+        <button id="btnNavCliAgendar" class="btn-pag-op" onclick="navegarPaginaCliente('agendar')">📅 Agendar Envio</button>
+        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">📇 Modelos de Encarte</button>
+        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 Meu Estoque Insumos</button>
+        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 Central Recados</button>
+      </div>
+
+      <!-- ABA 1 CLIENTE: LOTES EM ANDAMENTO -->
+      <div id="pagCliLotes">
+        <div id="containerLotesClientePainel" class="cards-grid-amplos"></div>
+      </div>
+
+      <!-- ABA 2 CLIENTE: LOTES FINALIZADOS -->
+      <div id="pagCliFinalizados" style="display:none;">
+        <div id="containerLotesFinalizadosClientePainel" class="cards-grid-amplos"></div>
+      </div>
+
+      <!-- ABA 3 CLIENTE: AGENDAR ENVIO -->
+      <div id="pagCliAgendar" style="display:none;">
+        <h3 style="margin-top:0;">Agendamento de Envio de Peças</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">Selecione um dia disponível (em verde) e informe o volume de peças ou o peso estimado.</p>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <button class="btn-main" style="width:auto; padding:6px 14px;" onclick="mudarMesCalendario(-1)">◄ Mês Anterior</button>
+          <strong id="calMesAnoHeader" style="font-size:1.1rem; color:var(--header-bg);"></strong>
+          <button class="btn-main" style="width:auto; padding:6px 14px;" onclick="mudarMesCalendario(1)">Próximo Mês ►</button>
+        </div>
+
+        <div id="containerCalendarioGrid" class="cal-grid"></div>
+
+        <div style="margin-top:20px; background:#F8FAFC; padding:18px; border-radius:16px; border:1px solid var(--border-color);">
+          <h4 style="margin-top:0;">Detalhes do Lote Agendado</h4>
+          
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div>
+              <label style="font-size:0.8rem; font-weight:700;">Qtd Peças (Estimada):</label>
+              <input type="number" id="inputAgendQtdPcs" class="form-control" placeholder="Ex: 500" oninput="calcularPesoPorPcsCli()">
+            </div>
+            <div>
+              <label style="font-size:0.8rem; font-weight:700;">Peso Estimado (g):</label>
+              <input type="number" id="inputAgendPesoGramos" class="form-control" placeholder="Ex: 1050" oninput="calcularPcsPorPesoCli()">
+            </div>
+          </div>
+
+          <p id="labelCalcAgendResult" style="font-size:0.85rem; font-weight:700; color:var(--primary-blue); margin:6px 0 12px 0;"></p>
+
+          <label style="font-size:0.8rem; font-weight:700;">Modelos / Referências Aproximadas:</label>
+          <input type="number" id="inputAgendQtdModelos" class="form-control" placeholder="Ex: 15 modelos" value="1">
+
+          <label style="font-size:0.8rem; font-weight:700;">Observações ou Instruções Iniciais:</label>
+          <textarea id="inputAgendObs" class="form-control" placeholder="Observações para a equipe EloHub..."></textarea>
+
+          <button class="btn-main btn-green" onclick="confirmarAgendamentoLoteClienteSubmit()">CONFIRMAR AGENDAMENTO DE ENVIO ➔</button>
+        </div>
+      </div>
+
+      <!-- ABA 4 CLIENTE: ENCARTES -->
+      <div id="pagCliEncarte" style="display:none;">
+        <h3 style="margin-top:0;">Modelos de Encarte Cadastrados</h3>
+        <div id="containerEncartesClienteExibicao" class="cards-grid-amplos"></div>
+      </div>
+
+      <!-- ABA 5 CLIENTE: INSUMOS -->
+      <div id="pagCliInsumos" style="display:none;">
+        <h3 style="margin-top:0;">Estoque de Insumos da Minha Marca</h3>
+        <div id="containerTabelaInsumosClienteExibicao"></div>
+      </div>
+
+      <!-- ABA 6 CLIENTE: MENSAGENS -->
+      <div id="pagCliMensagens" style="display:none;">
+        <h3 style="margin-top:0;">Central de Comunicados e Recados</h3>
+        <div id="boxMensagensRecebidasCli" style="background:#F8FAFC; padding:16px; border-radius:14px; margin-bottom:16px; max-height:250px; overflow-y:auto;"></div>
+        <textarea id="inputTextoEnvioCli" class="form-control" placeholder="Enviar uma mensagem para a Diretoria..."></textarea>
+        <button class="btn-main" onclick="enviarMensagemClienteSubmit()">ENVIAR MENSAGEM ➔</button>
       </div>
     </div>
   </div>
 
-  <div class="main-container">
 
-    <div id="loginScreen" class="login-wrapper">
-      <h2>Acesso ao HUB S.O.S</h2>
-      <p>Selecione seu perfil de acesso ao sistema:</p>
-      <div class="tabs-perfil">
-        <div id="tabCliente" class="tab-btn" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
-        <div id="tabEquipe" class="tab-btn" onclick="selecionarPerfilAcesso('equipe')">COLABORADOR</div>
-        <div id="tabDiretoria" class="tab-btn active" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
+  <!-- PAINEL COLABORADOR (EQUIPE OPERACIONAL) -->
+  <div id="painelColaborador" style="display:none;">
+    <div class="card-panel">
+      <h2 style="margin-top:0; color:var(--header-bg);">🛠️ BANCADA OPERACIONAL — ELO HUB</h2>
+      <p id="subtituloColabBancada" style="font-size:0.85rem; color:var(--text-muted); font-weight:600;"></p>
+
+      <div class="nav-tabs-bar">
+        <button id="btnNavOpLotes" class="btn-pag-op active" onclick="navegarPaginaColab('lotes')">⚡ Lotes no Meu Setor</button>
+        <button id="btnNavOpRegras" class="btn-pag-op" onclick="navegarPaginaColab('regras')">📖 Consultar Regras</button>
+        <button id="btnNavOpEncartes" class="btn-pag-op" onclick="navegarPaginaColab('encartes')">📇 Consultar Encartes</button>
+        <button id="btnNavOpInsumos" class="btn-pag-op" onclick="navegarPaginaColab('insumos')">📦 Estoque de Insumos</button>
+        <button id="btnNavOpMensagens" class="btn-pag-op" onclick="navegarPaginaColab('mensagens')">💬 Avisos da Diretoria</button>
       </div>
-      <form onsubmit="autenticarUsuario(event)">
-        <label style="font-size:0.78rem; font-weight:bold;">Selecione o Login</label>
-        <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;"></select>
-        <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
-        <input type="password" id="inputSenha" class="form-control" required placeholder="Digite sua senha...">
-        <button type="submit" class="btn-main btn-orange" style="margin-top:10px;">ENTRAR NO SISTEMA</button>
-      </form>
+
+      <div id="pagOpLotes">
+        <div id="containerColabMeuSetor" class="cards-grid-amplos"></div>
+      </div>
+
+      <div id="pagOpRegras" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+          <select id="selectFiltroSetorRegrasColab" class="form-control" onchange="renderizarRegrasSetoresColab()"></select>
+          <select id="selectFiltroClienteRegrasColab" class="form-control" onchange="renderizarRegrasSetoresColab()"></select>
+        </div>
+        <div id="containerCardsRegrasColabConsulta"></div>
+      </div>
+
+      <div id="pagOpEncartes" style="display:none;">
+        <select id="selectFiltroClienteEncarteColab" class="form-control" onchange="renderizarEncartesColabConsulta()"></select>
+        <div id="containerCardsEncarteColabConsulta" class="cards-grid-amplos"></div>
+      </div>
+
+      <div id="pagOpInsumos" style="display:none;">
+        <select id="selectFiltroClienteInsumoColab" class="form-control" onchange="renderizarInsumosColabConsulta()"></select>
+        <div id="containerTabelaInsumosColabConsulta"></div>
+      </div>
+
+      <div id="pagOpMensagens" style="display:none;">
+        <div id="boxMensagensRecebidasColab" style="background:#F8FAFC; padding:16px; border-radius:14px; margin-bottom:16px; max-height:250px; overflow-y:auto;"></div>
+        <textarea id="inputTextoEnvioColab" class="form-control" placeholder="Enviar recado para a Diretoria..."></textarea>
+        <button class="btn-main" onclick="enviarMensagemColabSubmit()">ENVIAR MENSAGEM ➔</button>
+      </div>
     </div>
+  </div>
 
-    <div id="painelDiretoria" style="display:none;">
-      <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#FFFDF0; padding:18px 24px;">
-        <h3 style="color:#B45309; margin:0 0 4px 0;">👑 PAINEL DA DIRETORIA GENERAL — KELVIN LIMA & BRENDA</h3>
-        <span style="font-size:0.82rem; color:#78350F;">Selecione uma das páginas no menu abaixo para acessar os módulos:</span>
-      </div>
-      <div class="menu-paginas-diretoria">
-        <button id="btnNavLotes" class="btn-pag-dir active" onclick="navegarPaginaDiretoria('lotes')">📦 1. PAINEL GERAL DE LOTES</button>
-        <button id="btnNavClientes" class="btn-pag-dir" onclick="navegarPaginaDiretoria('clientes')">👤 2. GESTÃO DE CLIENTES</button>
-        <button id="btnNavColab" class="btn-pag-dir" onclick="navegarPaginaDiretoria('colab')">🛠️ 3. MEUS COLABORADORES</button>
-        <button id="btnNavInsumos" class="btn-pag-dir" onclick="navegarPaginaDiretoria('insumos')">📦 4. INSUMOS POR CLIENTE</button>
-        <button id="btnNavEncarte" class="btn-pag-dir" onclick="navegarPaginaDiretoria('encarte')">🎴 5. MODELOS DE ENCARTE</button>
-        <button id="btnNavRegras" class="btn-pag-dir" onclick="navegarPaginaDiretoria('regras')">📋 6. REGRAS DOS SETORES</button>
-        <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙ 7. CONFIGS & CATEGORIAS</button>
+
+  <!-- PAINEL DIRETORIA (GESTAO GERAL) -->
+  <div id="painelDiretoria" style="display:none;">
+    <div class="card-panel">
+      <h2 style="margin-top:0; color:var(--header-bg);">👑 PAINEL DA DIRETORIA E GESTÃO</h2>
+
+      <div class="nav-tabs-bar">
+        <button id="btnNavLotes" class="btn-pag-dir active" onclick="navegarPaginaDiretoria('lotes')">📦 Visão Geral dos Lotes</button>
+        <button id="btnNavClientes" class="btn-pag-dir" onclick="navegarPaginaDiretoria('clientes')">👥 Marcas & Clientes</button>
+        <button id="btnNavColab" class="btn-pag-dir" onclick="navegarPaginaDiretoria('colab')">🛠️ Equipe Operacional</button>
+        <button id="btnNavInsumos" class="btn-pag-dir" onclick="navegarPaginaDiretoria('insumos')">📦 Gestão de Insumos</button>
+        <button id="btnNavEncarte" class="btn-pag-dir" onclick="navegarPaginaDiretoria('encarte')">📇 Modelos de Encarte</button>
+        <button id="btnNavRegras" class="btn-pag-dir" onclick="navegarPaginaDiretoria('regras')">📖 Regras de Setor</button>
+        <button id="btnNavConfigs" class="btn-pag-dir" onclick="navegarPaginaDiretoria('configs')">⚙️ Ajustes & Avisos</button>
       </div>
 
-      <div id="pagDirLotes" class="panel-card">
-        <div class="panel-header">
-          <h3>📦 Gestão e Acompanhamento Geral de Lotes (4 Etapas)</h3>
-          <select id="filtroCliLotes4Etapas" class="form-control" style="margin:0; width:250px;" onchange="renderizarLotes4Etapas()">
-            <option value="TODOS">TODAS AS MARCAS (VISÃO GERAL)</option>
-          </select>
+      <!-- 1. GESTÃO DE LOTES DIRETORIA -->
+      <div id="pagDirLotes">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px;">
+          <select id="filtroCliLotes4Etapas" class="form-control" style="margin:0; max-width:320px;" onchange="renderizarLotes4Etapas()"></select>
         </div>
         <div id="containerLotes4EtapasAmplo"></div>
       </div>
 
-      <div id="pagDirClientes" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>👤 Gestão de Clientes do Clube S.O.S</h3>
-          <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarCliente()">+ CADASTRA CLIENTE</button>
+      <!-- 2. GESTÃO DE CLIENTES DIRETORIA -->
+      <div id="pagDirClientes" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="margin:0;">Clientes Ativos & Inativos</h3>
+          <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarCliente()">+ NOVO CLIENTE</button>
         </div>
-        <h4>Ativos</h4>
-        <div class="cards-grid-amplos" id="containerCardsClientesAmplo"></div>
-        <h4 style="margin-top:24px; color:#64748B;">📁 Clientes Inativos / Antigos (Histórico Preservado)</h4>
-        <div class="cards-grid-amplos" id="containerCardsClientesInativos"></div>
+        <div id="containerCardsClientesAmplo" class="cards-grid-amplos" style="margin-bottom:24px;"></div>
+        <h4 style="color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:16px;">Clientes Inativos</h4>
+        <div id="containerCardsClientesInativos" class="cards-grid-amplos"></div>
       </div>
 
-      <div id="pagDirColab" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>🛠️ Meus Colaboradores & Equipe de Bancada</h3>
-          <button class="btn-main btn-orange" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarColaborador()">+ CADASTRA COLABORADOR</button>
+      <!-- 3. GESTÃO DE COLABORADORES DIRETORIA -->
+      <div id="pagDirColab" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="margin:0;">Equipe Operacional</h3>
+          <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarColaborador()">+ NOVO COLABORADOR</button>
         </div>
-        <div class="cards-grid-amplos" id="containerCardsColabAmplo"></div>
+        <div id="containerCardsColabAmplo" class="cards-grid-amplos"></div>
       </div>
 
-      <div id="pagDirInsumos" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>📦 Estoque de Insumos dos Clientes</h3>
-          <button class="btn-main btn-green" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarInsumo()">+ CADASTRAR NOVO INSUMO</button>
-        </div>
+      <!-- 4. GESTÃO DE INSUMOS DIRETORIA -->
+      <div id="pagDirInsumos" style="display:none;">
         <div id="secaoSelecaoClienteInsumo">
-          <h4>Clientes Ativos</h4>
-          <div class="cards-grid-amplos" id="containerCardsClientesInsumosSelection"></div>
-          <h4 style="margin-top:24px; color:#64748B;">📁 Insumos de Clientes Inativos</h4>
-          <div class="cards-grid-amplos" id="containerCardsClientesInsumosInativosSelection"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="margin:0;">Selecione uma Marca para Gerenciar Insumos</h3>
+            <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarInsumo('')">+ NOVO INSUMO GERAL</button>
+          </div>
+          <div id="containerCardsClientesInsumosSelection" class="cards-grid-amplos"></div>
+          <h4 style="color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:16px; margin-top:20px;">Marcas Inativas</h4>
+          <div id="containerCardsClientesInsumosInativosSelection" class="cards-grid-amplos"></div>
         </div>
-        <div id="secaoDetalheInsumosClienteSel" style="display:none; margin-top:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#F0F9FF; padding:12px 18px; border-radius:12px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-            <strong id="tituloInsumosClienteSel" style="font-size:1.1rem; color:var(--header-bg);">Niara Semijoias</strong>
-            <div style="display:flex; gap:10px;">
-              <button class="btn-main btn-green" style="width:auto; padding:8px 14px; font-size:0.75rem;" onclick="abrirModalCadastrarInsumoParaClienteAtual()">+ CADASTRAR INSUMO PARA ESTA MARCA</button>
-              <button class="btn-main" style="width:auto; padding:8px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteInsumo()">← VOLTAR PARA CLIENTES</button>
-            </div>
+
+        <div id="secaoDetalheInsumosClienteSel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <button class="btn-main" style="width:auto; background:#64748B;" onclick="voltarSelecaoClienteInsumo()">◄ VOLTAR ÀS MARCAS</button>
+            <h3 id="tituloInsumosClienteSel" style="margin:0;"></h3>
+            <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarInsumoParaClienteAtual()">+ CADASTRAR INSUMO</button>
           </div>
           <div id="containerInsumosTabelaDirect"></div>
         </div>
       </div>
 
-      <div id="pagDirEncarte" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>🎴 Modelos de Encarte por Cliente</h3>
-          <button class="btn-main btn-orange" style="width:auto; padding:10px 18px;" onclick="abrirModalCadastrarModeloEncarte()">+ NOVO MODELO DE ENCARTE</button>
-        </div>
+      <!-- 5. GESTÃO DE ENCARTES DIRETORIA -->
+      <div id="pagDirEncarte" style="display:none;">
         <div id="secaoSelecaoClienteEncarte">
-          <h4>Clientes Ativos</h4>
-          <div class="cards-grid-amplos" id="containerCardsClientesEncarteSelection"></div>
-          <h4 style="margin-top:24px; color:#64748B;">📁 Encartes de Clientes Inativos</h4>
-          <div class="cards-grid-amplos" id="containerCardsClientesEncarteInativosSelection"></div>
-        </div>
-        <div id="secaoDetalheEncarteClienteSel" style="display:none; margin-top:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#FFF7ED; padding:12px 18px; border-radius:12px; margin-bottom:15px;">
-            <strong id="tituloEncarteClienteSel" style="font-size:1.1rem; color:#9A3412;">Niara Semijoias</strong>
-            <button class="btn-main" style="width:auto; padding:6px 14px; background:#64748B; font-size:0.75rem;" onclick="voltarSelecaoClienteEncarte()">← VOLTAR PARA MARCAS</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="margin:0;">Modelos de Encarte por Marca</h3>
+            <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarModeloEncarte()">+ NOVO MODELO DE ENCARTE</button>
           </div>
-          <div class="cards-grid-amplos" id="containerCardsCategoriasEncarteClienteSel"></div>
+          <div id="containerCardsClientesEncarteSelection" class="cards-grid-amplos"></div>
+          <h4 style="color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:16px; margin-top:20px;">Marcas Inativas</h4>
+          <div id="containerCardsClientesEncarteInativosSelection" class="cards-grid-amplos"></div>
+        </div>
+
+        <div id="secaoDetalheEncarteClienteSel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <button class="btn-main" style="width:auto; background:#64748B;" onclick="voltarSelecaoClienteEncarte()">◄ VOLTAR ÀS MARCAS</button>
+            <h3 id="tituloEncarteClienteSel" style="margin:0;"></h3>
+            <button class="btn-main btn-green" style="width:auto;" onclick="abrirModalCadastrarModeloEncarte()">+ NOVO MODELO</button>
+          </div>
+          <div id="containerCardsCategoriasEncarteClienteSel" class="cards-grid-amplos"></div>
         </div>
       </div>
 
-      <div id="pagDirRegras" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>📋 Central de Regras Operacionais por Setor & Cliente</h3>
-          <div style="display:flex; gap:10px;">
-            <select id="selectFiltroSetorRegrasDir" class="form-control" style="width:200px; margin:0;" onchange="renderizarCardsSetoresRegrasDir()"></select>
-            <select id="selectFiltroClienteRegrasDir" class="form-control" style="width:200px; margin:0;" onchange="renderizarCardsSetoresRegrasDir()"></select>
-          </div>
+      <!-- 6. GESTÃO DE REGRAS DE SETOR DIRETORIA -->
+      <div id="pagDirRegras" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+          <select id="selectFiltroSetorRegrasDir" class="form-control" onchange="renderizarCardsSetoresRegrasDir()"></select>
+          <select id="selectFiltroClienteRegrasDir" class="form-control" onchange="renderizarCardsSetoresRegrasDir()"></select>
         </div>
-        <div class="cards-grid-amplos" id="containerCardsSetoresRegrasDir"></div>
+        <div id="containerCardsSetoresRegrasDir" class="cards-grid-amplos"></div>
       </div>
 
-      <div id="pagDirConfigs" class="panel-card" style="display:none;">
-        <h3>⚙️ Configurações Globais & Categorias de Joias</h3>
-        <div class="grid-2col" style="margin-top:15px;">
-          <div>
-            <h4>💎 Cadastro Central de Categorias de Joias</h4>
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
-              <input type="text" id="inputNovaCatJoia" class="form-control" style="margin:0;" placeholder="Ex: Anel Regulável...">
-              <button class="btn-main btn-green" style="width:auto; padding:0 16px;" onclick="cadastrarNovaCategoriaJoiaSubmit()">+ CADASTRAR</button>
+      <!-- 7. CONFIGURAÇÕES DA FABRICA & AVISOS -->
+      <div id="pagDirConfigs" style="display:none;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+          <div style="background:#F8FAFC; padding:18px; border-radius:16px; border:1px solid var(--border-color);">
+            <h4 style="margin-top:0;">Categorias de Joias Central</h4>
+            <div id="boxListaCategoriasJoiasCentral" style="margin-bottom:12px;"></div>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="inputNovaCatJoia" class="form-control" style="margin:0;" placeholder="Nova categoria...">
+              <button class="btn-main btn-green" style="width:auto;" onclick="cadastrarNovaCategoriaJoiaSubmit()">+ ADICIONAR</button>
             </div>
-            <div id="boxListaCategoriasJoiasCentral" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px;"></div>
           </div>
-          <div>
-            <h4>📢 Publicação de Comunicado Oficial</h4>
-            <label style="font-size:0.78rem; font-weight:bold;">Enviar Para:</label>
-            <select id="selectTipoDestinatarioAviso" class="form-control" onchange="alternarExibicaoDestinatariosAviso()">
-              <option value="TODOS">TODOS OS CLIENTES E COLABORADORES</option>
-              <option value="TODOS_CLIENTES">TODOS OS CLIENTES</option>
-              <option value="TODOS_COLABORADORES">TODOS OS COLABORADORES</option>
-              <option value="SELECIONAR_CLIENTES">SELECIONAR CLIENTES ESPECÍFICOS</option>
-              <option value="SELECIONAR_COLABORADORES">SELECIONAR COLABORADORES ESPECÍFICOS</option>
-            </select>
 
-            <div id="boxSelecaoClientesAviso" style="display:none; background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; max-height:150px; overflow-y:auto;"></div>
-            <div id="boxSelecaoColabAviso" style="display:none; background:#F8FAFC; border:1px solid #CBD5E1; padding:10px; border-radius:10px; margin-bottom:12px; max-height:150px; overflow-y:auto;"></div>
-
-            <label style="font-size:0.78rem; font-weight:bold;">Mensagem / Comunicado:</label>
-            <textarea id="textoAvisoDir" class="form-control" style="height:80px;" placeholder="Ex: Feriado municipal..."></textarea>
-            <button class="btn-main btn-orange" onclick="salvarAvisoComunicadoSubmit()">PUBLICAR COMUNICADO</button>
-
-            <h4 style="margin-top:16px;">⚙️ Média de Peso por Peça (Divisor Interno)</h4>
+          <div style="background:#F8FAFC; padding:18px; border-radius:16px; border:1px solid var(--border-color);">
+            <h4 style="margin-top:0;">Cálculo de Média de Peso (Peça -> Gramas)</h4>
+            <label style="font-size:0.8rem; font-weight:700;">Fator Médio (Gramas por Peça):</label>
             <input type="number" step="0.1" id="inputFatorDivisorDir" class="form-control" value="2.1">
-            <button class="btn-main btn-green" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DE PESO</button>
+            <button class="btn-main" onclick="salvarFatorDivisorSubmit()">SALVAR FATOR DIVISOR</button>
           </div>
+        </div>
+
+        <div style="background:#F8FAFC; padding:18px; border-radius:16px; border:1px solid var(--border-color); margin-top:20px;">
+          <h4 style="margin-top:0;">Emitir Comunicado Geral / Recado</h4>
+          <label style="font-size:0.8rem; font-weight:700;">Enviar Para:</label>
+          <select id="selectTipoDestinatarioAviso" class="form-control" onchange="alternarExibicaoDestinatariosAviso()">
+            <option value="TODOS">Todos (Clientes e Equipe)</option>
+            <option value="TODOS_CLIENTES">Todos os Clientes</option>
+            <option value="TODOS_COLABORADORES">Toda a Equipe Operacional</option>
+            <option value="SELECIONAR_CLIENTES">Selecionar Clientes Específicos</option>
+            <option value="SELECIONAR_COLABORADORES">Selecionar Colaboradores Específicos</option>
+          </select>
+
+          <div id="boxSelecaoClientesAviso" style="display:none; background:#FFFFFF; padding:10px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:12px; max-height:120px; overflow-y:auto;"></div>
+          <div id="boxSelecaoColabAviso" style="display:none; background:#FFFFFF; padding:10px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:12px; max-height:120px; overflow-y:auto;"></div>
+
+          <textarea id="textoAvisoDir" class="form-control" placeholder="Texto do comunicado oficial..."></textarea>
+          <button class="btn-main btn-green" onclick="salvarAvisoComunicadoSubmit()">PUBLICAR COMUNICADO ➔</button>
         </div>
       </div>
     </div>
-
-    <div id="painelColaborador" style="display:none;">
-      <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#F0F9FF; padding:18px 24px;">
-        <h3 style="color:var(--header-bg); margin:0 0 4px 0;">🛠️ BANCADA OPERACIONAL S.O.S — PAINEL DO COLABORADOR</h3>
-        <span style="font-size:0.82rem; color:var(--text-muted);" id="subtituloColabBancada">Setores Liberados para Atuação:</span>
-      </div>
-      <div class="menu-paginas-operacional">
-        <button id="btnNavOpLotes" class="btn-pag-op active" onclick="navegarPaginaColab('lotes')">📦 1. LOTES DA ESTEIRA</button>
-        <button id="btnNavOpRegras" class="btn-pag-op" onclick="navegarPaginaColab('regras')">📋 2. REGRAS DOS SETORES</button>
-        <button id="btnNavOpEncartes" class="btn-pag-op" onclick="navegarPaginaColab('encartes')">🎴 3. CONSULTA DE ENCARTES</button>
-        <button id="btnNavOpInsumos" class="btn-pag-op" onclick="navegarPaginaColab('insumos')">📦 4. CONSULTA DE INSUMOS</button>
-        <button id="btnNavOpMensagens" class="btn-pag-op" onclick="navegarPaginaColab('mensagens')">💬 5. MENSAGENS DIRETORIA</button>
-      </div>
-
-      <div id="pagOpLotes" class="panel-card">
-        <h3>📦 Lotes na Esteira Fabril</h3>
-        <h4 style="color:#C2410C; margin-top:10px;">🔥 Lotes no Meu Setor</h4>
-        <div class="cards-grid-amplos" id="containerColabMeuSetor"></div>
-      </div>
-
-      <div id="pagOpRegras" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>📋 Consulta de Regras dos Setores</h3>
-          <div style="display:flex; gap:10px;">
-            <select id="selectFiltroSetorRegrasColab" class="form-control" style="width:200px; margin:0;" onchange="renderizarRegrasSetoresColab()"></select>
-            <select id="selectFiltroClienteRegrasColab" class="form-control" style="width:200px; margin:0;" onchange="renderizarRegrasSetoresColab()"></select>
-          </div>
-        </div>
-        <div id="containerCardsRegrasColabConsulta"></div>
-      </div>
-
-      <div id="pagOpEncartes" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>🎴 Consulta de Modelos de Encarte</h3>
-          <select id="selectFiltroClienteEncarteColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarEncartesColabConsulta()"></select>
-        </div>
-        <div class="cards-grid-amplos" id="containerCardsEncarteColabConsulta"></div>
-      </div>
-
-      <div id="pagOpInsumos" class="panel-card" style="display:none;">
-        <div class="panel-header">
-          <h3>📦 Consulta de Insumos</h3>
-          <select id="selectFiltroClienteInsumoColab" class="form-control" style="width:250px; margin:0;" onchange="renderizarInsumosColabConsulta()"></select>
-        </div>
-        <div id="containerTabelaInsumosColabConsulta"></div>
-      </div>
-
-      <div id="pagOpMensagens" class="panel-card" style="display:none;">
-        <h3>💬 Central de Mensagens</h3>
-        <div class="grid-2col" style="margin-top:15px;">
-          <div><h4>📥 Recebidas</h4><div id="boxMensagensRecebidasColab" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;"></div></div>
-          <div>
-            <h4>📤 Enviar Mensagem</h4>
-            <textarea id="inputTextoEnvioColab" class="form-control" style="height:90px;" placeholder="Digite..."></textarea>
-            <button class="btn-main btn-orange" onclick="enviarMensagemColabSubmit()">ENVIAR PARA DIRETORIA</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="painelCliente" style="display:none;">
-      <div class="panel-card" style="border-left: 6px solid var(--green-val); background:#ECFDF5; padding:18px 24px;">
-        <h3 style="color:#065F46; margin:0 0 4px 0;" id="tituloClientePainel">💎 PAINEL DO CLIENTE</h3>
-        <span style="font-size:0.82rem; color:#047857;">Acompanhe seus lotes, agende entregas e consulte seu estoque:</span>
-      </div>
-      <div class="menu-paginas-operacional">
-        <button id="btnNavCliLotes" class="btn-pag-op active" onclick="navegarPaginaCliente('lotes')">📦 1. LOTES EM ANDAMENTO</button>
-        <button id="btnNavCliFinalizados" class="btn-pag-op" onclick="navegarPaginaCliente('finalizados')">✅ 2. LOTES FINALIZADOS</button>
-        <button id="btnNavCliAgendar" class="btn-pag-op" onclick="navegarPaginaCliente('agendar')">📅 3. AGENDAR LOTE</button>
-        <button id="btnNavCliEncarte" class="btn-pag-op" onclick="navegarPaginaCliente('encarte')">🎴 4. ENCARTES</button>
-        <button id="btnNavCliInsumos" class="btn-pag-op" onclick="navegarPaginaCliente('insumos')">📦 5. MEUS INSUMOS</button>
-        <button id="btnNavCliMensagens" class="btn-pag-op" onclick="navegarPaginaCliente('mensagens')">💬 6. MENSAGENS</button>
-      </div>
-
-      <div id="pagCliLotes" class="panel-card">
-        <h3>📦 Prazos de Produção em Dias Úteis</h3>
-        <div class="prazos-bar">
-          <div class="prazo-item">Até 500 pcs: <span>8 Dias Úteis</span></div>
-          <div class="prazo-item">501 a 1.000 pcs: <span>10 Dias Úteis</span></div>
-          <div class="prazo-item">1.001 a 1.500 pcs: <span>13 Dias Úteis</span></div>
-          <div class="prazo-item">+1.500 pcs: <span>Mínimo 15 Dias Úteis</span></div>
-        </div>
-        <div class="cards-grid-amplos" id="containerLotesClientePainel"></div>
-      </div>
-
-      <div id="pagCliFinalizados" class="panel-card" style="display:none;">
-        <h3>✅ Histórico de Lotes Finalizados e Liberados</h3>
-        <div class="cards-grid-amplos" id="containerLotesFinalizadosClientePainel"></div>
-      </div>
-
-      <div id="pagCliAgendar" class="panel-card" style="display:none;">
-        <h3>📅 Agendar Chegada de Nova Mercadoria</h3>
-        <div class="grid-2col">
-          <div>
-            <div style="background:#FFF; border:1px solid #CBD5E1; padding:12px; border-radius:12px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <button class="cal-nav-btn" onclick="mudarMesCalendario(-1)">◄</button>
-                <strong style="font-size:0.9rem;" id="calMesAnoHeader">OUTUBRO / 2026</strong>
-                <button class="cal-nav-btn" onclick="mudarMesCalendario(1)">►</button>
-              </div>
-              <div class="cal-grid" id="containerCalendarioGrid"></div>
-            </div>
-          </div>
-          <div>
-            <div class="scale-box-container">
-              <div class="scale-header"><h4>⚖️ BALANÇA DIGITAL S.O.S</h4></div>
-              <input type="number" id="inputAgendQtdPcs" class="form-control" style="background:#0F172A; color:#FFF;" placeholder="Ex: 400 pcs" oninput="calcularPesoPorPcsCli()">
-              <input type="number" id="inputAgendPesoGramos" class="form-control" style="background:#0F172A; color:#FFF;" placeholder="Ex: 1280 g" oninput="calcularPcsPorPesoCli()">
-              <div class="scale-display"><div class="scale-number" id="labelCalcAgendResult">0 PCS (~0g)</div></div>
-            </div>
-            <input type="number" id="inputAgendQtdModelos" class="form-control" placeholder="Modelos diferentes...">
-            <textarea id="inputAgendObs" class="form-control" style="height:70px;" placeholder="Observações do lote..."></textarea>
-            <button class="btn-main btn-orange" onclick="confirmarAgendamentoLoteClienteSubmit()">CONFIRMAR AGENDAMENTO ➔</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="pagCliEncarte" class="panel-card" style="display:none;">
-        <div class="cards-grid-amplos" id="containerEncartesClienteExibicao"></div>
-      </div>
-
-      <div id="pagCliInsumos" class="panel-card" style="display:none;">
-        <div id="containerTabelaInsumosClienteExibicao"></div>
-      </div>
-
-      <div id="pagCliMensagens" class="panel-card" style="display:none;">
-        <div class="grid-2col">
-          <div><div id="boxMensagensRecebidasCli" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px; border-radius:10px; min-height:120px;"></div></div>
-          <div>
-            <textarea id="inputTextoEnvioCli" class="form-control" style="height:90px;" placeholder="Mensagem..."></textarea>
-            <button class="btn-main btn-green" onclick="enviarMensagemClienteSubmit()">ENVIAR PARA DIRETORIA</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- MODAL DE DETALHES COMPLETO DO LOTE -->
+  </div><!-- MODAL DE DETALHES COMPLETO DO LOTE (VISÃO CLIENTE E GERAL) -->
   <div id="modalDetalheCompletoLote" class="modal-overlay">
     <div class="modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #E2E8F0; padding-bottom:12px; margin-bottom:16px;">
@@ -404,34 +487,58 @@
     </div>
   </div>
 
-  <!-- MODAL BANCADA OPERACIONAL (COM BOTÃO DE INICIAR E FINALIZAR SETOR COM DATA AUTOMÁTICA) -->
+  <!-- MODAL BANCADA OPERACIONAL (COLABORADOR) COM SERVIÇOS ADICIONAIS -->
   <div id="modalOpBancadaLote" class="modal-overlay">
-    <div class="modal-card" style="max-width:550px;">
+    <div class="modal-card" style="max-width:600px;">
       <h3 style="margin-top:0;" id="tituloModalOpLote">Atuação Operacional do Lote</h3>
       <input type="hidden" id="hiddenOpLoteId">
-      <div style="background:#F1F5F9; padding:12px; border-radius:10px; margin-bottom:15px;">
-        <p style="margin:2px 0;" id="infoOpLoteMarca"></p>
-        <p style="margin:2px 0;" id="infoOpLoteSetor"></p>
-        <p style="margin:4px 0 0 0; font-size:0.8rem; font-weight:bold; color:var(--blue-val);" id="infoOpLoteStatusInicio">Status do Setor: Não Iniciado</p>
+      
+      <div style="background:#F1F5F9; padding:12px; border-radius:12px; margin-bottom:15px; border:1px solid var(--border-color);">
+        <p style="margin:2px 0; font-weight:700;" id="infoOpLoteMarca"></p>
+        <p style="margin:2px 0; color:var(--text-muted);" id="infoOpLoteSetor"></p>
+        <p style="margin:4px 0 0 0; font-size:0.8rem; font-weight:800; color:var(--primary-blue);" id="infoOpLoteStatusInicio">Status do Setor: Não Iniciado</p>
       </div>
       
-      <!-- PAINEL DE CONTROLE DE TEMPO DO SETOR -->
-      <div style="margin-bottom:15px; background:#ECFDF5; border:1px solid #10B981; padding:12px; border-radius:10px; text-align:center;">
+      <!-- CONTROLE DE TEMPO DO SETOR -->
+      <div style="margin-bottom:15px; background:#ECFDF5; border:1px solid #10B981; padding:12px; border-radius:12px; text-align:center;">
         <button id="btnIniciarSetorBancada" class="btn-main btn-green" style="margin-bottom:6px;" onclick="iniciarSetorBancadaSubmit()">▶️ INICIAR PROCESSO NESTE SETOR</button>
-        <span id="stampHoraInicioRegistrada" style="font-size:0.75rem; font-weight:bold; color:#065F46; display:none;"></span>
+        <span id="stampHoraInicioRegistrada" style="font-size:0.75rem; font-weight:800; color:#065F46; display:none;"></span>
       </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Qtd Total Declarada do Lote:</label>
+      <!-- SEÇÃO EXCLUSIVA: SERVIÇOS ADICIONAIS (EX: INSPEÇÃO 3EM1 / CRAVAÇÃO / MONTAGEM / COLAGEM) -->
+      <div id="boxServicosAdicionaisInspecao" class="box-servico-adicional" style="display:none;">
+        <h4 style="margin:0 0 8px 0; color:#0D9488; font-size:0.9rem;">🛠️ Registrar Trabalhos Adicionais (Cravação / Montagem / Colagem)</h4>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700;">Tipo de Trabalho:</label>
+            <select id="selectTipoServicoAdicional" class="form-control" style="margin-bottom:6px;">
+              <option value="Cravação de Pedras">Cravação de Pedras</option>
+              <option value="Montagem de Peças">Montagem de Peças</option>
+              <option value="Colagem de Cristais/Pedras">Colagem de Cristais/Pedras</option>
+              <option value="Solda / Ajuste Técnico">Solda / Ajuste Técnico</option>
+              <option value="Outro Trabalho Especial">Outro Trabalho Especial</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700;">Qtd Peças Trabalhadas:</label>
+            <input type="number" id="inputQtdServicoAdicional" class="form-control" style="margin-bottom:6px;" placeholder="Ex: 50">
+          </div>
+        </div>
+        <button type="button" class="btn-main" style="background:#0D9488; padding:6px; font-size:0.75rem; margin-top:4px;" onclick="adicionarServicoEspecialLista()">+ INCLUIR TRABALHO NO RELATÓRIO</button>
+        <div id="listaServicosEspeciaisAdicionados" style="margin-top:8px; font-size:0.8rem;"></div>
+      </div>
+
+      <label style="font-size:0.78rem; font-weight:700;">Qtd Total Declarada do Lote:</label>
       <input type="number" id="inputOpQtdReal" class="form-control" placeholder="Qtd Real Contada...">
       
-      <label style="font-size:0.78rem; font-weight:bold; color:var(--orange-accent);">* Qtd Produzida Neste Setor (OBRIGATÓRIO PARA AVANÇAR):</label>
+      <label style="font-size:0.78rem; font-weight:700; color:var(--orange-accent);">* Qtd Produzida Neste Setor (OBRIGATÓRIO PARA AVANÇAR):</label>
       <input type="number" id="inputOpQtdServicoSetor" class="form-control" placeholder="Ex: 300 (Inspeções / Fotos / Cadastros / Encartes...)">
-      <span id="msgAvisoQtdObrig" style="display:none; color:red; font-size:0.75rem; font-weight:bold; margin-bottom:8px;">⚠️ A quantidade é obrigatória para este setor!</span>
+      <span id="msgAvisoQtdObrig" style="display:none; color:red; font-size:0.75rem; font-weight:800; margin-bottom:8px;">⚠️ A quantidade é obrigatória para este setor!</span>
       
-      <label style="font-size:0.78rem; font-weight:bold;">Modelos Identificados:</label>
+      <label style="font-size:0.78rem; font-weight:700;">Modelos Identificados:</label>
       <input type="number" id="inputOpQtdModelosReal" class="form-control" placeholder="Modelos Identificados...">
       
-      <label style="font-size:0.78rem; font-weight:bold;">Avançar Para o Próximo Setor:</label>
+      <label style="font-size:0.78rem; font-weight:700;">Avançar Para o Próximo Setor:</label>
       <select id="selectOpProximoSetor" class="form-control">
         <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
         <option value="3. Fotografia">3. Fotografia</option>
@@ -441,7 +548,7 @@
         <option value="7. Finalização / Liberado">7. Finalização / Liberado</option>
       </select>
       
-      <label style="font-size:0.78rem; font-weight:bold;">Observação Técnica do Setor (Opcional):</label>
+      <label style="font-size:0.78rem; font-weight:700;">Observação Técnica do Setor (Opcional):</label>
       <input type="text" id="inputOpObs" class="form-control" placeholder="Observações específicas...">
       
       <button class="btn-main btn-orange" onclick="concluirAvançarLoteBancadaSubmit()">CONCLUIR SETOR E AVANÇAR ➔</button>
@@ -449,26 +556,26 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) -->
+  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) COM DETALHAMENTO DE TEMPO E OPERADOR -->
   <div id="modalEditarLoteDir" class="modal-overlay">
-    <div class="modal-card" style="max-width:650px;">
-      <h3 style="margin-top:0;">Editar / Finalizar Lote (Diretoria)</h3>
+    <div class="modal-card" style="max-width:750px;">
+      <h3 style="margin-top:0; color:var(--header-bg);">Editar / Finalizar Lote (Diretoria)</h3>
       <input type="hidden" id="editLoteIdHidden">
       
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
         <div>
-          <label style="font-size:0.78rem; font-weight:bold;">Nº do Lote:</label>
+          <label style="font-size:0.78rem; font-weight:700;">Nº do Lote:</label>
           <input type="text" id="editLoteNum" class="form-control" placeholder="Nº Lote...">
         </div>
         <div>
-          <label style="font-size:0.78rem; font-weight:bold;">Volume de Peças (Total):</label>
+          <label style="font-size:0.78rem; font-weight:700;">Volume de Peças (Total):</label>
           <input type="number" id="editLotePcs" class="form-control" placeholder="Total pcs..." oninput="calcularValoresFinanceirosEditLote()">
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
         <div>
-          <label style="font-size:0.78rem; font-weight:bold;">Etapa do Lote:</label>
+          <label style="font-size:0.78rem; font-weight:700;">Etapa do Lote:</label>
           <select id="editLoteEtapa" class="form-control">
             <option value="1">1. Aguardando Aprovação</option>
             <option value="2">2. Aguardando Chegada Física</option>
@@ -477,7 +584,7 @@
           </select>
         </div>
         <div>
-          <label style="font-size:0.78rem; font-weight:bold;">Setor Atual:</label>
+          <label style="font-size:0.78rem; font-weight:700;">Setor Atual:</label>
           <select id="editLoteSetorAtual" class="form-control">
             <option value="1. Entrada Bruta">1. Entrada Bruta</option>
             <option value="2. Inspeção 3em1">2. Inspeção 3em1</option>
@@ -490,33 +597,36 @@
         </div>
       </div>
 
+      <!-- PAINEL HISTÓRICO DE SERVIÇOS, TEMPOS E OPERADORES -->
+      <div id="containerHistoricoSetoresDiretoria" style="margin-bottom:15px;"></div>
+
       <!-- PAINEL FINANCEIRO DE CÁLCULO E DESCONTO AUTOMÁTICO -->
-      <div style="background:#F0F9FF; border:1px solid #0284C7; padding:14px; border-radius:12px; margin-bottom:12px;">
+      <div style="background:#F0F9FF; border:1px solid #0284C7; padding:14px; border-radius:14px; margin-bottom:12px;">
         <h4 style="margin:0 0 8px 0; color:#0369A1;">💰 Fechamento Financeiro & Valores</h4>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
           <div>
-            <label style="font-size:0.75rem; font-weight:bold;">Valor Bruto Total (R$):</label>
-            <input type="number" step="0.01" id="editLoteValorBruto" class="form-control" placeholder="Ex: 1958.30" oninput="calcularValoresFinanceirosEditLote()">
+            <label style="font-size:0.75rem; font-weight:700;">Valor Bruto Total (R$):</label>
+            <input type="number" step="0.01" id="editLoteValorBruto" class="form-control" placeholder="Ex: 780.15" oninput="calcularValoresFinanceirosEditLote()">
           </div>
           <div>
-            <label style="font-size:0.75rem; font-weight:bold;">Desconto (%):</label>
+            <label style="font-size:0.75rem; font-weight:700;">Desconto (%):</label>
             <input type="number" step="0.1" id="editLoteDesconto" class="form-control" placeholder="Ex: 7" oninput="calcularValoresFinanceirosEditLote()">
           </div>
         </div>
         
-        <div class="finance-summary-box">
-          <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.85rem;">
+        <div style="background:#FFFFFF; padding:10px; border-radius:10px; margin-top:8px; border:1px solid #BAE6FD;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem;">
             <span>Valor Total com Desconto:</span>
             <span id="labelValTotalComDesconto">R$ 0,00</span>
           </div>
-          <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.85rem; margin-top:4px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-top:4px; color:var(--primary-blue);">
             <span>Valor Unitário por Peça:</span>
             <span id="labelValPorPecaFinal">R$ 0,00 / pc</span>
           </div>
         </div>
       </div>
 
-      <label style="font-size:0.78rem; font-weight:bold;">Observações Gerais do Lote:</label>
+      <label style="font-size:0.78rem; font-weight:700;">Observações Gerais do Lote:</label>
       <textarea id="editLoteObs" class="form-control" placeholder="Observações..."></textarea>
       
       <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES</button>
@@ -524,7 +634,7 @@
     </div>
   </div>
 
-  <!-- DEMAIS MODAIS DO SISTEMA -->
+  <!-- DEMAIS MODAIS -->
   <div id="modalCadCliente" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 id="modalClienteTitulo" style="margin-top:0;">Cadastrar Cliente</h3>
@@ -553,7 +663,7 @@
       <input type="text" id="mCadColabLogin" class="form-control" required placeholder="Login...">
       <input type="text" id="mCadColabSenha" class="form-control" required value="123">
       
-      <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px; color:var(--header-bg);">Áreas / Setores Liberados:</label>
+      <label style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:6px; color:var(--header-bg);">Áreas / Setores Liberados:</label>
       <div id="boxSetoresTagsColab">
         <span class="tag-setor-btn" data-setor="1. Entrada Bruta" onclick="toggleSetorTag(this)">1. Entrada Bruta</span>
         <span class="tag-setor-btn" data-setor="2. Inspeção 3em1" onclick="toggleSetorTag(this)">2. Inspeção 3em1</span>
@@ -575,26 +685,26 @@
         <input type="hidden" id="mEditInsumoCliOriginalHidden">
         <input type="hidden" id="mEditInsumoIdxHidden">
         
-        <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca Pertencente:</label>
+        <label style="font-size:0.78rem; font-weight:700;">Cliente / Marca Pertencente:</label>
         <select id="mCadInsCli" class="form-control"></select>
         
-        <label style="font-size:0.78rem; font-weight:bold; margin-top:6px; display:block;">Categorias de Joias Atribuidas:</label>
+        <label style="font-size:0.78rem; font-weight:700; margin-top:6px; display:block;">Categorias de Joias Atribuídas:</label>
         <div id="boxCatJoiasInsumoTags" style="margin-bottom:12px; background:#F8FAFC; padding:8px; border-radius:10px;"></div>
         
-        <label style="font-size:0.78rem; font-weight:bold;">Tipo de Insumo:</label>
+        <label style="font-size:0.78rem; font-weight:700;">Tipo de Insumo:</label>
         <select id="mCadInsTipo" class="form-control"></select>
         <div style="display:flex; gap:6px; margin-bottom:12px;">
           <input type="text" id="inputNovoTipoInsumoTemp" class="form-control" style="margin:0;" placeholder="Novo tipo...">
           <button type="button" class="btn-main btn-orange" style="width:auto; padding:0 12px; font-size:0.75rem;" onclick="adicionarNovoTipoInsumoDirect()">+ ADICIONAR</button>
         </div>
 
-        <label style="font-size:0.78rem; font-weight:bold;">Subcategoria / Descrição:</label>
+        <label style="font-size:0.78rem; font-weight:700;">Subcategoria / Descrição:</label>
         <input type="text" id="mCadInsSub" class="form-control" required placeholder="Subcategoria/Tamanho...">
         
-        <label style="font-size:0.78rem; font-weight:bold;">Quantidade em Estoque:</label>
+        <label style="font-size:0.78rem; font-weight:700;">Quantidade em Estoque:</label>
         <input type="number" id="mCadInsQtd" class="form-control" required placeholder="Quantidade...">
         
-        <label style="font-size:0.78rem; font-weight:bold;">Gôndola / Localização:</label>
+        <label style="font-size:0.78rem; font-weight:700;">Gôndola / Localização:</label>
         <input type="text" id="mCadInsGondula" class="form-control" placeholder="Gôndola...">
         
         <button type="submit" class="btn-main btn-green" id="btnSalvarModalInsumo">SALVAR INSUMO</button>
@@ -626,12 +736,13 @@
   </div><script>
     var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
 
-    var perfilAcessoSelecionadoTab = 'diretoria';
+    var perfilAcessoSelecionadoTab = 'cliente';
     var usuarioLogadoObjeto = null;
     var dataAgendamentoSelecionadaCli = "";
     var fatorMediaPesoGlobal = 2.1;
     var dadosCarregadosDaNovem = false;
     var clienteInsumosSelecionadoAtual = "";
+    var listaServicosAdicionaisTemp = [];
 
     var DATA_HOJE_SISTEMA = new Date();
     var anoCalendarioAtual = DATA_HOJE_SISTEMA.getFullYear();
@@ -676,10 +787,18 @@
 
       if(p === 'cliente') {
         document.getElementById('tabCliente').classList.add('active');
-        bancoClientes.forEach(function(c) { selectAcc.innerHTML += '<option value="' + c.id + '">' + c.login + ' (' + c.marca + ')</option>'; });
+        if (bancoClientes.length === 0) {
+          selectAcc.innerHTML = '<option value="">Carregando clientes...</option>';
+        } else {
+          bancoClientes.forEach(function(c) { selectAcc.innerHTML += '<option value="' + c.id + '">' + c.marca + ' (' + c.login + ')</option>'; });
+        }
       } else if(p === 'equipe') {
         document.getElementById('tabEquipe').classList.add('active');
-        bancoColaboradores.forEach(function(col) { selectAcc.innerHTML += '<option value="' + col.id + '">' + col.login + ' (' + col.nome + ')</option>'; });
+        if (bancoColaboradores.length === 0) {
+          selectAcc.innerHTML = '<option value="">Carregando colaboradores...</option>';
+        } else {
+          bancoColaboradores.forEach(function(col) { selectAcc.innerHTML += '<option value="' + col.id + '">' + col.nome + ' (' + col.login + ')</option>'; });
+        }
       } else {
         document.getElementById('tabDiretoria').classList.add('active');
         bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.login + '</option>'; });
@@ -688,7 +807,7 @@
 
     function carregarDadosNovem() {
       var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Sincronizando Planilha...";
+      if(statusEl) statusEl.innerText = "⏳ Sincronizando Nuvem...";
 
       var cacheLocal = localStorage.getItem("sos_banco_backup_local");
       if (cacheLocal) {
@@ -734,12 +853,12 @@
           if(dados.bancoTiposInsumos) bancoTiposInsumos = dados.bancoTiposInsumos;
 
           salvarBackupLocalCache();
-          if(statusEl) statusEl.innerText = "☁️ Nuvem Conectada";
+          if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
           selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
         })
         .catch(function(err) {
           dadosCarregadosDaNovem = true;
-          if(statusEl) statusEl.innerText = "☁️ Modo Seguro (Local)";
+          if(statusEl) statusEl.innerText = "☁️ Conectado (Cache Local)";
           selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
         });
     }
@@ -766,9 +885,9 @@
         try {
           var data = JSON.parse(sessao);
           usuarioLogadoObjeto = data.usuario;
-          abrirPainelLogado(data.perfil, data.usuario.login);
-        } catch(e) { selecionarPerfilAcesso(perfilAcessoSelecionadoTab); }
-      } else { selecionarPerfilAcesso(perfilAcessoSelecionadoTab); }
+          abrirPainelLogado(data.perfil, data.usuario.login || data.usuario.marca || data.usuario.nome);
+        } catch(e) { selecionarPerfilAcesso('cliente'); }
+      } else { selecionarPerfilAcesso('cliente'); }
     }
 
     function salvarDadosNovem() {
@@ -800,13 +919,12 @@
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: bodyData.toString()
       }).then(function() {
-        if(statusEl) statusEl.innerText = "☁️ Salvo com Sucesso!";
+        if(statusEl) statusEl.innerText = "☁️ Salvo na Nuvem";
       }).catch(function() {
         if(statusEl) statusEl.innerText = "⚠️ Salvo no Cache Local";
       });
     }
 
-    /* CORREÇÃO DE LOGINS E SENHAS COM LIMPEZA DE ESPAÇOS E TOLERÂNCIA A MAIÚSCULAS/MINÚSCULAS */
     function autenticarUsuario(e) {
       e.preventDefault();
       var valId = String(document.getElementById('selectUsuarioLogin').value).trim();
@@ -814,30 +932,30 @@
 
       if(perfilAcessoSelecionadoTab === 'diretoria') {
         var u = bancoDiretoria.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(u && (u.senha === passInp || passInp === "123456" || passInp === "123")) {
+        if(u && (String(u.senha).trim() === passInp || passInp === "123456" || passInp === "123")) {
           usuarioLogadoObjeto = u;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'diretoria', usuario: u }));
           abrirPainelLogado('diretoria', u.login);
         } else { alert("❌ Senha incorreta para a Diretoria!"); }
       } else if(perfilAcessoSelecionadoTab === 'cliente') {
         var c = bancoClientes.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(c && c.senha === passInp) {
+        if(c && String(c.senha).trim() === passInp) {
           usuarioLogadoObjeto = c;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'cliente', usuario: c }));
-          abrirPainelLogado('cliente', c.login);
+          abrirPainelLogado('cliente', c.marca);
         } else { alert("❌ Senha incorreta para o cliente!"); }
       } else if(perfilAcessoSelecionadoTab === 'equipe') {
         var col = bancoColaboradores.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(col && col.senha === passInp) {
+        if(col && String(col.senha).trim() === passInp) {
           usuarioLogadoObjeto = col;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'equipe', usuario: col }));
-          abrirPainelLogado('equipe', col.login);
+          abrirPainelLogado('equipe', col.nome);
         } else { alert("❌ Senha incorreta para o colaborador!"); }
       }
     }
@@ -864,10 +982,8 @@
       document.getElementById('userBadgeArea').style.display = 'none';
       document.getElementById('inputSenha').value = "";
       document.getElementById('loginScreen').style.display = 'block';
-      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
-    }
-
-    function navegarPaginaCliente(pag) {
+      selecionarPerfilAcesso('cliente');
+    }function navegarPaginaCliente(pag) {
       document.querySelectorAll('.btn-pag-op').forEach(function(b) { b.classList.remove('active'); });
       document.getElementById('pagCliLotes').style.display = 'none';
       document.getElementById('pagCliFinalizados').style.display = 'none';
@@ -926,7 +1042,7 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
-    /* MONTAGEM DO RELATÓRIO COMPLETO EXIBINDO DATAS REAIS DE INÍCIO E FIM DO SETOR */
+    /* RASTREAMENTO VISUAL COM DATA, HORA E OPERADOR */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -938,19 +1054,29 @@
 
       var histHtml = "";
       if (l.historicoSetores && l.historicoSetores.length > 0) {
-        histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços por Setor:</h4>';
+        histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços e Histórico por Setor:</h4>';
         l.historicoSetores.forEach(function(h) {
           var periodoStr = "";
-          if(h.dataInicio && h.dataFim) periodoStr = "(" + h.dataInicio + " até " + h.dataFim + ")";
-          else if(h.dataFim) periodoStr = "(" + h.dataFim + ")";
-          else if(h.data) periodoStr = "(" + h.data + ")";
+          if(h.dataInicio && h.dataFim) periodoStr = "Início: " + h.dataInicio + " | Fim: " + h.dataFim;
+          else if(h.dataFim) periodoStr = "Concluído em: " + h.dataFim;
+          else if(h.dataInicio) periodoStr = "Iniciado em: " + h.dataInicio;
+          else if(h.data) periodoStr = "Registrado em: " + h.data;
+
+          var servEspeciaisHtml = "";
+          if (h.servicosEspeciais && h.servicosEspeciais.length > 0) {
+            servEspeciaisHtml = '<div style="margin-top:4px; padding-left:10px; border-left:2px solid #0D9488; font-size:0.76rem; color:#0D9488;">' +
+              h.servicosEspeciais.map(function(se) { return '🛠️ <strong>' + se.tipo + ':</strong> ' + se.qtd + ' pcs'; }).join('<br>') +
+            '</div>';
+          }
 
           histHtml += '<div class="item-setor-hist">' +
               '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<span>📍 <strong>' + h.setor + ':</strong></span>' +
                 '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' pcs</strong>' +
               '</div>' +
+              servEspeciaisHtml +
               '<span class="stamp-time">⏱️ ' + periodoStr + '</span>' +
+              (h.operador ? '<span class="stamp-operator">👤 Operador: ' + h.operador + '</span>' : '') +
             '</div>';
         });
         histHtml += '</div>';
@@ -960,12 +1086,12 @@
 
       var finHtml = "";
       if (l.valTotalComDesconto || l.valorTotalBruto) {
-        finHtml = '<div class="finance-summary-box">' +
-            '<h4 style="margin:0 0 6px 0;">💰 Resumo Financeiro do Lote</h4>' +
+        finHtml = '<div class="finance-summary-box" style="margin-top:12px; background:#F0F9FF; border:1px solid #0284C7; padding:12px; border-radius:12px;">' +
+            '<h4 style="margin:0 0 6px 0; color:#0369A1;">💰 Resumo Financeiro do Lote</h4>' +
             '<p style="margin:2px 0; font-size:0.85rem;">• Valor Bruto: R$ ' + (l.valorTotalBruto || '0,00') + '</p>' +
             '<p style="margin:2px 0; font-size:0.85rem;">• Desconto Aplicado: ' + (l.descontoPct || '0') + '%</p>' +
             '<p style="margin:4px 0 2px 0; font-size:0.95rem; font-weight:bold; color:#065F46;">• VALOR TOTAL FINAL: R$ ' + (l.valTotalComDesconto || '0,00') + '</p>' +
-            '<p style="margin:2px 0; font-size:0.85rem; font-weight:bold;">• VALOR UNITÁRIO POR PEÇA: R$ ' + (l.valPorPecaFinal || '0,00') + ' / pc</p>' +
+            '<p style="margin:2px 0; font-size:0.85rem; font-weight:bold; color:var(--primary-blue);">• VALOR UNITÁRIO POR PEÇA: R$ ' + (l.valPorPecaFinal || '0,00') + ' / pc</p>' +
           '</div>';
       }
 
@@ -998,6 +1124,16 @@
         document.getElementById('inputOpQtdReal').value = l.pcs;
         document.getElementById('inputOpQtdServicoSetor').value = "";
         document.getElementById('msgAvisoQtdObrig').style.display = 'none';
+        
+        listaServicosAdicionaisTemp = [];
+        renderizarListaServicosEspeciaisBancada();
+
+        var boxEspecial = document.getElementById('boxServicosAdicionaisInspecao');
+        if (l.setorAtual.indexOf("Inspeção") !== -1 || l.setorAtual.indexOf("2.") !== -1) {
+          boxEspecial.style.display = 'block';
+        } else {
+          boxEspecial.style.display = 'none';
+        }
 
         if (!l.historicoSetores) l.historicoSetores = [];
         var hAtual = l.historicoSetores.find(function(h) { return h.setor === l.setorAtual; });
@@ -1008,7 +1144,7 @@
 
         if(hAtual && hAtual.dataInicio) {
           btnIni.innerText = "🔄 REINICIAR CONTAGEM DO SETOR";
-          lblStamp.innerText = "▶️ Iniciado em: " + hAtual.dataInicio;
+          lblStamp.innerText = "▶️ Iniciado em: " + hAtual.dataInicio + (hAtual.operador ? " por " + hAtual.operador : "");
           lblStamp.style.display = "inline-block";
           lblStatus.innerText = "Status do Setor: EM PROCESSO (Iniciado)";
           lblStatus.style.color = "#047857";
@@ -1016,7 +1152,7 @@
           btnIni.innerText = "▶️ INICIAR PROCESSO NESTE SETOR";
           lblStamp.style.display = "none";
           lblStatus.innerText = "Status do Setor: Não Iniciado";
-          lblStatus.style.color = "var(--blue-val)";
+          lblStatus.style.color = "var(--primary-blue)";
         }
 
         document.getElementById('modalOpBancadaLote').style.display = 'flex';
@@ -1025,37 +1161,68 @@
 
     function fecharModalOpBancadaLote() { document.getElementById('modalOpBancadaLote').style.display = 'none'; }
 
-    /* LÓGICA DE INICIAR SETOR */
+    function adicionarServicoEspecialLista() {
+      var tipo = document.getElementById('selectTipoServicoAdicional').value;
+      var qtd = parseInt(document.getElementById('inputQtdServicoAdicional').value) || 0;
+      if(qtd <= 0) { alert("⚠️ Digite a quantidade do trabalho adicional!"); return; }
+
+      listaServicosAdicionaisTemp.push({ tipo: tipo, qtd: qtd });
+      document.getElementById('inputQtdServicoAdicional').value = "";
+      renderizarListaServicosEspeciaisBancada();
+    }
+
+    function renderizarListaServicosEspeciaisBancada() {
+      var div = document.getElementById('listaServicosEspeciaisAdicionados');
+      if (listaServicosAdicionaisTemp.length === 0) {
+        div.innerHTML = "<span style='color:var(--text-muted); font-size:0.75rem;'>Nenhum trabalho adicional incluído.</span>";
+      } else {
+        div.innerHTML = listaServicosAdicionaisTemp.map(function(s, idx) {
+          return '<div style="display:flex; justify-content:space-between; background:#FFFFFF; padding:4px 8px; border-radius:6px; margin-bottom:4px; border:1px solid #99F6E4;">' +
+              '<span><strong>' + s.tipo + ':</strong> ' + s.qtd + ' pcs</span>' +
+              '<b style="color:red; cursor:pointer;" onclick="removerServicoEspecialLista(' + idx + ')">✕</b>' +
+            '</div>';
+        }).join('');
+      }
+    }
+
+    function removerServicoEspecialLista(idx) {
+      listaServicosAdicionaisTemp.splice(idx, 1);
+      renderizarListaServicosEspeciaisBancada();
+    }
+
     function iniciarSetorBancadaSubmit() {
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
 
       var horaAgora = obterDataHoraAtualFormatada();
+      var operadorNome = usuarioLogadoObjeto ? (usuarioLogadoObjeto.nome || usuarioLogadoObjeto.login) : "Colaborador";
       if (!l.historicoSetores) l.historicoSetores = [];
 
       var hSetor = l.historicoSetores.find(function(h) { return h.setor === l.setorAtual; });
       if(hSetor) {
         hSetor.dataInicio = horaAgora;
+        hSetor.operador = operadorNome;
       } else {
         l.historicoSetores.push({
           setor: l.setorAtual,
           qtdServico: 0,
           dataInicio: horaAgora,
-          dataFim: ""
+          dataFim: "",
+          operador: operadorNome,
+          servicosEspeciais: []
         });
       }
 
       salvarDadosNovem();
-      alert("⏱️ Processo iniciado no setor " + l.setorAtual + " em " + horaAgora);
+      alert("⏱️ Processo iniciado por " + operadorNome + " no setor " + l.setorAtual + " em " + horaAgora);
 
-      document.getElementById('stampHoraInicioRegistrada').innerText = "▶️ Iniciado em: " + horaAgora;
+      document.getElementById('stampHoraInicioRegistrada').innerText = "▶️ Iniciado em: " + horaAgora + " por " + operadorNome;
       document.getElementById('stampHoraInicioRegistrada').style.display = "inline-block";
       document.getElementById('infoOpLoteStatusInicio').innerText = "Status do Setor: EM PROCESSO (Iniciado)";
       document.getElementById('infoOpLoteStatusInicio').style.color = "#047857";
     }
 
-    /* LÓGICA DE FINALIZAR SETOR E REGISTRAR DATA/HORA AUTOMÁTICA */
     function concluirAvançarLoteBancadaSubmit() {
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1072,6 +1239,7 @@
       }
 
       var horaFimAgora = obterDataHoraAtualFormatada();
+      var operadorNome = usuarioLogadoObjeto ? (usuarioLogadoObjeto.nome || usuarioLogadoObjeto.login) : "Colaborador";
       if (!l.historicoSetores) l.historicoSetores = [];
       
       var hSetor = l.historicoSetores.find(function(h) { return h.setor === setorExecutado; });
@@ -1079,12 +1247,16 @@
         hSetor.qtdServico = qtdServico || l.pcs;
         hSetor.dataFim = horaFimAgora;
         if(!hSetor.dataInicio) hSetor.dataInicio = horaFimAgora;
+        if(!hSetor.operador) hSetor.operador = operadorNome;
+        hSetor.servicosEspeciais = JSON.parse(JSON.stringify(listaServicosAdicionaisTemp));
       } else {
         l.historicoSetores.push({
           setor: setorExecutado,
           qtdServico: qtdServico || l.pcs,
           dataInicio: horaFimAgora,
-          dataFim: horaFimAgora
+          dataFim: horaFimAgora,
+          operador: operadorNome,
+          servicosEspeciais: JSON.parse(JSON.stringify(listaServicosAdicionaisTemp))
         });
       }
 
@@ -1099,7 +1271,7 @@
       }
 
       salvarDadosNovem();
-      alert("✅ Setor finalizado em " + horaFimAgora + " e lote avançado com sucesso!");
+      alert("✅ Setor finalizado por " + operadorNome + " em " + horaFimAgora + " e lote avançado com sucesso!");
       fecharModalOpBancadaLote();
       renderizarLotesColabBancada();
     }
@@ -1117,6 +1289,7 @@
       document.getElementById('labelValPorPecaFinal').innerText = "R$ " + vPorPeca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / pc";
     }
 
+    /* CARREGAMENTO NA DIRETORIA COM DATA, HORA E OPERADOR */
     function abrirModalEditarLoteDir(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(l) {
@@ -1129,6 +1302,39 @@
         document.getElementById('editLoteValorBruto').value = l.valorTotalBruto || l.valorTotal || "";
         document.getElementById('editLoteDesconto').value = l.descontoPct || l.desconto || "";
         document.getElementById('editLoteObs').value = l.obs || "";
+
+        var containerHistDir = document.getElementById('containerHistoricoSetoresDiretoria');
+        if (l.historicoSetores && l.historicoSetores.length > 0) {
+          var histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços e Tempos por Setor:</h4>';
+          l.historicoSetores.forEach(function(h) {
+            var periodoStr = "";
+            if(h.dataInicio && h.dataFim) periodoStr = "Início: " + h.dataInicio + " | Fim: " + h.dataFim;
+            else if(h.dataFim) periodoStr = "Concluído em: " + h.dataFim;
+            else if(h.dataInicio) periodoStr = "Iniciado em: " + h.dataInicio;
+            else if(h.data) periodoStr = "Registrado em: " + h.data;
+
+            var servEspeciaisHtml = "";
+            if (h.servicosEspeciais && h.servicosEspeciais.length > 0) {
+              servEspeciaisHtml = '<div style="margin-top:4px; padding-left:10px; border-left:2px solid #0D9488; font-size:0.76rem; color:#0D9488;">' +
+                h.servicosEspeciais.map(function(se) { return '🛠️ <strong>' + se.tipo + ':</strong> ' + se.qtd + ' pcs'; }).join('<br>') +
+              '</div>';
+            }
+
+            histHtml += '<div class="item-setor-hist">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                  '<span>📍 <strong>' + h.setor + ':</strong></span>' +
+                  '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' pcs</strong>' +
+                '</div>' +
+                servEspeciaisHtml +
+                '<span class="stamp-time">⏱️ ' + periodoStr + '</span>' +
+                (h.operador ? '<span class="stamp-operator">👤 Operador: ' + h.operador + '</span>' : '') +
+              '</div>';
+          });
+          histHtml += '</div>';
+          containerHistDir.innerHTML = histHtml;
+        } else {
+          containerHistDir.innerHTML = '<div class="historico-setores-box"><p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Nenhum histórico de tempo/serviço registrado ainda para este lote.</p></div>';
+        }
 
         calcularValoresFinanceirosEditLote();
         document.getElementById('modalEditarLoteDir').style.display = 'flex';
@@ -1394,7 +1600,7 @@
       var cli = document.getElementById('selectFiltroClienteInsumoColab').value || "Niara Semijoias";
       var cont = document.getElementById('containerTabelaInsumosColabConsulta');
       var lista = bancoInsumosCompletos[cli] || [];
-      var html = '<table class="tabela-sos"><thead><tr><th>Categoria</th><th>Tipo</th><th>Estoque</th><th>Gondula</th></tr></thead><tbody>';
+      var html = '<table class="tabela-sos"><thead><tr><th>Categoria</th><th>Tipo</th><th>Estoque</th><th>Gôndola</th></tr></thead><tbody>';
       lista.forEach(function(ins) { html += '<tr><td>' + (ins.catJoia || 'Geral') + '</td><td>' + ins.tipo + '</td><td>' + ins.qtd + ' un</td><td>' + (ins.gondula || 'N/I') + '</td></tr>'; });
       html += '</tbody></table>';
       cont.innerHTML = html;
@@ -1605,7 +1811,7 @@
       }
 
       salvarDadosNovem();
-      alert("✅ Cliente salvo!");
+      alert("✅ Cliente salvo com sucesso na nuvem!");
       fecharModalCadCliente();
       renderizarCardsClientesAmplo();
       selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
@@ -1707,7 +1913,7 @@
       }
 
       salvarDadosNovem();
-      alert("✅ Colaborador salvo com sucesso!");
+      alert("✅ Colaborador salvo com sucesso na nuvem!");
       fecharModalCadColaborador();
       renderizarCardsColabAmplo();
       selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
