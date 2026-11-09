@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EloHub — Operações em Semijoias</title>
+  <title>Clube S.O.S. — Operações em Semijoias</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Biblioteca Chart.js para os Gráficos Individuais e Gerais -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     :root {
@@ -32,6 +30,7 @@
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
     body { background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%); color: var(--text-dark); margin: 0; padding: 16px; min-height: 100vh; }
 
+    /* CONTAINERS E CARDS FUTURISTAS */
     .app-header {
       background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
       color: #FFFFFF;
@@ -86,6 +85,7 @@
       border-color: var(--primary-blue);
     }
 
+    /* BOTÕES E CONTROLES */
     .btn-main {
       width: 100%;
       padding: 12px 18px;
@@ -122,6 +122,7 @@
     }
     .form-control:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
 
+    /* NAVEGAÇÃO / TABS */
     .nav-tabs-bar { display: flex; gap: 8px; background: rgba(226, 232, 240, 0.6); padding: 6px; border-radius: 14px; margin-bottom: 20px; overflow-x: auto; }
     .btn-pag-dir, .btn-pag-op, .profile-tab-btn {
       flex: 1; padding: 10px 16px; border: none; border-radius: 10px; background: transparent; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; white-space: nowrap; text-align: center; position: relative;
@@ -130,6 +131,7 @@
       background: #FFFFFF; color: var(--header-bg); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
+    /* BADGES */
     .badge-msg-alert {
       background: #EF4444; color: #FFFFFF; font-size: 0.72rem; font-weight: 800; border-radius: 12px; padding: 2px 7px; margin-left: 6px; display: inline-block; animation: pulse 1.8s infinite;
     }
@@ -140,6 +142,7 @@
     .badge-espera { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
     .badge-concluido { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
 
+    /* CALENDÁRIO */
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
     .cal-day-header { font-weight: 700; font-size: 0.75rem; text-align: center; color: var(--text-muted); padding: 4px; }
     .cal-day {
@@ -147,22 +150,33 @@
     }
     .cal-day.disponivel:hover { border-color: var(--green-val); background: #ECFDF5; }
     .cal-day.selected { border: 2px solid var(--green-val); background: #D1FAE5; box-shadow: 0 0 12px rgba(5, 150, 105, 0.3); }
+    .cal-day.disabled { background: #F1F5F9; opacity: 0.4; cursor: not-allowed; }
+    .cal-day.indisponivel { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; cursor: not-allowed; }
     .cal-status-tag { font-size: 0.65rem; font-weight: 700; display: block; margin-top: 2px; }
 
+    /* ESTRUTURA DOS HISTÓRICOS DE SETOR */
     .historico-setores-box { background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-top: 14px; }
     .item-setor-hist { background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .item-setor-hist .stamp-time { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px; font-weight: 600; }
     .item-setor-hist .stamp-operator { font-size: 0.73rem; color: var(--primary-blue); font-weight: 700; margin-top: 2px; display: block; }
+    
+    .box-servico-adicional { background: #F0FDFA; border: 1px solid #99F6E4; padding: 12px; border-radius: 12px; margin-bottom: 12px; }
 
+    /* MODAIS */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 16px; }
     .modal-card { background: #FFFFFF; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.8); }
+
+    .tag-setor-btn { display: inline-block; padding: 6px 12px; background: #F1F5F9; border-radius: 8px; font-size: 0.78rem; font-weight: 600; margin: 2px; cursor: pointer; border: 1px solid var(--border-color); }
+    .tag-setor-btn.selected { background: var(--header-bg); color: #FFFFFF; border-color: var(--header-bg); }
 
     .tabela-sos { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .tabela-sos th, .tabela-sos td { padding: 10px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 0.85rem; }
     .tabela-sos th { background: #F8FAFC; color: var(--text-muted); font-weight: 700; }
   </style>
 </head>
-<body><!-- CABEÇALHO GLOBAL -->
+<body>
+
+  <!-- CABEÇALHO GLOBAL -->
   <div class="app-header">
     <div>
       <h1 class="brand-title">Clube S.O.S.</h1>
@@ -191,9 +205,7 @@
       <input type="password" id="inputSenha" class="form-control" placeholder="Sua senha..." required>
       <button type="submit" class="btn-main" style="margin-top:10px;">ENTRAR NO SISTEMA ➔</button>
     </form>
-  </div>
-
-  <!-- PAINEL CLIENTE -->
+  </div><!-- PAINEL CLIENTE -->
   <div id="painelCliente" style="display:none;">
     <div class="card-panel">
       <h2 id="tituloClientePainel" style="margin-top:0; color:var(--header-bg);">💎 PAINEL DO CLIENTE</h2>
@@ -217,7 +229,9 @@
       <!-- ABA 2 CLIENTE: LOTES FINALIZADOS -->
       <div id="pagCliFinalizados" style="display:none;">
         <div id="containerLotesFinalizadosClientePainel" class="cards-grid-amplos"></div>
-      </div><!-- ABA 3 CLIENTE: AGENDAR ENVIO -->
+      </div>
+
+      <!-- ABA 3 CLIENTE: AGENDAR ENVIO -->
       <div id="pagCliAgendar" style="display:none;">
         <h3 style="margin-top:0;">Agendamento de Envio de Peças</h3>
         <p style="font-size:0.85rem; color:var(--text-muted);">Selecione um dia disponível (em verde) e informe o volume de peças ou o peso estimado.</p>
@@ -276,7 +290,10 @@
         <button class="btn-main" onclick="enviarMensagemClienteSubmit()">ENVIAR MENSAGEM ➔</button>
       </div>
     </div>
-  </div><!-- PAINEL COLABORADOR (EQUIPE OPERACIONAL) -->
+  </div>
+
+
+  <!-- PAINEL COLABORADOR (EQUIPE OPERACIONAL) -->
   <div id="painelColaborador" style="display:none;">
     <div class="card-panel">
       <h2 style="margin-top:0; color:var(--header-bg);">🛠️ BANCADA OPERACIONAL — CLUBE S.O.S.</h2>
@@ -318,7 +335,10 @@
         <button class="btn-main" onclick="enviarMensagemColabSubmit()">ENVIAR MENSAGEM ➔</button>
       </div>
     </div>
-  </div><!-- PAINEL DIRETORIA (GESTAO GERAL) -->
+  </div>
+
+
+  <!-- PAINEL DIRETORIA (GESTAO GERAL) -->
   <div id="painelDiretoria" style="display:none;">
     <div class="card-panel">
       <h2 style="margin-top:0; color:var(--header-bg);">👑 PAINEL DA DIRETORIA E GESTÃO</h2>
@@ -393,7 +413,7 @@
           </div>
           <div id="containerCardsClientesEncarteSelection" class="cards-grid-amplos"></div>
           <h4 style="color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:16px; margin-top:20px;">Marcas Inativas</h4>
-          <div id="containerCardsClientesIncarteInativosSelection" class="cards-grid-amplos"></div>
+          <div id="containerCardsClientesEncarteInativosSelection" class="cards-grid-amplos"></div>
         </div>
 
         <div id="secaoDetalheEncarteClienteSel" style="display:none;">
@@ -634,7 +654,7 @@
           </div>
           <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-top:4px; color:var(--primary-blue);">
             <span>Valor Unitário por Peça:</span>
-            <span id="labelValPorPecaFinal">R$ 0,00 / und</span>
+            <span id="labelValPorPecaFinal">R$ 0,00 / pc</span>
           </div>
         </div>
       </div>
@@ -656,10 +676,10 @@
       <input type="text" id="mCadCliLogin" class="form-control" required placeholder="Login/E-mail...">
       <input type="text" id="mCadCliSenha" class="form-control" required value="123">
       <select id="mCadCliCat" class="form-control">
-        <option value="Iniciante">🥉 Iniciante (Até 500 und/mês)</option>
-        <option value="Ouro">🥇 VIP Ouro (Até 1.000 und/mês)</option>
-        <option value="Diamante" selected>💎 VIP Diamante (Até 1.500 und/mês)</option>
-        <option value="Black">👑 VIP Black (Até 2.000 und/mês)</option>
+        <option value="Iniciante">🥉 Iniciante (Até 500 pcs/mês)</option>
+        <option value="Ouro">🥇 VIP Ouro (Até 1.000 pcs/mês)</option>
+        <option value="Diamante" selected>💎 VIP Diamante (Até 1.500 pcs/mês)</option>
+        <option value="Black">👑 VIP Black (Até 2.000 pcs/mês)</option>
       </select>
       <input type="text" id="mCadCliInicio" class="form-control" required placeholder="Mês/Ano Início...">
       <button class="btn-main btn-green" onclick="salvarClienteModalSubmit()">SALVAR CLIENTE</button>
@@ -730,7 +750,7 @@
     <div class="modal-card" style="max-width:700px;">
       <h3 style="margin-top:0;">Cadastrar Modelo de Encarte</h3>
       <form onsubmit="salvarModeloEncarteCompletoSubmit(event)">
-        <select id="mCadEncCli" class="form-control" onclick="atualizarSelectsInsumosModeloEncarte()"></select>
+        <select id="mCadEncCli" class="form-control" onchange="atualizarSelectsInsumosModeloEncarte()"></select>
         <select id="mCadEncCatJoia" class="form-control"></select>
         <div style="display:flex; gap:6px; margin-bottom:8px;">
           <input type="text" id="inputPassoEncarteTemp" class="form-control" style="margin:0;" placeholder="Instrução do passo...">
@@ -764,6 +784,7 @@
     var feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
     var datasOcupadasAgenda = [];
 
+    // DIRETORIA COM NOME CORRIGIDO: Kelvin (Diretoria)
     var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin (Diretoria)', login: 'kelvin', senha: '123' }];
     var bancoClientes = [];
     var bancoClientesInativos = [];
@@ -789,19 +810,27 @@
       return dia + "/" + mes + "/" + ano + " " + horas + ":" + mins;
     }
 
+    /* LIMPEZA INTEGRAL DE DADOS ÓRFÃOS DE CLIENTES EXCLUÍDOS */
     function expurgarDadosClientesExcluidos() {
       var marcasValidas = [];
       bancoClientes.forEach(function(c) { marcasValidas.push(c.marca); });
       bancoClientesInativos.forEach(function(c) { marcasValidas.push(c.marca); });
 
+      // Limpar insumos de clientes que não existem mais
       Object.keys(bancoInsumosCompletos).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) { delete bancoInsumosCompletos[cli]; }
+        if (marcasValidas.indexOf(cli) === -1) {
+          delete bancoInsumosCompletos[cli];
+        }
       });
 
+      // Limpar modelos de encarte de clientes que não existem mais
       Object.keys(bancoModelosEncarte).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) { delete bancoModelosEncarte[cli]; }
+        if (marcasValidas.indexOf(cli) === -1) {
+          delete bancoModelosEncarte[cli];
+        }
       });
 
+      // Limpar regras associadas a clientes excluídos
       Object.keys(bancoRegrasSetores).forEach(function(setor) {
         if (Array.isArray(bancoRegrasSetores[setor])) {
           bancoRegrasSetores[setor] = bancoRegrasSetores[setor].filter(function(r) {
@@ -1005,292 +1034,7 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'block';
       
-      var rotuloUser = loginStr;
-      if (perfil === 'diretoria') rotuloUser = "Kelvin (DIRETORIA)";
-      else rotuloUser = loginStr + " (" + perfil.toUpperCase() + ")";
-
-      document.getElementById('nomeUsuarioBadge').innerText = rotuloUser;
-
-      document.getElementById('painelDiretoria').style.display = 'none';
-      document.getElementById('painelColaborador').style.display = 'none';
-      document.getElementById('painelCliente').style.display = 'none';
-
-      if(perfil === 'diretoria') { renderizarPainelDiretoria(); document.getElementById('painelDiretoria').style.display = 'block'; }
-      else if(perfil === 'equipe') { navegarPaginaColab('lotes'); document.getElementById('painelColaborador').style.display = 'block'; }
-      else if(perfil === 'cliente') { 
-        navegarPaginaCliente('lotes'); 
-        document.getElementById('painelCliente').style.display = 'block';
-        verificarNovasMensagensCliente();
-      }
-    }
-
-    function fazerLogout() {
-      localStorage.removeItem("sos_user_session");
-      document.getElementById('painelDiretoria').style.display = 'none';
-      document.getElementById('painelColaborador').style.display = 'none';
-      document.getElementById('painelCliente').style.display = 'none';
-      document.getElementById('userBadgeArea').style.display = 'none';
-      document.getElementById('inputSenha').value = "";
-      document.getElementById('loginScreen').style.display = 'block';
-      selecionarPerfilAcesso('cliente');
-    }
-  </script><script>
-    var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
-
-    var perfilAcessoSelecionadoTab = 'cliente';
-    var usuarioLogadoObjeto = null;
-    var dataAgendamentoSelecionadaCli = "";
-    var fatorMediaPesoGlobal = 2.1;
-    var dadosCarregadosDaNovem = false;
-    var clienteInsumosSelecionadoAtual = "";
-    var listaServicosAdicionaisTemp = [];
-
-    var DATA_HOJE_SISTEMA = new Date();
-    var anoCalendarioAtual = DATA_HOJE_SISTEMA.getFullYear();
-    var mesCalendarioAtual = DATA_HOJE_SISTEMA.getMonth();
-
-    var feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
-    var datasOcupadasAgenda = [];
-
-    var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin (Diretoria)', login: 'kelvin', senha: '123' }];
-    var bancoClientes = [];
-    var bancoClientesInativos = [];
-    var bancoColaboradores = [];
-
-    var listaSetoresFabricaGeral = ["1. Entrada Bruta", "2. Inspeção 3em1", "3. Fotografia", "4. CDE Catalogação", "5. Etiquetagem", "6. Encartelamento", "7. Finalização"];
-    var bancoCategoriasJoias = ["Anel Regulável", "Anel Tradicional", "Brinco Pequeno", "Brinco Grande", "Colar Grande", "Choker", "Infantil", "Pulseira", "Tornozeleira"];
-    var bancoTiposInsumos = ["Cartela", "Saquinho", "Tag / Solapa", "Fecho / Argola", "Trava anel", "Extensor"];
-
-    var bancoInsumosCompletos = {};
-    var bancoModelosEncarte = {};
-    var bancoRegrasSetores = {};
-    var bancoLotes4Etapas = [];
-    var bancoMensagens = [];
-
-    function obterDataHoraAtualFormatada() {
-      var d = new Date();
-      var dia = String(d.getDate()).padStart(2, '0');
-      var mes = String(d.getMonth() + 1).padStart(2, '0');
-      var ano = d.getFullYear();
-      var horas = String(d.getHours()).padStart(2, '0');
-      var mins = String(d.getMinutes()).padStart(2, '0');
-      return dia + "/" + mes + "/" + ano + " " + horas + ":" + mins;
-    }
-
-    function expurgarDadosClientesExcluidos() {
-      var marcasValidas = [];
-      bancoClientes.forEach(function(c) { marcasValidas.push(c.marca); });
-      bancoClientesInativos.forEach(function(c) { marcasValidas.push(c.marca); });
-
-      Object.keys(bancoInsumosCompletos).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) { delete bancoInsumosCompletos[cli]; }
-      });
-
-      Object.keys(bancoModelosEncarte).forEach(function(cli) {
-        if (marcasValidas.indexOf(cli) === -1) { delete bancoModelosEncarte[cli]; }
-      });
-
-      Object.keys(bancoRegrasSetores).forEach(function(setor) {
-        if (Array.isArray(bancoRegrasSetores[setor])) {
-          bancoRegrasSetores[setor] = bancoRegrasSetores[setor].filter(function(r) {
-            return marcasValidas.indexOf(r.cliente) !== -1;
-          });
-        }
-      });
-    }
-
-    function selecionarPerfilAcesso(p) {
-      perfilAcessoSelecionadoTab = p;
-      document.getElementById('tabCliente').classList.remove('active');
-      document.getElementById('tabEquipe').classList.remove('active');
-      document.getElementById('tabDiretoria').classList.remove('active');
-
-      var selectAcc = document.getElementById('selectUsuarioLogin');
-      selectAcc.innerHTML = "";
-
-      if(p === 'cliente') {
-        document.getElementById('tabCliente').classList.add('active');
-        if (bancoClientes.length === 0) {
-          selectAcc.innerHTML = '<option value="">Carregando clientes...</option>';
-        } else {
-          bancoClientes.forEach(function(c) { selectAcc.innerHTML += '<option value="' + c.id + '">' + c.marca + ' (' + c.login + ')</option>'; });
-        }
-      } else if(p === 'equipe') {
-        document.getElementById('tabEquipe').classList.add('active');
-        if (bancoColaboradores.length === 0) {
-          selectAcc.innerHTML = '<option value="">Carregando colaboradores...</option>';
-        } else {
-          bancoColaboradores.forEach(function(col) { selectAcc.innerHTML += '<option value="' + col.id + '">' + col.nome + ' (' + col.login + ')</option>'; });
-        }
-      } else {
-        document.getElementById('tabDiretoria').classList.add('active');
-        bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.nome + '</option>'; });
-      }
-    }function carregarDadosNovem() {
-      var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Sincronizando Nuvem...";
-
-      var cacheLocal = localStorage.getItem("sos_banco_backup_local");
-      if (cacheLocal) {
-        try {
-          var cData = JSON.parse(cacheLocal);
-          if (cData.bancoClientes) bancoClientes = cData.bancoClientes;
-          if (cData.bancoColaboradores) bancoColaboradores = cData.bancoColaboradores;
-          if (cData.bancoClientesInativos) bancoClientesInativos = cData.bancoClientesInativos;
-          if (cData.bancoInsumosCompletos) bancoInsumosCompletos = cData.bancoInsumosCompletos;
-          if (cData.bancoModelosEncarte) bancoModelosEncarte = cData.bancoModelosEncarte;
-          if (cData.bancoRegrasSetores) bancoRegrasSetores = cData.bancoRegrasSetores;
-          if (cData.bancoLotes4Etapas) bancoLotes4Etapas = cData.bancoLotes4Etapas;
-          if (cData.bancoMensagens) bancoMensagens = cData.bancoMensagens;
-          if (cData.bancoCategoriasJoias) bancoCategoriasJoias = cData.bancoCategoriasJoias;
-          if (cData.bancoTiposInsumos) bancoTiposInsumos = cData.bancoTiposInsumos;
-          expurgarDadosClientesExcluidos();
-          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
-        } catch(e){}
-      }
-
-      verificarSessaoSalva();
-
-      fetch(GOOGLE_API_URL + "?action=carregarTudo")
-        .then(function(res) { return res.json(); })
-        .then(function(dados) {
-          dadosCarregadosDaNovem = true;
-          if(dados.bancoClientes && dados.bancoClientes.length > 0) bancoClientes = dados.bancoClientes;
-          if(dados.bancoClientesInativos) bancoClientesInativos = dados.bancoClientesInativos;
-          if(dados.bancoColaboradores && dados.bancoColaboradores.length > 0) {
-            bancoColaboradores = dados.bancoColaboradores.map(function(c) {
-              if (typeof c.setores === 'string') {
-                try { c.setores = JSON.parse(c.setores); } catch(e) { c.setores = []; }
-              }
-              if (!Array.isArray(c.setores)) c.setores = [];
-              return c;
-            });
-          }
-          if(dados.bancoInsumosCompletos && Object.keys(dados.bancoInsumosCompletos).length > 0) bancoInsumosCompletos = dados.bancoInsumosCompletos;
-          if(dados.bancoModelosEncarte && Object.keys(dados.bancoModelosEncarte).length > 0) bancoModelosEncarte = dados.bancoModelosEncarte;
-          if(dados.bancoRegrasSetores && Object.keys(dados.bancoRegrasSetores).length > 0) bancoRegrasSetores = dados.bancoRegrasSetores;
-          if(dados.bancoLotes4Etapas) bancoLotes4Etapas = dados.bancoLotes4Etapas;
-          if(dados.bancoMensagens && dados.bancoMensagens.length > 0) bancoMensagens = dados.bancoMensagens;
-          if(dados.bancoCategoriasJoias) bancoCategoriasJoias = dados.bancoCategoriasJoias;
-          if(dados.bancoTiposInsumos) bancoTiposInsumos = dados.bancoTiposInsumos;
-
-          expurgarDadosClientesExcluidos();
-          salvarBackupLocalCache();
-          if(statusEl) statusEl.innerText = "☁️ Nuvem Sincronizada";
-          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
-          verificarNovasMensagensCliente();
-        })
-        .catch(function(err) {
-          dadosCarregadosDaNovem = true;
-          if(statusEl) statusEl.innerText = "☁️ Conectado (Cache Local)";
-          expurgarDadosClientesExcluidos();
-          selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
-          verificarNovasMensagensCliente();
-        });
-    }
-
-    function salvarBackupLocalCache() {
-      var localPayload = {
-        bancoClientes: bancoClientes,
-        bancoClientesInativos: bancoClientesInativos,
-        bancoColaboradores: bancoColaboradores,
-        bancoInsumosCompletos: bancoInsumosCompletos,
-        bancoModelosEncarte: bancoModelosEncarte,
-        bancoRegrasSetores: bancoRegrasSetores,
-        bancoLotes4Etapas: bancoLotes4Etapas,
-        bancoMensagens: bancoMensagens,
-        bancoCategoriasJoias: bancoCategoriasJoias,
-        bancoTiposInsumos: bancoTiposInsumos
-      };
-      localStorage.setItem("sos_banco_backup_local", JSON.stringify(localPayload));
-    }
-
-    function verificarSessaoSalva() {
-      var sessao = localStorage.getItem("sos_user_session");
-      if (sessao) {
-        try {
-          var data = JSON.parse(sessao);
-          usuarioLogadoObjeto = data.usuario;
-          abrirPainelLogado(data.perfil, data.usuario.nome || data.usuario.marca || data.usuario.login);
-        } catch(e) { selecionarPerfilAcesso('cliente'); }
-      } else { selecionarPerfilAcesso('cliente'); }
-    }
-
-    function salvarDadosNovem() {
-      if (!dadosCarregadosDaNovem) return;
-
-      expurgarDadosClientesExcluidos();
-      salvarBackupLocalCache();
-      var statusEl = document.getElementById('statusSync');
-      if(statusEl) statusEl.innerText = "⏳ Gravando na Nuvem...";
-
-      var payload = {
-        action: "salvarTudo",
-        bancoClientes: bancoClientes,
-        bancoClientesInativos: bancoClientesInativos,
-        bancoColaboradores: bancoColaboradores,
-        bancoInsumosCompletos: bancoInsumosCompletos,
-        bancoModelosEncarte: bancoModelosEncarte,
-        bancoRegrasSetores: bancoRegrasSetores,
-        bancoLotes4Etapas: bancoLotes4Etapas,
-        bancoMensagens: bancoMensagens,
-        bancoCategoriasJoias: bancoCategoriasJoias,
-        bancoTiposInsumos: bancoTiposInsumos
-      };
-
-      var bodyData = new URLSearchParams();
-      bodyData.append("dados", JSON.stringify(payload));
-
-      fetch(GOOGLE_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: bodyData.toString()
-      }).then(function() {
-        if(statusEl) statusEl.innerText = "☁️ Salvo na Nuvem";
-      }).catch(function() {
-        if(statusEl) statusEl.innerText = "⚠️ Salvo no Cache Local";
-      });
-    }
-
-    function autenticarUsuario(e) {
-      e.preventDefault();
-      var valId = String(document.getElementById('selectUsuarioLogin').value).trim();
-      var passInp = document.getElementById('inputSenha').value.trim();
-
-      if(perfilAcessoSelecionadoTab === 'diretoria') {
-        var u = bancoDiretoria.find(function(item) { 
-          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
-        });
-        if(u && (String(u.senha).trim() === passInp || passInp === "123456" || passInp === "123")) {
-          usuarioLogadoObjeto = u;
-          localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'diretoria', usuario: u }));
-          abrirPainelLogado('diretoria', u.nome);
-        } else { alert("❌ Senha incorreta para a Diretoria!"); }
-      } else if(perfilAcessoSelecionadoTab === 'cliente') {
-        var c = bancoClientes.find(function(item) { 
-          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
-        });
-        if(c && String(c.senha).trim() === passInp) {
-          usuarioLogadoObjeto = c;
-          localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'cliente', usuario: c }));
-          abrirPainelLogado('cliente', c.marca);
-        } else { alert("❌ Senha incorreta para o cliente!"); }
-      } else if(perfilAcessoSelecionadoTab === 'equipe') {
-        var col = bancoColaboradores.find(function(item) { 
-          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
-        });
-        if(col && String(col.senha).trim() === passInp) {
-          usuarioLogadoObjeto = col;
-          localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'equipe', usuario: col }));
-          abrirPainelLogado('equipe', col.nome);
-        } else { alert("❌ Senha incorreta para o colaborador!"); }
-      }
-    }
-
-    function abrirPainelLogado(perfil, loginStr) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('userBadgeArea').style.display = 'block';
-      
+      // Nome exato da diretoria formatado
       var rotuloUser = loginStr;
       if (perfil === 'diretoria') rotuloUser = "Kelvin (DIRETORIA)";
       else rotuloUser = loginStr + " (" + perfil.toUpperCase() + ")";
@@ -1380,7 +1124,7 @@
             '<span class="badge-status ' + badgeClass + '">' + labelTexto.toUpperCase() + '</span>' +
             '<strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ' + (l.numLote ? '#' + l.numLote : 'Pendente') + '</strong>' +
             '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Setor: <strong>' + (l.setorAtual || 'Pendente') + '</strong></p>' +
-            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Volume: ' + l.pcs + ' und | Peso: ' + l.peso + '</p>' +
+            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Volume: ' + l.pcs + ' pcs | Peso: ' + l.peso + '</p>' +
           '</div>';
       });
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote em andamento para a sua marca.</p>";
@@ -1396,7 +1140,7 @@
         html += '<div class="card-ampli-item" style="border-color:var(--green-val);" onclick="abrirModalDetalheLote(' + l.id + ')">' +
             '<span class="badge-status badge-concluido">FINALIZADO / LIBERADO</span>' +
             '<strong style="display:block; font-size:1.1rem; color:var(--header-bg); margin-top:6px;">Lote ' + (l.numLote ? '#' + l.numLote : 'Pendente') + '</strong>' +
-            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Volume Final: ' + l.pcs + ' und | Peso: ' + l.peso + '</p>' +
+            '<p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Volume Final: ' + l.pcs + ' pcs | Peso: ' + l.peso + '</p>' +
             (l.valTotalComDesconto ? '<p style="font-size:0.85rem; color:#065F46; font-weight:bold;">Total Final: R$ ' + l.valTotalComDesconto + '</p>' : '') +
             '<button class="btn-main btn-green" style="margin-top:10px; padding:6px; font-size:0.75rem;">VER RELATÓRIO COMPLETO ➔</button>' +
           '</div>';
@@ -1404,6 +1148,7 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
+    /* RELATÓRIO COMPLETO DE TEMPO E VALORES */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -1426,14 +1171,14 @@
           var servEspeciaisHtml = "";
           if (h.servicosEspeciais && h.servicosEspeciais.length > 0) {
             servEspeciaisHtml = '<div style="margin-top:4px; padding-left:10px; border-left:2px solid #0D9488; font-size:0.76rem; color:#0D9488;">' +
-              h.servicosEspeciais.map(function(se) { return '🛠️ <strong>' + se.tipo + ':</strong> ' + se.qtd + ' und'; }).join('<br>') +
+              h.servicosEspeciais.map(function(se) { return '🛠️ <strong>' + se.tipo + ':</strong> ' + se.qtd + ' pcs'; }).join('<br>') +
             '</div>';
           }
 
           histHtml += '<div class="item-setor-hist">' +
               '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<span>📍 <strong>' + h.setor + ':</strong></span>' +
-                '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' und</strong>' +
+                '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' pcs</strong>' +
               '</div>' +
               servEspeciaisHtml +
               '<span class="stamp-time">⏱️ ' + periodoStr + '</span>' +
@@ -1452,7 +1197,7 @@
             '<p style="margin:2px 0; font-size:0.85rem;">• Valor Bruto: R$ ' + (l.valorTotalBruto || '0,00') + '</p>' +
             '<p style="margin:2px 0; font-size:0.85rem;">• Desconto Aplicado: ' + (l.descontoPct || '0') + '%</p>' +
             '<p style="margin:4px 0 2px 0; font-size:0.95rem; font-weight:bold; color:#065F46;">• VALOR TOTAL FINAL: R$ ' + (l.valTotalComDesconto || '0,00') + '</p>' +
-            '<p style="margin:2px 0; font-size:0.85rem; font-weight:bold; color:var(--primary-blue);">• VALOR UNITÁRIO POR UNIDADE: R$ ' + (l.valPorPecaFinal || '0,00') + ' / und</p>' +
+            '<p style="margin:2px 0; font-size:0.85rem; font-weight:bold; color:var(--primary-blue);">• VALOR UNITÁRIO POR PEÇA: R$ ' + (l.valPorPecaFinal || '0,00') + ' / pc</p>' +
           '</div>';
       }
 
@@ -1462,7 +1207,7 @@
           '<p style="margin:8px 0 2px 0;">Setor Atual: <strong>' + l.setorAtual + '</strong></p>' +
         '</div>' +
         '<div>' +
-          '<p style="font-size:0.85rem;">• Peças Total (Declarado): <strong>' + l.pcs + ' und</strong></p>' +
+          '<p style="font-size:0.85rem;">• Peças Total (Declarado): <strong>' + l.pcs + ' pcs</strong></p>' +
           '<p style="font-size:0.85rem;">• Peso Total: <strong>' + l.peso + '</strong></p>' +
           (l.obs ? '<p style="font-size:0.85rem;">• Observações Gerais: <strong>' + l.obs + '</strong></p>' : '') +
         '</div>' +
@@ -1539,7 +1284,7 @@
       } else {
         div.innerHTML = listaServicosAdicionaisTemp.map(function(s, idx) {
           return '<div style="display:flex; justify-content:space-between; background:#FFFFFF; padding:4px 8px; border-radius:6px; margin-bottom:4px; border:1px solid #99F6E4;">' +
-              '<span><strong>' + s.tipo + ':</strong> ' + s.qtd + ' und</span>' +
+              '<span><strong>' + s.tipo + ':</strong> ' + s.qtd + ' pcs</span>' +
               '<b style="color:red; cursor:pointer;" onclick="removerServicoEspecialLista(' + idx + ')">✕</b>' +
             '</div>';
         }).join('');
@@ -1595,7 +1340,7 @@
 
       if (setorExecutado !== "1. Entrada Bruta" && (!inputQtdVal || isNaN(qtdServico) || qtdServico <= 0)) {
         document.getElementById('msgAvisoQtdObrig').style.display = 'block';
-        alert("⚠️ ATENÇÃO: A quantidade de unidades processadas neste setor é OBRIGATÓRIA para finalizar!");
+        alert("⚠️ ATENÇÃO: A quantidade de peças processadas neste setor é OBRIGATÓRIA para finalizar!");
         return;
       }
 
@@ -1637,12 +1382,13 @@
       renderizarLotesColabBancada();
     }
 
+    /* HISTÓRICO E EDIÇÃO LIBERADA DE SETORES PELA DIRETORIA */
     function renderizarEdicaoSetoresDiretoria(l) {
       var container = document.getElementById('containerHistoricoSetoresDiretoria');
       if (!l.historicoSetores) l.historicoSetores = [];
 
       var html = '<table class="tabela-sos" style="margin:0;">' +
-        '<thead><tr><th>Setor</th><th>Qtd Unidades</th><th>Início / Fim</th><th>Operador</th></tr></thead><tbody>';
+        '<thead><tr><th>Setor</th><th>Qtd Peças</th><th>Início / Fim</th><th>Operador</th></tr></thead><tbody>';
 
       listaSetoresFabricaGeral.forEach(function(setor, idx) {
         var hSetor = l.historicoSetores.find(function(h) { return h.setor === setor; }) || {
@@ -1691,6 +1437,7 @@
       });
     }
 
+    /* EXCLUSÃO DEFINITIVA DE LOTE PELA DIRETORIA */
     function excluirLoteDefinitivoDir() {
       var id = parseInt(document.getElementById('editLoteIdHidden').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1743,9 +1490,7 @@
             '</div>';
         }).join('');
       }
-    }
-
-    function calcularValoresFinanceirosEditLote() {
+    }function calcularValoresFinanceirosEditLote() {
       var pcs = parseInt(document.getElementById('editLotePcs').value) || 0;
       var vBruto = parseFloat(document.getElementById('editLoteValorBruto').value) || 0;
       var descPct = parseFloat(document.getElementById('editLoteDesconto').value) || 0;
@@ -1755,7 +1500,7 @@
       var vPorPeca = pcs > 0 ? (vFinal / pcs) : 0;
 
       document.getElementById('labelValTotalComDesconto').innerText = "R$ " + vFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      document.getElementById('labelValPorPecaFinal').innerText = "R$ " + vPorPeca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / und";
+      document.getElementById('labelValPorPecaFinal').innerText = "R$ " + vPorPeca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / pc";
     }
 
     function abrirModalEditarLoteDir(id) {
@@ -1897,14 +1642,14 @@
       var pcs = parseInt(document.getElementById('inputAgendQtdPcs').value) || 0;
       var pesoEst = (pcs * fatorMediaPesoGlobal).toFixed(0);
       document.getElementById('inputAgendPesoGramos').value = pesoEst;
-      document.getElementById('labelCalcAgendResult').innerText = pcs + " und (~" + pesoEst + "g)";
+      document.getElementById('labelCalcAgendResult').innerText = pcs + " PCS (~" + pesoEst + "g)";
     }
 
     function calcularPcsPorPesoCli() {
       var peso = parseFloat(document.getElementById('inputAgendPesoGramos').value) || 0;
       var pcsEst = Math.round(peso / fatorMediaPesoGlobal);
       document.getElementById('inputAgendQtdPcs').value = pcsEst;
-      document.getElementById('labelCalcAgendResult').innerText = pcsEst + " und (~" + peso + "g)";
+      document.getElementById('labelCalcAgendResult').innerText = pcsEst + " PCS (~" + peso + "g)";
     }
 
     function confirmarAgendamentoLoteClienteSubmit() {
@@ -2091,6 +1836,7 @@
       bancoClientes.forEach(function(c) { sel.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
     }
 
+    /* RENDERIZAÇÃO E CLIQUE GARANTIDO NOS CARDS DOS LOTES DA DIRETORIA */
     function renderizarLotes4Etapas() {
       var filtro = document.getElementById('filtroCliLotes4Etapas').value;
       var cont = document.getElementById('containerLotes4EtapasAmplo');
@@ -2100,13 +1846,13 @@
       
       html += '<div class="coluna-etapa-lotes" style="background:#FFF7ED;"><h4 style="color:#C2410C;">1. Aguardando Aprovação (' + lotes.filter(function(l){return l.etapa===1;}).length + ')</h4>';
       lotes.filter(function(l){return l.etapa===1;}).forEach(function(l) { 
-        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' und</p></div>'; 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
       });
       html += '</div>';
 
       html += '<div class="coluna-etapa-lotes" style="background:#E0F2FE;"><h4 style="color:#0369A1;">2. Aguardando Chegada (' + lotes.filter(function(l){return l.etapa===2;}).length + ')</h4>';
       lotes.filter(function(l){return l.etapa===2;}).forEach(function(l) { 
-        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' und</p></div>'; 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
       });
       html += '</div>';
 
@@ -2118,7 +1864,7 @@
 
       html += '<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (' + lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).length + ')</h4>';
       lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).forEach(function(l) { 
-        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' und</p></div>'; 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
       });
       html += '</div></div>';
       cont.innerHTML = html;
@@ -2615,7 +2361,7 @@
       document.getElementById('secaoDetalheEncarteClienteSel').style.display = 'none';
       
       var contAtivos = document.getElementById('containerCardsClientesEncarteSelection');
-      var contInativos = document.getElementById('containerCardsClientesIncarteInativosSelection');
+      var contInativos = document.getElementById('containerCardsClientesEncarteInativosSelection');
       var marcasInativas = bancoClientesInativos.map(function(c) { return c.marca; });
 
       var htmlAtivos = "";
