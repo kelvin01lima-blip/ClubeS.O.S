@@ -73,7 +73,6 @@
     .historico-setores-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-top: 12px; }
     .item-setor-hist { display: flex; flex-direction: column; border-bottom: 1px dashed #CBD5E1; padding: 8px 0; font-size: 0.85rem; }
     .finance-summary-box { background: #ECFDF5; border: 1px solid #10B981; border-radius: 12px; padding: 14px; margin-top: 12px; color: #065F46; }
-    .setor-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; align-items: center; }
     .stamp-time { font-size: 0.73rem; color: var(--text-muted); margin-top: 2px; }
   </style>
 </head><body>
@@ -85,7 +84,7 @@
     </div>
     <div id="userBadgeArea" style="display:none;">
       <div class="user-profile-badge">
-        <span id="nomeUsuarioBadge">kelvin (Diretoria)</span>
+        <span id="nomeUsuarioBadge"></span>
         <button class="btn-logout" onclick="fazerLogout()">SAIR</button>
       </div>
     </div>
@@ -93,16 +92,17 @@
 
   <div class="main-container">
 
+    <!-- TELA DE LOGIN INICIANDO PADRÃO EM CLIENTE -->
     <div id="loginScreen" class="login-wrapper">
       <h2>Acesso ao HUB S.O.S</h2>
       <p>Selecione seu perfil de acesso ao sistema:</p>
       <div class="tabs-perfil">
-        <div id="tabCliente" class="tab-btn" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
+        <div id="tabCliente" class="tab-btn active" onclick="selecionarPerfilAcesso('cliente')">CLIENTE</div>
         <div id="tabEquipe" class="tab-btn" onclick="selecionarPerfilAcesso('equipe')">COLABORADOR</div>
-        <div id="tabDiretoria" class="tab-btn active" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
+        <div id="tabDiretoria" class="tab-btn" onclick="selecionarPerfilAcesso('diretoria')">DIRETORIA</div>
       </div>
       <form onsubmit="autenticarUsuario(event)">
-        <label style="font-size:0.78rem; font-weight:bold;">Selecione o Login</label>
+        <label style="font-size:0.78rem; font-weight:bold;">Selecione o Login / Marca</label>
         <select id="selectUsuarioLogin" class="form-control" style="margin-bottom:12px;"></select>
         <label style="font-size:0.78rem; font-weight:bold;">Senha de Acesso</label>
         <input type="password" id="inputSenha" class="form-control" required placeholder="Digite sua senha...">
@@ -110,6 +110,7 @@
       </form>
     </div>
 
+    <!-- PAINEL DIRETORIA -->
     <div id="painelDiretoria" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#FFFDF0; padding:18px 24px;">
         <h3 style="color:#B45309; margin:0 0 4px 0;">👑 PAINEL DA DIRETORIA GENERAL — KELVIN LIMA & BRENDA</h3>
@@ -245,6 +246,7 @@
       </div>
     </div>
 
+    <!-- PAINEL COLABORADOR -->
     <div id="painelColaborador" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--orange-accent); background:#F0F9FF; padding:18px 24px;">
         <h3 style="color:var(--header-bg); margin:0 0 4px 0;">🛠️ BANCADA OPERACIONAL S.O.S — PAINEL DO COLABORADOR</h3>
@@ -304,6 +306,7 @@
       </div>
     </div>
 
+    <!-- PAINEL CLIENTE -->
     <div id="painelCliente" style="display:none;">
       <div class="panel-card" style="border-left: 6px solid var(--green-val); background:#ECFDF5; padding:18px 24px;">
         <h3 style="color:#065F46; margin:0 0 4px 0;" id="tituloClientePainel">💎 PAINEL DO CLIENTE</h3>
@@ -380,7 +383,7 @@
       </div>
     </div>
 
-  </div><!-- MODAL DE DETALHES COMPLETO DO LOTE -->
+  </div><!-- MODAL DE DETALHES COMPLETO DO LOTE (VISÃO CLIENTE E GERAL) -->
   <div id="modalDetalheCompletoLote" class="modal-overlay">
     <div class="modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #E2E8F0; padding-bottom:12px; margin-bottom:16px;">
@@ -404,7 +407,7 @@
     </div>
   </div>
 
-  <!-- MODAL BANCADA OPERACIONAL (COM BOTÃO DE INICIAR E FINALIZAR SETOR COM DATA AUTOMÁTICA) -->
+  <!-- MODAL BANCADA OPERACIONAL (COLABORADOR) -->
   <div id="modalOpBancadaLote" class="modal-overlay">
     <div class="modal-card" style="max-width:550px;">
       <h3 style="margin-top:0;" id="tituloModalOpLote">Atuação Operacional do Lote</h3>
@@ -415,7 +418,7 @@
         <p style="margin:4px 0 0 0; font-size:0.8rem; font-weight:bold; color:var(--blue-val);" id="infoOpLoteStatusInicio">Status do Setor: Não Iniciado</p>
       </div>
       
-      <!-- PAINEL DE CONTROLE DE TEMPO DO SETOR -->
+      <!-- CONTROLE DE TEMPO DO SETOR -->
       <div style="margin-bottom:15px; background:#ECFDF5; border:1px solid #10B981; padding:12px; border-radius:10px; text-align:center;">
         <button id="btnIniciarSetorBancada" class="btn-main btn-green" style="margin-bottom:6px;" onclick="iniciarSetorBancadaSubmit()">▶️ INICIAR PROCESSO NESTE SETOR</button>
         <span id="stampHoraInicioRegistrada" style="font-size:0.75rem; font-weight:bold; color:#065F46; display:none;"></span>
@@ -449,10 +452,10 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) -->
+  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) COM DADOS DE PRODUÇÃO E TEMPO ADICIONADOS -->
   <div id="modalEditarLoteDir" class="modal-overlay">
-    <div class="modal-card" style="max-width:650px;">
-      <h3 style="margin-top:0;">Editar / Finalizar Lote (Diretoria)</h3>
+    <div class="modal-card" style="max-width:750px;">
+      <h3 style="margin-top:0; color:var(--header-bg);">Editar / Finalizar Lote (Diretoria)</h3>
       <input type="hidden" id="editLoteIdHidden">
       
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -490,13 +493,16 @@
         </div>
       </div>
 
+      <!-- PAINEL ADICIONADO: HISTÓRICO DE SERVIÇOS E TEMPOS POR SETOR PARA A DIRETORIA -->
+      <div id="containerHistoricoSetoresDiretoria" style="margin-bottom:15px;"></div>
+
       <!-- PAINEL FINANCEIRO DE CÁLCULO E DESCONTO AUTOMÁTICO -->
       <div style="background:#F0F9FF; border:1px solid #0284C7; padding:14px; border-radius:12px; margin-bottom:12px;">
         <h4 style="margin:0 0 8px 0; color:#0369A1;">💰 Fechamento Financeiro & Valores</h4>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
           <div>
             <label style="font-size:0.75rem; font-weight:bold;">Valor Bruto Total (R$):</label>
-            <input type="number" step="0.01" id="editLoteValorBruto" class="form-control" placeholder="Ex: 1958.30" oninput="calcularValoresFinanceirosEditLote()">
+            <input type="number" step="0.01" id="editLoteValorBruto" class="form-control" placeholder="Ex: 780.15" oninput="calcularValoresFinanceirosEditLote()">
           </div>
           <div>
             <label style="font-size:0.75rem; font-weight:bold;">Desconto (%):</label>
@@ -578,7 +584,7 @@
         <label style="font-size:0.78rem; font-weight:bold;">Cliente / Marca Pertencente:</label>
         <select id="mCadInsCli" class="form-control"></select>
         
-        <label style="font-size:0.78rem; font-weight:bold; margin-top:6px; display:block;">Categorias de Joias Atribuidas:</label>
+        <label style="font-size:0.78rem; font-weight:bold; margin-top:6px; display:block;">Categorias de Joias Atribuídas:</label>
         <div id="boxCatJoiasInsumoTags" style="margin-bottom:12px; background:#F8FAFC; padding:8px; border-radius:10px;"></div>
         
         <label style="font-size:0.78rem; font-weight:bold;">Tipo de Insumo:</label>
@@ -626,7 +632,7 @@
   </div><script>
     var GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbx_okio68ZvoCLOyzdZgG5qdIWp1IBQJjFLu9Gi2Cq6sNzoVw9ZsRn8ZUsHKfQy-ErFPQ/exec";
 
-    var perfilAcessoSelecionadoTab = 'diretoria';
+    var perfilAcessoSelecionadoTab = 'cliente';
     var usuarioLogadoObjeto = null;
     var dataAgendamentoSelecionadaCli = "";
     var fatorMediaPesoGlobal = 2.1;
@@ -676,10 +682,18 @@
 
       if(p === 'cliente') {
         document.getElementById('tabCliente').classList.add('active');
-        bancoClientes.forEach(function(c) { selectAcc.innerHTML += '<option value="' + c.id + '">' + c.login + ' (' + c.marca + ')</option>'; });
+        if (bancoClientes.length === 0) {
+          selectAcc.innerHTML = '<option value="">Carregando clientes...</option>';
+        } else {
+          bancoClientes.forEach(function(c) { selectAcc.innerHTML += '<option value="' + c.id + '">' + c.marca + ' (' + c.login + ')</option>'; });
+        }
       } else if(p === 'equipe') {
         document.getElementById('tabEquipe').classList.add('active');
-        bancoColaboradores.forEach(function(col) { selectAcc.innerHTML += '<option value="' + col.id + '">' + col.login + ' (' + col.nome + ')</option>'; });
+        if (bancoColaboradores.length === 0) {
+          selectAcc.innerHTML = '<option value="">Carregando colaboradores...</option>';
+        } else {
+          bancoColaboradores.forEach(function(col) { selectAcc.innerHTML += '<option value="' + col.id + '">' + col.nome + ' (' + col.login + ')</option>'; });
+        }
       } else {
         document.getElementById('tabDiretoria').classList.add('active');
         bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.login + '</option>'; });
@@ -766,9 +780,9 @@
         try {
           var data = JSON.parse(sessao);
           usuarioLogadoObjeto = data.usuario;
-          abrirPainelLogado(data.perfil, data.usuario.login);
-        } catch(e) { selecionarPerfilAcesso(perfilAcessoSelecionadoTab); }
-      } else { selecionarPerfilAcesso(perfilAcessoSelecionadoTab); }
+          abrirPainelLogado(data.perfil, data.usuario.login || data.usuario.marca || data.usuario.nome);
+        } catch(e) { selecionarPerfilAcesso('cliente'); }
+      } else { selecionarPerfilAcesso('cliente'); }
     }
 
     function salvarDadosNovem() {
@@ -806,7 +820,6 @@
       });
     }
 
-    /* CORREÇÃO DE LOGINS E SENHAS COM LIMPEZA DE ESPAÇOS E TOLERÂNCIA A MAIÚSCULAS/MINÚSCULAS */
     function autenticarUsuario(e) {
       e.preventDefault();
       var valId = String(document.getElementById('selectUsuarioLogin').value).trim();
@@ -814,30 +827,30 @@
 
       if(perfilAcessoSelecionadoTab === 'diretoria') {
         var u = bancoDiretoria.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(u && (u.senha === passInp || passInp === "123456" || passInp === "123")) {
+        if(u && (String(u.senha).trim() === passInp || passInp === "123456" || passInp === "123")) {
           usuarioLogadoObjeto = u;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'diretoria', usuario: u }));
           abrirPainelLogado('diretoria', u.login);
         } else { alert("❌ Senha incorreta para a Diretoria!"); }
       } else if(perfilAcessoSelecionadoTab === 'cliente') {
         var c = bancoClientes.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(c && c.senha === passInp) {
+        if(c && String(c.senha).trim() === passInp) {
           usuarioLogadoObjeto = c;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'cliente', usuario: c }));
-          abrirPainelLogado('cliente', c.login);
+          abrirPainelLogado('cliente', c.marca);
         } else { alert("❌ Senha incorreta para o cliente!"); }
       } else if(perfilAcessoSelecionadoTab === 'equipe') {
         var col = bancoColaboradores.find(function(item) { 
-          return String(item.id) === valId || item.login.toLowerCase() === valId.toLowerCase(); 
+          return String(item.id) === valId || String(item.login).toLowerCase() === valId.toLowerCase(); 
         });
-        if(col && col.senha === passInp) {
+        if(col && String(col.senha).trim() === passInp) {
           usuarioLogadoObjeto = col;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'equipe', usuario: col }));
-          abrirPainelLogado('equipe', col.login);
+          abrirPainelLogado('equipe', col.nome);
         } else { alert("❌ Senha incorreta para o colaborador!"); }
       }
     }
@@ -864,7 +877,7 @@
       document.getElementById('userBadgeArea').style.display = 'none';
       document.getElementById('inputSenha').value = "";
       document.getElementById('loginScreen').style.display = 'block';
-      selecionarPerfilAcesso(perfilAcessoSelecionadoTab);
+      selecionarPerfilAcesso('cliente');
     }
 
     function navegarPaginaCliente(pag) {
@@ -882,9 +895,7 @@
       else if(pag === 'encarte') { document.getElementById('btnNavCliEncarte').classList.add('active'); document.getElementById('pagCliEncarte').style.display = 'block'; renderizarEncartesCliente(); }
       else if(pag === 'insumos') { document.getElementById('btnNavCliInsumos').classList.add('active'); document.getElementById('pagCliInsumos').style.display = 'block'; renderizarInsumosCliente(); }
       else if(pag === 'mensagens') { document.getElementById('btnNavCliMensagens').classList.add('active'); document.getElementById('pagCliMensagens').style.display = 'block'; renderizarMensagensCliente(); }
-    }
-
-    function renderizarPainelClienteLotes() {
+    }function renderizarPainelClienteLotes() {
       var cli = usuarioLogadoObjeto;
       document.getElementById('tituloClientePainel').innerText = "💎 PAINEL DO CLIENTE — " + cli.marca.toUpperCase();
       var cont = document.getElementById('containerLotesClientePainel');
@@ -926,7 +937,6 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
-    /* MONTAGEM DO RELATÓRIO COMPLETO EXIBINDO DATAS REAIS DE INÍCIO E FIM DO SETOR */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -1025,7 +1035,6 @@
 
     function fecharModalOpBancadaLote() { document.getElementById('modalOpBancadaLote').style.display = 'none'; }
 
-    /* LÓGICA DE INICIAR SETOR */
     function iniciarSetorBancadaSubmit() {
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1055,7 +1064,6 @@
       document.getElementById('infoOpLoteStatusInicio').style.color = "#047857";
     }
 
-    /* LÓGICA DE FINALIZAR SETOR E REGISTRAR DATA/HORA AUTOMÁTICA */
     function concluirAvançarLoteBancadaSubmit() {
       var id = parseInt(document.getElementById('hiddenOpLoteId').value);
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
@@ -1117,6 +1125,7 @@
       document.getElementById('labelValPorPecaFinal').innerText = "R$ " + vPorPeca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / pc";
     }
 
+    /* CARREGAMENTO DOS DADOS DE PRODUÇÃO E TEMPO NO MODAL DA DIRETORIA (IMAGEM 2) */
     function abrirModalEditarLoteDir(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(l) {
@@ -1129,6 +1138,30 @@
         document.getElementById('editLoteValorBruto').value = l.valorTotalBruto || l.valorTotal || "";
         document.getElementById('editLoteDesconto').value = l.descontoPct || l.desconto || "";
         document.getElementById('editLoteObs').value = l.obs || "";
+
+        // MONTAGEM DO PAINEL DE SERVIÇOS POR SETOR PARA A DIRETORIA
+        var containerHistDir = document.getElementById('containerHistoricoSetoresDiretoria');
+        if (l.historicoSetores && l.historicoSetores.length > 0) {
+          var histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços por Setor:</h4>';
+          l.historicoSetores.forEach(function(h) {
+            var periodoStr = "";
+            if(h.dataInicio && h.dataFim) periodoStr = "(" + h.dataInicio + " até " + h.dataFim + ")";
+            else if(h.dataFim) periodoStr = "(" + h.dataFim + ")";
+            else if(h.data) periodoStr = "(" + h.data + ")";
+
+            histHtml += '<div class="item-setor-hist">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                  '<span>📍 <strong>' + h.setor + ':</strong></span>' +
+                  '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' pcs</strong>' +
+                '</div>' +
+                '<span class="stamp-time">⏱️ ' + periodoStr + '</span>' +
+              '</div>';
+          });
+          histHtml += '</div>';
+          containerHistDir.innerHTML = histHtml;
+        } else {
+          containerHistDir.innerHTML = '<div class="historico-setores-box"><p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Nenhum histórico de tempo/serviço registrado ainda para este lote.</p></div>';
+        }
 
         calcularValoresFinanceirosEditLote();
         document.getElementById('modalEditarLoteDir').style.display = 'flex';
