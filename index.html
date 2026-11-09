@@ -77,6 +77,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      user-select: none;
     }
     .card-ampli-item:hover {
       transform: translateY(-3px) scale(1.01);
@@ -130,13 +131,12 @@
       background: #FFFFFF; color: var(--header-bg); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
-    /* BADGE DE NOTIFICAÇÃO DE MENSAGENS NOVAS (🔴 1) */
+    /* BADGES */
     .badge-msg-alert {
       background: #EF4444; color: #FFFFFF; font-size: 0.72rem; font-weight: 800; border-radius: 12px; padding: 2px 7px; margin-left: 6px; display: inline-block; animation: pulse 1.8s infinite;
     }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-    /* BADGES DE STATUS DE LOTE */
     .badge-status { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
     .badge-andamento { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
     .badge-espera { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
@@ -176,7 +176,7 @@
 </head>
 <body>
 
-  <!-- CABEÇALHO GLOBAL DO SISTEMA (CLUBE S.O.S.) -->
+  <!-- CABEÇALHO GLOBAL -->
   <div class="app-header">
     <div>
       <h1 class="brand-title">Clube S.O.S.</h1>
@@ -583,10 +583,13 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR / FINALIZAR LOTE (DIRETORIA) COM DETALHAMENTO DE TEMPO E OPERADOR -->
+  <!-- MODAL EDITAR / FINALIZAR / EXCLUIR LOTE (DIRETORIA) -->
   <div id="modalEditarLoteDir" class="modal-overlay">
     <div class="modal-card" style="max-width:750px;">
-      <h3 style="margin-top:0; color:var(--header-bg);">Editar / Finalizar Lote (Diretoria)</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; color:var(--header-bg);">Gestão Completa do Lote (Diretoria)</h3>
+        <button class="btn-main btn-danger" style="width:auto; padding:6px 12px; font-size:0.75rem;" onclick="excluirLoteDefinitivoDir()">🗑️ EXCLUIR LOTE</button>
+      </div>
       <input type="hidden" id="editLoteIdHidden">
       
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -624,8 +627,11 @@
         </div>
       </div>
 
-      <!-- PAINEL HISTÓRICO DE SERVIÇOS, TEMPOS E OPERADORES -->
-      <div id="containerHistoricoSetoresDiretoria" style="margin-bottom:15px;"></div>
+      <!-- PAINEL EDITÁVEL DE HISTÓRICO DE SETORES, TEMPOS E QUANTIDADES -->
+      <div style="margin-bottom:15px; background:#F8FAFC; padding:14px; border-radius:14px; border:1px solid var(--border-color);">
+        <h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Histórico e Edição dos Setores Operacionais:</h4>
+        <div id="containerHistoricoSetoresDiretoria"></div>
+      </div>
 
       <!-- PAINEL FINANCEIRO DE CÁLCULO E DESCONTO AUTOMÁTICO -->
       <div style="background:#F0F9FF; border:1px solid #0284C7; padding:14px; border-radius:14px; margin-bottom:12px;">
@@ -656,7 +662,7 @@
       <label style="font-size:0.78rem; font-weight:700;">Observações Gerais do Lote:</label>
       <textarea id="editLoteObs" class="form-control" placeholder="Observações..."></textarea>
       
-      <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES</button>
+      <button class="btn-main btn-green" onclick="salvarEdicaoLoteDir()">SALVAR ALTERAÇÕES DO LOTE</button>
       <button class="btn-main" style="background:#94A3B8; margin-top:8px;" onclick="fecharModalEditarLoteDir()">CANCELAR</button>
     </div>
   </div>
@@ -778,7 +784,8 @@
     var feriadosLimeiraSP = ["2026-01-01", "2026-04-03", "2026-04-21", "2026-05-01", "2026-06-04", "2026-07-09", "2026-09-07", "2026-09-15", "2026-10-12", "2026-11-02", "2026-11-15", "2026-11-20", "2026-12-25"];
     var datasOcupadasAgenda = [];
 
-    var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin Lima & Brenda', login: 'kelvin', senha: '123' }];
+    // DIRETORIA COM NOME CORRIGIDO: Kelvin (Diretoria)
+    var bancoDiretoria = [{ id: 'dir1', nome: 'Kelvin (Diretoria)', login: 'kelvin', senha: '123' }];
     var bancoClientes = [];
     var bancoClientesInativos = [];
     var bancoColaboradores = [];
@@ -858,7 +865,7 @@
         }
       } else {
         document.getElementById('tabDiretoria').classList.add('active');
-        bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.login + '</option>'; });
+        bancoDiretoria.forEach(function(d) { selectAcc.innerHTML += '<option value="' + d.id + '">' + d.nome + '</option>'; });
       }
     }
 
@@ -947,7 +954,7 @@
         try {
           var data = JSON.parse(sessao);
           usuarioLogadoObjeto = data.usuario;
-          abrirPainelLogado(data.perfil, data.usuario.login || data.usuario.marca || data.usuario.nome);
+          abrirPainelLogado(data.perfil, data.usuario.nome || data.usuario.marca || data.usuario.login);
         } catch(e) { selecionarPerfilAcesso('cliente'); }
       } else { selecionarPerfilAcesso('cliente'); }
     }
@@ -1000,7 +1007,7 @@
         if(u && (String(u.senha).trim() === passInp || passInp === "123456" || passInp === "123")) {
           usuarioLogadoObjeto = u;
           localStorage.setItem("sos_user_session", JSON.stringify({ perfil: 'diretoria', usuario: u }));
-          abrirPainelLogado('diretoria', u.login);
+          abrirPainelLogado('diretoria', u.nome);
         } else { alert("❌ Senha incorreta para a Diretoria!"); }
       } else if(perfilAcessoSelecionadoTab === 'cliente') {
         var c = bancoClientes.find(function(item) { 
@@ -1026,7 +1033,13 @@
     function abrirPainelLogado(perfil, loginStr) {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('userBadgeArea').style.display = 'block';
-      document.getElementById('nomeUsuarioBadge').innerText = loginStr + " (" + perfil.toUpperCase() + ")";
+      
+      // Nome exato da diretoria formatado
+      var rotuloUser = loginStr;
+      if (perfil === 'diretoria') rotuloUser = "Kelvin (DIRETORIA)";
+      else rotuloUser = loginStr + " (" + perfil.toUpperCase() + ")";
+
+      document.getElementById('nomeUsuarioBadge').innerText = rotuloUser;
 
       document.getElementById('painelDiretoria').style.display = 'none';
       document.getElementById('painelColaborador').style.display = 'none';
@@ -1135,7 +1148,7 @@
       cont.innerHTML = html || "<p style='color:var(--text-muted);'>Nenhum lote finalizado ainda.</p>";
     }
 
-    /* RELATÓRIO COM TEMPO, HORA, OPERADOR E VALOR TOTAL */
+    /* RELATÓRIO COMPLETO DE TEMPO E VALORES */
     function abrirModalDetalheLote(id) {
       var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
       if(!l) return;
@@ -1369,7 +1382,80 @@
       renderizarLotesColabBancada();
     }
 
-    /* HISTÓRICO DE MENSAGENS COMPLETO DIRETORIA */
+    /* HISTÓRICO E EDIÇÃO LIBERADA DE SETORES PELA DIRETORIA */
+    function renderizarEdicaoSetoresDiretoria(l) {
+      var container = document.getElementById('containerHistoricoSetoresDiretoria');
+      if (!l.historicoSetores) l.historicoSetores = [];
+
+      var html = '<table class="tabela-sos" style="margin:0;">' +
+        '<thead><tr><th>Setor</th><th>Qtd Peças</th><th>Início / Fim</th><th>Operador</th></tr></thead><tbody>';
+
+      listaSetoresFabricaGeral.forEach(function(setor, idx) {
+        var hSetor = l.historicoSetores.find(function(h) { return h.setor === setor; }) || {
+          setor: setor, qtdServico: 0, dataInicio: "", dataFim: "", operador: ""
+        };
+
+        html += '<tr>' +
+            '<td><strong>' + setor + '</strong></td>' +
+            '<td><input type="number" class="form-control edit-dir-qtd" data-setor="' + setor + '" value="' + (hSetor.qtdServico || 0) + '" style="margin:0; padding:4px 8px; width:90px;"></td>' +
+            '<td><input type="text" class="form-control edit-dir-tempo" data-setor="' + setor + '" value="' + (hSetor.dataInicio || hSetor.dataFim || '') + '" placeholder="Data/Hora..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
+            '<td><input type="text" class="form-control edit-dir-colab" data-setor="' + setor + '" value="' + (hSetor.operador || '') + '" placeholder="Operador..." style="margin:0; padding:4px 8px; font-size:0.75rem;"></td>' +
+          '</tr>';
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function salvarValoresEditadosSetoresDiretoria(l) {
+      if (!l.historicoSetores) l.historicoSetores = [];
+
+      document.querySelectorAll('.edit-dir-qtd').forEach(function(inpQtd) {
+        var setorStr = inpQtd.getAttribute('data-setor');
+        var valQtd = parseInt(inpQtd.value) || 0;
+        var inpTempo = document.querySelector('.edit-dir-tempo[data-setor="' + setorStr + '"]');
+        var inpColab = document.querySelector('.edit-dir-colab[data-setor="' + setorStr + '"]');
+
+        var valTempo = inpTempo ? inpTempo.value.trim() : "";
+        var valColab = inpColab ? inpColab.value.trim() : "";
+
+        var hSetor = l.historicoSetores.find(function(h) { return h.setor === setorStr; });
+        if (hSetor) {
+          hSetor.qtdServico = valQtd;
+          if (valTempo) hSetor.dataInicio = valTempo;
+          if (valColab) hSetor.operador = valColab;
+        } else if (valQtd > 0 || valTempo || valColab) {
+          l.historicoSetores.push({
+            setor: setorStr,
+            qtdServico: valQtd,
+            dataInicio: valTempo,
+            dataFim: valTempo,
+            operador: valColab,
+            servicosEspeciais: []
+          });
+        }
+      });
+    }
+
+    /* EXCLUSÃO DEFINITIVA DE LOTE PELA DIRETORIA */
+    function excluirLoteDefinitivoDir() {
+      var id = parseInt(document.getElementById('editLoteIdHidden').value);
+      var l = bancoLotes4Etapas.find(function(item) { return item.id === id; });
+      if(!l) return;
+
+      if(confirm("⚠️ AVISO 1/2: Tem certeza que deseja EXCLUIR DEFINITIVAMENTE o Lote #" + (l.numLote || l.id) + " da marca '" + l.cliente + "'?") && 
+         confirm("⚠️ AVISO 2/2 (CONFIRMAÇÃO FINAL): O lote será removido permanentemente! Confirmar exclusão?")) {
+        
+        var idx = bancoLotes4Etapas.findIndex(function(item) { return item.id === id; });
+        if (idx > -1) bancoLotes4Etapas.splice(idx, 1);
+
+        salvarDadosNovem();
+        alert("🗑️ Lote excluído com sucesso!");
+        fecharModalEditarLoteDir();
+        renderizarLotes4Etapas();
+      }
+    }
+
     function preencherSelectsFiltroMensagensDiretoria() {
       var selCli = document.getElementById('selectFiltroMsgClienteDir');
       selCli.innerHTML = '<option value="TODOS">Todos os Clientes</option>';
@@ -1430,39 +1516,7 @@
         document.getElementById('editLoteDesconto').value = l.descontoPct || l.desconto || "";
         document.getElementById('editLoteObs').value = l.obs || "";
 
-        var containerHistDir = document.getElementById('containerHistoricoSetoresDiretoria');
-        if (l.historicoSetores && l.historicoSetores.length > 0) {
-          var histHtml = '<div class="historico-setores-box"><h4 style="margin:0 0 8px 0; color:var(--header-bg); font-size:0.88rem;">📊 Quantidade de Serviços e Tempos por Setor:</h4>';
-          l.historicoSetores.forEach(function(h) {
-            var periodoStr = "";
-            if(h.dataInicio && h.dataFim) periodoStr = "Início: " + h.dataInicio + " | Fim: " + h.dataFim;
-            else if(h.dataFim) periodoStr = "Concluído em: " + h.dataFim;
-            else if(h.dataInicio) periodoStr = "Iniciado em: " + h.dataInicio;
-            else if(h.data) periodoStr = "Registrado em: " + h.data;
-
-            var servEspeciaisHtml = "";
-            if (h.servicosEspeciais && h.servicosEspeciais.length > 0) {
-              servEspeciaisHtml = '<div style="margin-top:4px; padding-left:10px; border-left:2px solid #0D9488; font-size:0.76rem; color:#0D9488;">' +
-                h.servicosEspeciais.map(function(se) { return '🛠️ <strong>' + se.tipo + ':</strong> ' + se.qtd + ' pcs'; }).join('<br>') +
-              '</div>';
-            }
-
-            histHtml += '<div class="item-setor-hist">' +
-                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                  '<span>📍 <strong>' + h.setor + ':</strong></span>' +
-                  '<strong style="color:var(--orange-accent);">' + h.qtdServico + ' pcs</strong>' +
-                '</div>' +
-                servEspeciaisHtml +
-                '<span class="stamp-time">⏱️ ' + periodoStr + '</span>' +
-                (h.operador ? '<span class="stamp-operator">👤 Operador: ' + h.operador + '</span>' : '') +
-              '</div>';
-          });
-          histHtml += '</div>';
-          containerHistDir.innerHTML = histHtml;
-        } else {
-          containerHistDir.innerHTML = '<div class="historico-setores-box"><p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Nenhum histórico de tempo/serviço registrado ainda para este lote.</p></div>';
-        }
-
+        renderizarEdicaoSetoresDiretoria(l);
         calcularValoresFinanceirosEditLote();
         document.getElementById('modalEditarLoteDir').style.display = 'flex';
       }
@@ -1479,6 +1533,8 @@
         l.etapa = parseInt(document.getElementById('editLoteEtapa').value);
         l.setorAtual = document.getElementById('editLoteSetorAtual').value;
         
+        salvarValoresEditadosSetoresDiretoria(l);
+
         var vBruto = parseFloat(document.getElementById('editLoteValorBruto').value) || 0;
         var descPct = parseFloat(document.getElementById('editLoteDesconto').value) || 0;
         var vFinal = vBruto - (vBruto * (descPct / 100));
@@ -1497,7 +1553,7 @@
         }
 
         salvarDadosNovem();
-        alert("✅ Lote e fechamento financeiro gravados com sucesso!");
+        alert("✅ Lote, setores e fechamento financeiro gravados com sucesso!");
         fecharModalEditarLoteDir();
         renderizarLotes4Etapas();
       }
@@ -1780,26 +1836,36 @@
       bancoClientes.forEach(function(c) { sel.innerHTML += '<option value="' + c.marca + '">' + c.marca + '</option>'; });
     }
 
+    /* RENDERIZAÇÃO E CLIQUE GARANTIDO NOS CARDS DOS LOTES DA DIRETORIA */
     function renderizarLotes4Etapas() {
       var filtro = document.getElementById('filtroCliLotes4Etapas').value;
       var cont = document.getElementById('containerLotes4EtapasAmplo');
       var lotes = (filtro === "TODOS") ? bancoLotes4Etapas : bancoLotes4Etapas.filter(function(l) { return l.cliente === filtro; });
 
       var html = '<div class="cards-grid-amplos">';
+      
       html += '<div class="coluna-etapa-lotes" style="background:#FFF7ED;"><h4 style="color:#C2410C;">1. Aguardando Aprovação (' + lotes.filter(function(l){return l.etapa===1;}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===1;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
+      lotes.filter(function(l){return l.etapa===1;}).forEach(function(l) { 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
+      });
       html += '</div>';
 
       html += '<div class="coluna-etapa-lotes" style="background:#E0F2FE;"><h4 style="color:#0369A1;">2. Aguardando Chegada (' + lotes.filter(function(l){return l.etapa===2;}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===2;}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
+      lotes.filter(function(l){return l.etapa===2;}).forEach(function(l) { 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
+      });
       html += '</div>';
 
       html += '<div class="coluna-etapa-lotes" style="background:#FEF3C7;"><h4 style="color:#B45309;">3. Cadastrados (' + lotes.filter(function(l){return l.etapa===3 && l.setorAtual !== "7. Finalização / Liberado";}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===3 && l.setorAtual !== "7. Finalização / Liberado";}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Setor: ' + l.setorAtual + '</p></div>'; });
+      lotes.filter(function(l){return l.etapa===3 && l.setorAtual !== "7. Finalização / Liberado";}).forEach(function(l) { 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Setor: <strong>' + l.setorAtual + '</strong></p></div>'; 
+      });
       html += '</div>';
 
       html += '<div class="coluna-etapa-lotes" style="background:#D1FAE5;"><h4 style="color:#065F46;">4. Finalizados (' + lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).length + ')</h4>';
-      lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).forEach(function(l) { html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; });
+      lotes.filter(function(l){return l.etapa===4 || l.setorAtual === "7. Finalização / Liberado";}).forEach(function(l) { 
+        html += '<div class="card-ampli-item" onclick="abrirModalEditarLoteDir(' + l.id + ')"><strong>' + l.cliente + '</strong><p>Volume: ' + l.pcs + ' pcs</p></div>'; 
+      });
       html += '</div></div>';
       cont.innerHTML = html;
     }
@@ -1964,7 +2030,6 @@
       }
     }
 
-    /* EXCLUSÃO DEFINITIVA COM 2 CONFIRMAÇÕES E EXPURGO TOTAL DE DADOS ÓRFÃOS */
     function excluirClienteDefinitivoSubmit(id, eInativo) {
       var listaOrigem = eInativo ? bancoClientesInativos : bancoClientes;
       var c = listaOrigem.find(function(item) { return item.id == id; });
